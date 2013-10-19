@@ -9,5 +9,5 @@ task :start do
   Thread.new do
     SpotifyPlayer.new.start!
   end
-	SpotifyJukebox.run!
+  SpotifyJukebox.run!
 end

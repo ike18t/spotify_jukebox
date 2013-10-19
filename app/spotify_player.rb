@@ -40,7 +40,7 @@ class SpotifyPlayer
   end
 
   def get_playlist
-    link = Spotify.link_create_from_string "spotify:user:1215286433:playlist:0Ur8JSOQMuu3HWj4G63S42"
+    link = Spotify.link_create_from_string $playlist_uri
 
     playlist = Spotify.playlist_create @session_wrapper.session, link
 

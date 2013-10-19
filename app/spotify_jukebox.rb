@@ -25,15 +25,15 @@ class SpotifyJukebox < Sinatra::Base
     $metadata.to_json
 	end
 
-	def get_user_list
-		link = Spotify.link_create_from_string 'spotify:user:1215286433:playlist:0Ur8JSOQMuu3HWj4G63S42'
-		playlist = Spotify.playlist_create $session_wrapper.session, link
+  def get_user_list
+    link = Spotify.link_create_from_string $playlist_uri
+    playlist = Spotify.playlist_create $session_wrapper.session, link
     poll($session_wrapper.session) { Spotify.playlist_is_loaded(playlist) }
-		(0..Spotify.playlist_num_tracks(playlist)-1).map{|index|
-			creator = Spotify.playlist_track_creator(playlist, index)
-			Spotify.user_canonical_name creator
-		}.uniq.sort
-	end
+    (0..Spotify.playlist_num_tracks(playlist)-1).map{|index|
+      creator = Spotify.playlist_track_creator(playlist, index)
+      Spotify.user_canonical_name creator
+    }.uniq.sort
+  end
 
 	get '/' do
 		@user_mapping = CacheHandler.get_user_mappings

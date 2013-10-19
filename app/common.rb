@@ -34,3 +34,4 @@ $appkey = IO.read(File.join(APP_ROOT, 'keys/spotify_appkey.key'), encoding: 'BIN
 config = YAML.load_file('config.yml')
 $username = config['username']
 $password = config['password']
+$playlist_uri = config['playlist_uri']
