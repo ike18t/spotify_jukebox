@@ -11,11 +11,11 @@
 
 #spotify_wrapper
   #art{:style => "display: inline"}
-    %img{:src => "https://d3rt1990lpmkn.cloudfront.net/cover/#{@current_track["image"]}"}
+    %img{:src => "https://d3rt1990lpmkn.cloudfront.net/cover/#{@current_track[:image]}"}
   #spotify_text{:style => "display: inline-block"}
     #title
-      =@current_track["track_name"]
+      =@current_track[:track_name]
     #artist
-      =@current_track["artists"]
+      =@current_track[:artists]
     #added_by
-      ="Added by #{@user_mapping[@current_track["adder"]].nil? ? @current_track["adder"] : @user_mapping[@current_track["adder"]]}"
+      ="Added by #{@user_mapping[@current_track[:adder]]}"

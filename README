@@ -10,7 +10,3 @@ HOMEBREW:
 brew edit freealut
 mirror 'http://ftp.de.debian.org/debian/pool/main/f/freealut/freealut_1.1.0.orig.tar.gz'
 brew install freealut
-
-Known Issues:
-In OSX running the player and the jukebox at the same 
-
