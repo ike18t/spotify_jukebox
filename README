@@ -10,3 +10,8 @@ HOMEBREW:
 brew edit freealut
 mirror 'http://ftp.de.debian.org/debian/pool/main/f/freealut/freealut_1.1.0.orig.tar.gz'
 brew install freealut
+
+You'll need to drop your binary Spotify API into a folder on the root called key, retaining the original file name from Spotify.
+Add you credentials to the config.yml like so:
+  username: myusername
+  password: mypassword
