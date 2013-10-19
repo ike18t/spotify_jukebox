@@ -1,0 +1,16 @@
+install openal for playing
+
+YUM
+sudo yum install openal-soft-devel-1.12.854-1.el6.x86_64
+
+APT:
+sudo apt-get install libopenal-dev
+
+HOMEBREW:
+brew edit freealut
+mirror 'http://ftp.de.debian.org/debian/pool/main/f/freealut/freealut_1.1.0.orig.tar.gz'
+brew install freealut
+
+Known Issues:
+In OSX running the player and the jukebox at the same 
+

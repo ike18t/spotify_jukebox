@@ -1,0 +1,13 @@
+tags
+Gemfile.lock
+vendor
+.sass-cache
+.spotify
+spotify_tracefile.txt
+keys/*
+config.yml
+metadata.yml
+nohup.out
+.cache
+spotify_player.log
+spotify_jukebox.log

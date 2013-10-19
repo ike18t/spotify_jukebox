@@ -1,0 +1,21 @@
+%h3
+  %a{:href => "https://play.spotify.com/user/1215286433/playlist/0Ur8JSOQMuu3HWj4G63S42"}
+    Playlist URL
+- @users_for_view.each_key do |user|
+- enabled_or_disabled = @users_for_view[user] == false ? 'disabled' : 'enabled'
+- to_enable_or_disable = @users_for_view[user] == true ? 'disable' : 'enable'
+  %a{:href => "/#{to_enable_or_disable}/#{user}", :class => "#{enabled_or_disabled}"}
+    =@user_mapping[user.to_s].nil? ? user : @user_mapping[user.to_s]
+  %br
+
+
+#spotify_wrapper
+  #art{:style => "display: inline"}
+    %img{:src => "https://d3rt1990lpmkn.cloudfront.net/cover/#{@current_track["image"]}"}
+  #spotify_text{:style => "display: inline-block"}
+    #title
+      =@current_track["track_name"]
+    #artist
+      =@current_track["artists"]
+    #added_by
+      ="Added by #{@user_mapping[@current_track["adder"]].nil? ? @current_track["adder"] : @user_mapping[@current_track["adder"]]}"

@@ -1,0 +1,34 @@
+.enabled {
+	font-weight: bold;
+}
+
+body {
+	font-family: Arial;
+}
+
+a {
+	text-decoration: none;
+}
+
+#spotify_wrapper {
+	position: absolute;
+	bottom: 5px;
+}
+
+#album_art {
+	height: 150px;
+	width: 150px;
+}
+
+#spotify_text {
+	vertical-align: top;
+	font-size: 20pt;
+}
+
+#artist {
+	font-size: 16pt;
+}
+
+#added_by {
+	font-size: 10pt;
+}
