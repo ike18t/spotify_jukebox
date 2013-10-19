@@ -8,7 +8,7 @@ require 'spotify'
 require 'haml'
 require 'sinatra/assetpack'
 
-class SpotifyJukebox < Sinatra::Base
+class JukeboxWeb < Sinatra::Base
 	register Sinatra::AssetPack
 	set :root, File.join(File.dirname(__FILE__), '..')
 	set :bind, '0.0.0.0'

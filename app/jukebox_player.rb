@@ -4,7 +4,7 @@ require_relative 'common'
 require_relative 'session_wrapper'
 require 'json'
 
-class SpotifyPlayer
+class JukeboxPlayer
 
   SP_IMAGE_SIZE_NORMAL = 0
   attr_accessor :session_wrapper
