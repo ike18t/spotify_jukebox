@@ -21,7 +21,8 @@ class JukeboxPlayer
     $end_of_track = false
   end
 
-  def log_metadata(track, who_added) track_name     = Spotify.track_name track
+  def log_metadata(track, who_added)
+    track_name     = Spotify.track_name track
     artists        = (0..Spotify.track_num_artists(track) - 1).map{|i| Spotify.artist_name(Spotify.track_artist track, i)}
     album_name     = Spotify.album_name(Spotify.track_album(track))
     album_cover_id = Spotify.album_cover(Spotify.track_album(track), SP_IMAGE_SIZE_NORMAL)

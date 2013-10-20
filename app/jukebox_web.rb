@@ -9,21 +9,21 @@ require 'haml'
 require 'sinatra/assetpack'
 
 class JukeboxWeb < Sinatra::Base
-	register Sinatra::AssetPack
-	set :root, File.join(File.dirname(__FILE__), '..')
-	set :bind, '0.0.0.0'
+  register Sinatra::AssetPack
+  set :root, File.join(File.dirname(__FILE__), '..')
+  set :bind, '0.0.0.0'
 
   assets do
-		js :application, ['/js/*.js']
-		css :application, ['/css/*.css']
-	end
+    js :application, ['/js/*.js']
+    css :application, ['/css/*.css']
+  end
 
-	get '/whatbeplayin' do
-		headers 'Access-Control-Allow-Origin'					=> '*',
-						'Access-Conformation-Request-Method'	=> '*'
-		content_type 'application/json'
+  get '/whatbeplayin' do
+    headers 'Access-Control-Allow-Origin'         => '*',
+            'Access-Conformation-Request-Method'  => '*'
+    content_type 'application/json'
     $metadata.to_json
-	end
+  end
 
   def get_user_list
     link = Spotify.link_create_from_string $playlist_uri
@@ -63,24 +63,24 @@ class JukeboxWeb < Sinatra::Base
     haml :index
   end
 
-	get '/enable/:name' do
-		name = params[:name]
+  get '/enable/:name' do
+    name = params[:name]
     enabled = CacheHandler.get_enabled_users
-		if get_user_list.include? name and not enabled.include? name
-			enabled << name
-			CacheHandler.cache_enabled! enabled
-		end
-		redirect '/'
-	end
+    if get_user_list.include? name and not enabled.include? name
+      enabled << name
+      CacheHandler.cache_enabled! enabled
+    end
+    redirect '/'
+  end
 
-	get '/disable/:name' do
-		name = params[:name]
+  get '/disable/:name' do
+    name = params[:name]
     enabled = CacheHandler.get_enabled_users
-		if get_user_list.include? name and enabled.include? name
-			enabled.delete name
-			CacheHandler.cache_enabled! enabled
-		end
-		redirect '/'
-	end
+    if get_user_list.include? name and enabled.include? name
+      enabled.delete name
+      CacheHandler.cache_enabled! enabled
+    end
+    redirect '/'
+  end
 
 end

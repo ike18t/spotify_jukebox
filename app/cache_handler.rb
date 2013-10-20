@@ -36,6 +36,5 @@ class CacheHandler
       cache['users'] ||= {}
       cache
     end
-
   end
 end
