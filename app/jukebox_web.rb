@@ -35,27 +35,33 @@ class JukeboxWeb < Sinatra::Base
     }.uniq.sort
   end
 
-	get '/' do
-		@user_mapping = CacheHandler.get_user_mappings
-		@current_track = $metadata
+  def uri_to_url uri
+    uri = uri.gsub ':', '/'
+    uri.gsub 'spotify', 'http://play.spotify.com'
+  end
 
-		users = get_user_list
-		enabled = CacheHandler.get_enabled_users
-		@users_for_view = {}
+  get '/' do
+    @user_mapping = CacheHandler.get_user_mappings
+    @current_track = $metadata
+    @playlist_url = uri_to_url $playlist_uri
+
+    users = get_user_list
+    enabled = CacheHandler.get_enabled_users
+    @users_for_view = {}
     mapping_update = false
-		users.each {|user|
-			if not @user_mapping.keys.include? user
+    users.each {|user|
+      if not @user_mapping.keys.include? user
         $logger.info "pulling user #{user} display name"
-				@user_mapping[user] = SpotifyScraper.name_from_spotify_id(user)
-			end
-			@users_for_view[user] = enabled.include?(user)
+        @user_mapping[user] = SpotifyScraper.name_from_spotify_id(user)
+      end
+      @users_for_view[user] = enabled.include?(user)
       mapping_update = true
-		}
+    }
     if mapping_update
       CacheHandler.cache_user_mappings! @user_mapping
     end
-		haml :index
-	end
+    haml :index
+  end
 
 	get '/enable/:name' do
 		name = params[:name]
