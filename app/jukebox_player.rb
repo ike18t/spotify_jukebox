@@ -19,6 +19,12 @@ class JukeboxPlayer
     Spotify.try(:session_player_load, @session_wrapper.session, track)
     Spotify.try(:session_player_play, @session_wrapper.session, true)
     $end_of_track = false
+  rescue Spotify::Error => e
+    if e.message =~ /^\[TRACK_NOT_PLAYABLE\]/
+      $end_of_track = true
+    else
+      throw
+    end
   end
 
   def log_metadata(track, who_added)
@@ -54,7 +60,7 @@ class JukeboxPlayer
 
     $logger.info "there are #{Spotify.playlist_num_tracks(playlist)} songs"
     loop do
-      random_track_index = rand(Spotify.playlist_num_tracks(playlist)) - 1
+      random_track_index = rand(Spotify.playlist_num_tracks(playlist)-1)
       creator = Spotify.playlist_track_creator(playlist, random_track_index)
       who_added = Spotify.user_canonical_name creator
 
