@@ -7,11 +7,13 @@ require 'json'
 require 'spotify'
 require 'haml'
 require 'sinatra/assetpack'
+require 'thin'
 
 class JukeboxWeb < Sinatra::Base
   register Sinatra::AssetPack
   set :root, File.join(File.dirname(__FILE__), '..')
   set :bind, '0.0.0.0'
+  set :server, 'thin'
 
   assets do
     js :application, ['/js/*.js']
