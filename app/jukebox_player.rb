@@ -15,29 +15,26 @@ class JukeboxPlayer
   def start!
     playlist = get_playlist
 
-    $logger.debug "there are #{Spotify.playlist_num_tracks(playlist)} tracks"
     current_user = nil
     loop do
       enabled_users = CacheHandler.get_enabled_users
       if enabled_users.empty?
         rando = get_random_track playlist
-        added_by = rando[:user]
+        current_user = rando[:user]
         track = rando[:track]
       else
         current_user = get_next_user enabled_users, current_user
         track = get_random_track_for_user playlist, current_user
-        added_by = current_user
       end
+      next if track.nil?
       play_track(track)
-      log_metadata(track, added_by)
+      log_metadata(track, current_user)
       poll(@session_wrapper.session) { $end_of_track }
     end
   end
 
   private
-
   def play_track(track)
-    $logger.info "I'm going to play a track now"
     poll(@session_wrapper.session) { Spotify.track_is_loaded(track) }
     Spotify.try(:session_player_play, @session_wrapper.session, false)
     Spotify.try(:session_player_load, @session_wrapper.session, track)
@@ -60,7 +57,6 @@ class JukeboxPlayer
                   album_cover_id.unpack('H40')[0]
                 end
     $logger.info "Now playing #{track_name} by #{artists.join(", ")} on the album #{album_name}"
-    $logger.info "spotify image hex: #{image_hex}"
     $metadata = {
                   :track_name => track_name,
                   :artists    => artists.join(", "),
@@ -102,8 +98,8 @@ class JukeboxPlayer
   end
 
   def get_next_user enabled_users, last_user
-    last_index = enabled_users.index(last_user) || 0
-    enabled_users.rotate! last_index+1
+    last_index = enabled_users.index(last_user) || rand(enabled_users.count)-1
+    enabled_users.rotate! last_index + 1
     enabled_users.first
   end
 
