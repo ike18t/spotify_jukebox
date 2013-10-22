@@ -12,6 +12,30 @@ class JukeboxPlayer
     @session_wrapper = $session_wrapper
   end
 
+  def start!
+    playlist = get_playlist
+
+    $logger.debug "there are #{Spotify.playlist_num_tracks(playlist)} tracks"
+    current_user = nil
+    loop do
+      enabled_users = CacheHandler.get_enabled_users
+      if enabled_users.empty?
+        rando = get_random_track playlist
+        added_by = rando[:user]
+        track = rando[:track]
+      else
+        current_user = get_next_user enabled_users, current_user
+        track = get_random_track_for_user playlist, current_user
+        added_by = current_user
+      end
+      play_track(track)
+      log_metadata(track, added_by)
+      poll(@session_wrapper.session) { $end_of_track }
+    end
+  end
+
+  private
+
   def play_track(track)
     $logger.info "I'm going to play a track now"
     poll(@session_wrapper.session) { Spotify.track_is_loaded(track) }
@@ -48,33 +72,39 @@ class JukeboxPlayer
 
   def get_playlist
     link = Spotify.link_create_from_string $playlist_uri
-
     playlist = Spotify.playlist_create @session_wrapper.session, link
 
     poll(@session_wrapper.session) { Spotify.playlist_is_loaded(playlist) }
     playlist
   end
 
-  def start!
-    playlist = get_playlist
-
-    $logger.info "there are #{Spotify.playlist_num_tracks(playlist)} songs"
-    loop do
-      random_track_index = rand(Spotify.playlist_num_tracks(playlist)-1)
-      creator = Spotify.playlist_track_creator(playlist, random_track_index)
-      who_added = Spotify.user_canonical_name creator
-
-      $logger.info "this song was added by #{who_added}"
-
-      enabled = CacheHandler.get_enabled_users
-      if enabled.include? who_added or enabled.empty?
-        track = Spotify.playlist_track(playlist, random_track_index)
-        play_track(track)
-        log_metadata(track, who_added)
-        poll(@session_wrapper.session) { $end_of_track }
-      else
-        $logger.info "#{who_added} is currently disabled. skipping to next song"
-      end
+  def get_tracks_for_user playlist, user
+    tracks = []
+    num_tracks = Spotify.playlist_num_tracks(playlist)
+    (0..num_tracks-1).each do |index|
+      track = Spotify.playlist_track(playlist, index)
+      added_by = Spotify.playlist_track_creator(playlist, index)
+      tracks << track if Spotify.user_canonical_name(added_by) == user
     end
+    tracks
   end
+
+  def get_random_track_for_user playlist, user
+    tracks = get_tracks_for_user playlist, user
+    tracks.sample
+  end
+
+  def get_random_track playlist
+    random_track_index = rand(Spotify.playlist_num_tracks(playlist)) - 1
+    creator = Spotify.playlist_track_creator(playlist, random_track_index)
+    added_by = Spotify.user_canonical_name creator
+    { :user => added_by, :track => Spotify.playlist_track(playlist, random_track_index) }
+  end
+
+  def get_next_user enabled_users, last_user
+    last_index = enabled_users.index(last_user) || 0
+    enabled_users.rotate! last_index+1
+    enabled_users.first
+  end
+
 end
