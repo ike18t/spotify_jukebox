@@ -23,7 +23,9 @@ class JukeboxWeb < Sinatra::Base
     headers 'Access-Control-Allow-Origin'         => '*',
             'Access-Conformation-Request-Method'  => '*'
     content_type 'application/json'
-    $metadata.to_json
+    current_track = $metadata
+    current_track[:adder] = translate_name current_track[:adder]
+    current_track.to_json
   end
 
   def get_user_list
@@ -39,6 +41,11 @@ class JukeboxWeb < Sinatra::Base
   def uri_to_url uri
     uri = uri.gsub ':', '/'
     uri.gsub 'spotify', 'http://play.spotify.com'
+  end
+
+  def translate_name name
+    user_mapping = CacheHandler.get_user_mappings
+    user_mapping[name] || name
   end
 
   get '/' do

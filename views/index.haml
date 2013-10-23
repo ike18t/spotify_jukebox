@@ -8,14 +8,14 @@
     = @user_mapping[user.to_s]
   %br
 
-
 #spotify_wrapper
   #art{:style => "display: inline"}
-    %img{:src => "https://d3rt1990lpmkn.cloudfront.net/cover/#{@current_track[:image]}"}
   #spotify_text{:style => "display: inline-block"}
     #title
-      =@current_track[:track_name]
     #artist
-      =@current_track[:artists]
     #added_by
-      ="Added by #{@user_mapping[@current_track[:adder]]}"
+
+:javascript
+  $(document).ready(function(){
+    currentTrackPoller().initialize();
+  });
