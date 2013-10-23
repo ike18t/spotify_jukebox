@@ -4,6 +4,7 @@ require_relative './app/jukebox_web'
 require_relative './app/jukebox_player'
 require_relative './app/track_historian'
 require_relative './app/common'
+require_relative './app/session_wrapper'
 require 'rspec/core/rake_task'
 
 RSpec::Core::RakeTask.new :spec
