@@ -1,9 +1,13 @@
+
+// Roboto Font from Google                                       
+@import url(http://fonts.googleapis.com/css?family=Roboto:400,300,500,700);
+
 .enabled {
   font-weight: bold;
-}
+} 
 
 body {
-  font-family: Arial;
+  font-family: 'Roboto', sans-serif;
 }
 
 a {
