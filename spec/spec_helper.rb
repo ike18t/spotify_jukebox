@@ -1,11 +1,16 @@
 require 'sinatra'
 require 'rack/test'
+require 'rspec'
+require 'pry'
+require 'autotest'
+require 'mocha/api'
 
 ENV['RACK_ENV'] = 'test'
 
-require File.join(File.dirname(__FILE__), '..', 'lib', 'spotify_control.rb')
+files = Dir.glob('app/**/*.rb')
+files.each{ |file| require File.expand_path("#{file}"); }
 
-SpotifyControl.set(
+JukeboxWeb.set(
   :environment => :test,
   :run => false,
   :raise_errors => true,
@@ -15,7 +20,7 @@ SpotifyControl.set(
 module TestHelper
 
   def app
-    SpotifyControl.new
+    JukeboxWeb.new
   end
 
   def body
@@ -29,7 +34,3 @@ module TestHelper
   include Rack::Test::Methods
 
 end
-
-require 'bacon'
-
-Bacon::Context.send(:include, TestHelper)
