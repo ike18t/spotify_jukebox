@@ -2,6 +2,7 @@ require 'bundler'
 require 'bundler/setup'
 require_relative './app/jukebox_web'
 require_relative './app/jukebox_player'
+require_relative './app/track_historian'
 require_relative './app/common'
 require 'rspec/core/rake_task'
 
@@ -11,8 +12,9 @@ task :default => :spec
 
 task :start do
   $session_wrapper = SessionWrapper.new
+  @track_historian = TrackHistorian.new
   Thread.new do
-    JukeboxPlayer.new.start!
+    JukeboxPlayer.new($session_wrapper, @track_historian).start!
   end
   JukeboxWeb.run!({ :server => 'thin' })
 end

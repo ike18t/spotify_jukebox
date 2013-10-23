@@ -8,8 +8,9 @@ class JukeboxPlayer
 
   SP_IMAGE_SIZE_NORMAL = 0
   attr_accessor :session_wrapper
-  def initialize
-    @session_wrapper = $session_wrapper
+  def initialize session_wrapper, track_historian
+    @session_wrapper = session_wrapper
+    @historian = track_historian
   end
 
   def start!
@@ -18,6 +19,7 @@ class JukeboxPlayer
     current_user = nil
     loop do
       enabled_users = CacheHandler.get_enabled_users
+      @historian.update_enabled_users_list enabled_users
       if enabled_users.empty?
         rando = get_random_track playlist
         current_user = rando[:user]
@@ -39,6 +41,7 @@ class JukeboxPlayer
     Spotify.try(:session_player_play, @session_wrapper.session, false)
     Spotify.try(:session_player_load, @session_wrapper.session, track)
     Spotify.try(:session_player_play, @session_wrapper.session, true)
+    @historian.record track
     $end_of_track = false
   rescue Spotify::Error => e
     if e.message =~ /^\[TRACK_NOT_PLAYABLE\]/
@@ -82,7 +85,8 @@ class JukeboxPlayer
       added_by = Spotify.playlist_track_creator(playlist, index)
       tracks << track if Spotify.user_canonical_name(added_by) == user
     end
-    tracks
+    @historian.update_user_track_count user, tracks.count
+    tracks.reject {|track| @historian.played_recently?(track) }
   end
 
   def get_random_track_for_user playlist, user
