@@ -9,5 +9,5 @@ task :start do
   Thread.new do
     JukeboxPlayer.new.start!
   end
-  JukeboxWeb.run!
+  JukeboxWeb.run!({ :server => 'thin' })
 end
