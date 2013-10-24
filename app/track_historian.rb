@@ -30,7 +30,13 @@ class TrackHistorian
   protected
 
   def generate_track_key track
-    TRACK_FORMAT % [ Spotify.artist_name(Spotify.track_artist(track, 0)), Spotify.track_name(track) ]
+    artist = nil
+    poll($session_wrapper.session) do
+      artist = Spotify.track_artist(track, 0)
+      !artist.null?
+    end
+
+    TRACK_FORMAT % [ Spotify.artist_name(artist), Spotify.track_name(track) ]
   end
 
   def get_calculated_size
