@@ -11,3 +11,4 @@ nohup.out
 .cache
 spotify_player.log
 spotify_jukebox.log
+*.swp
