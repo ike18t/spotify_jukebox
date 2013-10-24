@@ -103,7 +103,7 @@ class JukeboxPlayer
   end
 
   def get_next_user enabled_users, last_user
-    last_index = enabled_users.index(last_user) || rand(enabled_users.count)-1
+    last_index = enabled_users.index(last_user) || rand(enabled_users.count)
     enabled_users.rotate! last_index + 1
     enabled_users.first
   end
