@@ -95,7 +95,8 @@ class JukeboxPlayer
   end
 
   def get_random_track playlist
-    random_track_index = rand(Spotify.playlist_num_tracks(playlist)) - 1
+    random_track_index = rand(Spotify.playlist_num_tracks(playlist))
+
     creator = Spotify.playlist_track_creator(playlist, random_track_index)
     added_by = Spotify.user_canonical_name creator
     { :user => added_by, :track => Spotify.playlist_track(playlist, random_track_index) }
