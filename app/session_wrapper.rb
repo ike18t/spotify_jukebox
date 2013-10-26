@@ -106,4 +106,16 @@ class SessionWrapper
     $logger.info "Logged in as #{Spotify.session_user_name(session)}."
     session
   end
+
+  # libspotify supports callbacks, but they are not useful for waiting on
+  # operations (how they fire can be strange at times, and sometimes they
+  # might not fire at all). As a result, polling is the way to go.
+  def poll session=@session
+    until yield
+      FFI::MemoryPointer.new(:int) do |ptr|
+        Spotify.session_process_events(session, ptr)
+      end
+      sleep(0.1)
+    end
+  end
 end

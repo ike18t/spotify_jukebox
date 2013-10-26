@@ -31,17 +31,16 @@ class JukeboxPlayer
       next if track.nil?
       play_track(track)
       log_metadata(track, current_user)
-      poll(@session_wrapper.session) { $end_of_track }
+      @session_wrapper.poll { $end_of_track }
     end
   end
 
   private
   def play_track(track)
-    poll(@session_wrapper.session) { Spotify.track_is_loaded(track) }
+    @session_wrapper.poll { Spotify.track_is_loaded(track) }
     Spotify.try(:session_player_play, @session_wrapper.session, false)
     Spotify.try(:session_player_load, @session_wrapper.session, track)
     Spotify.try(:session_player_play, @session_wrapper.session, true)
-    @historian.record track
     $end_of_track = false
   rescue Spotify::Error => e
     if e.message =~ /^\[TRACK_NOT_PLAYABLE\]/
@@ -52,13 +51,20 @@ class JukeboxPlayer
   end
 
   def log_metadata(track, who_added)
-    track_name     = Spotify.track_name track
-    artists        = (0..Spotify.track_num_artists(track) - 1).map{|i| Spotify.artist_name(Spotify.track_artist track, i)}
-    album_name     = Spotify.album_name(Spotify.track_album(track))
+    track_name = Spotify.track_name track
+    artists = (0..Spotify.track_num_artists(track) - 1).map do |i|
+      artist = Spotify.track_artist track, i
+      @session_wrapper.poll { Spotify.artist_is_loaded(artist) }
+      Spotify.artist_name artist
+    end
+    album = Spotify.track_album(track)
+    @session_wrapper.poll { Spotify.album_is_loaded(album) }
+    album_name = Spotify.album_name album
     album_cover_id = Spotify.album_cover(Spotify.track_album(track), SP_IMAGE_SIZE_NORMAL)
     image_hex = if album_cover_id
                   album_cover_id.unpack('H40')[0]
                 end
+    @historian.record artists.first, track_name
     $logger.info "Now playing #{track_name} by #{artists.join(", ")} on the album #{album_name}"
     $metadata = {
                   :track_name => track_name,
@@ -73,7 +79,7 @@ class JukeboxPlayer
     link = Spotify.link_create_from_string $playlist_uri
     playlist = Spotify.playlist_create @session_wrapper.session, link
 
-    poll(@session_wrapper.session) { Spotify.playlist_is_loaded(playlist) }
+    @session_wrapper.poll { Spotify.playlist_is_loaded(playlist) }
     playlist
   end
 
@@ -82,11 +88,19 @@ class JukeboxPlayer
     num_tracks = Spotify.playlist_num_tracks(playlist)
     (0..num_tracks-1).each do |index|
       track = Spotify.playlist_track(playlist, index)
-      added_by = Spotify.playlist_track_creator(playlist, index)
-      tracks << track if Spotify.user_canonical_name(added_by) == user
+      @session_wrapper.poll { Spotify.track_is_loaded(track) }
+      creator = Spotify.playlist_track_creator(playlist, index)
+      @session_wrapper.poll { Spotify.user_is_loaded(creator) }
+      tracks << track if Spotify.user_canonical_name(creator) == user
     end
     @historian.update_user_track_count user, tracks.count
-    tracks.reject {|track| @historian.played_recently?(track) }
+    tracks.reject do |track|
+      track_name = Spotify.track_name track
+      artist = Spotify.track_artist track, 0
+      @session_wrapper.poll { Spotify.artist_is_loaded(artist) }
+      artist_name = Spotify.artist_name artist
+      @historian.played_recently?(artist_name, track_name)
+    end
   end
 
   def get_random_track_for_user playlist, user
@@ -98,8 +112,11 @@ class JukeboxPlayer
     random_track_index = rand(Spotify.playlist_num_tracks(playlist))
 
     creator = Spotify.playlist_track_creator(playlist, random_track_index)
+    @session_wrapper.poll { Spotify.user_is_loaded(creator) }
     added_by = Spotify.user_canonical_name creator
-    { :user => added_by, :track => Spotify.playlist_track(playlist, random_track_index) }
+    track = Spotify.playlist_track(playlist, random_track_index)
+    @session_wrapper.poll { Spotify.track_is_loaded(track) }
+    { :user => added_by, :track => track }
   end
 
   def get_next_user enabled_users, last_user

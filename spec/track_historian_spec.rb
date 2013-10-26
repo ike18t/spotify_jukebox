@@ -23,68 +23,42 @@ describe TrackHistorian do
 
   context 'record' do
     it 'should add track key to the array' do
-      track_key = 'track_key'
+      track_key = 'artist => track'
       @track_historian.stubs(:generate_track_key).returns(track_key)
       @track_historian.stubs(:get_calculated_size).returns(1)
-      @track_historian.record 'track_placeholder'
+      @track_historian.record 'artist', 'track'
       @track_historian.instance_variable_get(:@track_history).should include(track_key)
     end
 
     it 'should bump value in index 0 if max size has been met' do
-      track_key = 'track_key'
+      track_key = 'artist => track'
       @track_historian.instance_variable_set(:@track_history, [:a, :b, :c])
       @track_historian.stubs(:generate_track_key).returns(:d)
       @track_historian.stubs(:get_calculated_size).returns(3)
-      @track_historian.record 'dummy_value'
+      @track_historian.record 'artist', 'track'
       @track_historian.instance_variable_get(:@track_history).should eq([:b, :c, :d])
     end
   end
 
   context 'played_recently?' do
     it 'should return true if the track key is in the track_history array' do
-      @track_historian.instance_variable_set(:@track_history, [:a, :b, :c])
-      @track_historian.stubs(:generate_track_key).returns(:b)
-      @track_historian.played_recently?('dummy_value').should be_true
+      track_key = 'artist => track'
+      @track_historian.instance_variable_set(:@track_history, [:a, track_key, :c])
+      @track_historian.stubs(:generate_track_key).returns(track_key)
+      @track_historian.played_recently?('artist', 'track').should be_true
     end
 
     it 'should return false if the track key is not in the track_history array' do
+      track_key = 'artist => track'
       @track_historian.instance_variable_set(:@track_history, [:a, :b, :c])
-      @track_historian.stubs(:generate_track_key).returns(:d)
-      @track_historian.played_recently?('dummy_value').should be_false
+      @track_historian.stubs(:generate_track_key).returns(track_key)
+      @track_historian.played_recently?('artist', 'track').should be_false
     end
   end
 
   context 'generate_track_key' do
-    before do
-      $session_wrapper = double.as_null_object
-      Spotify.stubs(:track_name).returns('track_name')
-      Spotify.stubs(:track_artist).returns(double(null?: false))
-      Spotify.stubs(:artist_name).returns('artist_name')
-    end
-
     it 'should generate a track key in the format artist_name => track_name' do
-      @track_historian.send(:generate_track_key, 'track_placeholder').should eq('artist_name => track_name')
-    end
-
-    it 'should poll until the artist is not null' do
-      Spotify.stubs(:null_artist).returns(double(null?: true))
-      Spotify.stubs(:not_null_artist).returns(double(null?: false))
-
-      class << @track_historian
-        attr_reader :when_null, :when_not_null
-        def poll(*args)
-          Spotify.stubs(:track_artist).returns(Spotify.null_artist)
-          @when_null = yield
-
-          Spotify.stubs(:track_artist).returns(Spotify.not_null_artist)
-          @when_not_null = yield
-        end
-      end
-
-      @track_historian.send(:generate_track_key, 'foo')
-
-      @track_historian.when_null.should be_false
-      @track_historian.when_not_null.should be_true
+      @track_historian.send(:generate_track_key, 'artist_name', 'track_name').should eq('artist_name => track_name')
     end
   end
 

@@ -1,5 +1,4 @@
 class TrackHistorian
-  require 'spotify'
 
   TRACK_FORMAT = '%s => %s'
 
@@ -17,26 +16,20 @@ class TrackHistorian
     @user_track_counts[user] = count
   end
 
-  def record track
-    @track_history.push generate_track_key(track)
+  def record artist_name, track_name
+    @track_history.push generate_track_key(artist_name, track_name)
     @track_history.shift if @track_history.size > get_calculated_size
   end
 
-  def played_recently? track
-    track_key = generate_track_key(track)
+  def played_recently? artist_name, track_name
+    track_key = generate_track_key(artist_name, track_name)
     not @track_history.index(track_key).nil?
   end
 
   protected
 
-  def generate_track_key track
-    artist = nil
-    poll($session_wrapper.session) do
-      artist = Spotify.track_artist(track, 0)
-      !artist.null?
-    end
-
-    TRACK_FORMAT % [ Spotify.artist_name(artist), Spotify.track_name(track) ]
+  def generate_track_key artist_name, track_name
+    TRACK_FORMAT % [ artist_name, track_name ]
   end
 
   def get_calculated_size
