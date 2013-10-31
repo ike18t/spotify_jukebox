@@ -1,16 +1,13 @@
-#!/usr/bin/env ruby
-
-require_relative 'common'
-require_relative 'session_wrapper'
-require 'json'
-
 class JukeboxPlayer
+  require_relative 'cache_handler'
 
   SP_IMAGE_SIZE_NORMAL = 0
   attr_accessor :session_wrapper
-  def initialize session_wrapper, track_historian
+  def initialize session_wrapper, queue, playlist_uri, track_historian
     @session_wrapper = session_wrapper
     @historian = track_historian
+    @queue = queue
+    @playlist_uri = playlist_uri
   end
 
   def start!
@@ -42,6 +39,7 @@ class JukeboxPlayer
     Spotify.try(:session_player_play, @session_wrapper.session, true)
     $end_of_track = false
   rescue Spotify::Error => e
+    logger.error e.message
     if e.message =~ /^\[TRACK_NOT_PLAYABLE\]/
       $end_of_track = true
     else
@@ -65,17 +63,17 @@ class JukeboxPlayer
                 end
     @historian.record artists.first, track_name
     $logger.info "Now playing #{track_name} by #{artists.join(", ")} on the album #{album_name}"
-    $metadata = {
-                  :track_name => track_name,
-                  :artists    => artists.join(", "),
-                  :album_name => album_name,
-                  :image      => image_hex,
-                  :adder      => who_added
-                 }
+    @queue[:web].push({
+                       :track_name => track_name,
+                       :artists    => artists.join(", "),
+                       :album_name => album_name,
+                       :image      => image_hex,
+                       :adder      => who_added
+                    })
   end
 
   def get_playlist
-    link = Spotify.link_create_from_string $playlist_uri
+    link = Spotify.link_create_from_string @playlist_uri
     playlist = Spotify.playlist_create @session_wrapper.session, link
 
     @session_wrapper.poll { Spotify.playlist_is_loaded(playlist) }

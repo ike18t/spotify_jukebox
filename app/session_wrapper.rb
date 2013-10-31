@@ -1,13 +1,13 @@
 class SessionWrapper
-  require_relative 'frame_reader'
-  require_relative 'common'
   require 'plaything'
+  require_relative 'frame_reader'
 
   attr_accessor :session
 
-  def initialize
+  def initialize config, queue
     @plaything = Plaything.new
-    @session = initialize_session
+    @queue = queue
+    @session = initialize_session config
   end
 
   # Global callback procs.
@@ -72,17 +72,10 @@ class SessionWrapper
     }
   end
 
-  def initialize_session
-    #
-    # Main work code.
-    #
-
-    # You can read about what these session configuration options do in the
-    # libspotify documentation:
-    # https://developer.spotify.com/technologies/libspotify/docs/12.1.45/structsp__session__config.html
-    config = Spotify::SessionConfig.new({
+  def initialize_session config
+    session_config = Spotify::SessionConfig.new({
       api_version: Spotify::API_VERSION.to_i,
-      application_key: $appkey,
+      application_key: config.app_key,
       cache_location: '../.spotify/',
       settings_location: '../.spotify/',
       tracefile: '../spotify_tracefile.txt',
@@ -93,12 +86,12 @@ class SessionWrapper
     $logger.info "Creating session."
     session = nil
     FFI::MemoryPointer.new(Spotify::Session) do |ptr|
-      Spotify.try(:session_create, config, ptr)
+      Spotify.try(:session_create, session_config, ptr)
       session = Spotify::Session.new(ptr.read_pointer)
     end
 
     $logger.info "Created! Logging in."
-    Spotify.session_login(session, $username, $password, false, nil)
+    Spotify.session_login(session, config.username, config.password, false, nil)
 
     $logger.info "Log in requested. Waiting forever until logged in."
     poll(session) { Spotify.session_connectionstate(session) == :logged_in }
@@ -114,6 +107,16 @@ class SessionWrapper
     until yield
       FFI::MemoryPointer.new(:int) do |ptr|
         Spotify.session_process_events(session, ptr)
+      end
+      if not @queue[:player].empty?
+        case @queue[:player].pop
+        when :play
+          Spotify.try(:session_player_play, self.session, true)
+        when :pause
+          Spotify.try(:session_player_play, self.session, false)
+        else
+          $logger.error "There was an unrecognized command passed to player"
+        end
       end
       sleep(0.1)
     end

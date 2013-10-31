@@ -1,15 +1,12 @@
-#!/usr/bin/env ruby
-
-require_relative 'common'
-require_relative 'spotify_scraper'
 require 'sinatra'
-require 'json'
-require 'spotify'
-require 'haml'
 require 'sinatra/assetpack'
-require 'thin'
 
 class JukeboxWeb < Sinatra::Base
+  require 'json'
+  require 'spotify'
+  require 'haml'
+  require_relative 'spotify_scraper'
+
   register Sinatra::AssetPack
   set :root, File.join(File.dirname(__FILE__), '..')
   set :bind, '0.0.0.0'
@@ -19,20 +16,40 @@ class JukeboxWeb < Sinatra::Base
     css :application, ['/css/*.css']
   end
 
+  def initialize
+    super
+    @@queue = settings.custom[:queue]
+    @@session_wrapper = settings.custom[:session_wrapper]
+    @@playlist_uri = settings.custom[:playlist_uri]
+  end
+
+  def get_current_track_info
+    @@current_track = @@queue[:web].pop unless @@queue[:web].empty?
+    @@current_track || nil
+  end
+
   get '/whatbeplayin' do
     headers 'Access-Control-Allow-Origin'         => '*',
             'Access-Conformation-Request-Method'  => '*'
     content_type 'application/json'
-    current_track = $metadata
+    current_track = get_current_track_info
     current_track[:adder] = translate_name current_track[:adder]
     current_track.to_json
   end
 
+  get '/pause' do
+    @@queue[:player].push(:pause)
+  end
+
+  get '/play' do
+    @@queue[:player].push(:play)
+  end
+
   def get_user_list
     @@user ||=  begin
-                  link = Spotify.link_create_from_string $playlist_uri
-                  playlist = Spotify.playlist_create $session_wrapper.session, link
-                  $session_wrapper.poll { Spotify.playlist_is_loaded(playlist) }
+                  link = Spotify.link_create_from_string @@playlist_uri
+                  playlist = Spotify.playlist_create @@session_wrapper.session, link
+                  @@session_wrapper.poll { Spotify.playlist_is_loaded(playlist) }
                   (0..Spotify.playlist_num_tracks(playlist)-1).map{|index|
                     creator = Spotify.playlist_track_creator(playlist, index)
                     Spotify.user_canonical_name creator
@@ -52,8 +69,8 @@ class JukeboxWeb < Sinatra::Base
 
   get '/' do
     @user_mapping = CacheHandler.get_user_mappings
-    @current_track = $metadata
-    @playlist_url = uri_to_url $playlist_uri
+    @current_track = get_current_track_info
+    @playlist_url = uri_to_url @@playlist_uri
 
     users = get_user_list
     enabled = CacheHandler.get_enabled_users
