@@ -29,13 +29,15 @@ class JukeboxWeb < Sinatra::Base
   end
 
   def get_user_list
-    link = Spotify.link_create_from_string $playlist_uri
-    playlist = Spotify.playlist_create $session_wrapper.session, link
-    $session_wrapper.poll { Spotify.playlist_is_loaded(playlist) }
-    (0..Spotify.playlist_num_tracks(playlist)-1).map{|index|
-      creator = Spotify.playlist_track_creator(playlist, index)
-      Spotify.user_canonical_name creator
-    }.uniq.sort
+    @@user ||=  begin
+                  link = Spotify.link_create_from_string $playlist_uri
+                  playlist = Spotify.playlist_create $session_wrapper.session, link
+                  $session_wrapper.poll { Spotify.playlist_is_loaded(playlist) }
+                  (0..Spotify.playlist_num_tracks(playlist)-1).map{|index|
+                    creator = Spotify.playlist_track_creator(playlist, index)
+                    Spotify.user_canonical_name creator
+                  }.uniq.sort
+                end
   end
 
   def uri_to_url uri
