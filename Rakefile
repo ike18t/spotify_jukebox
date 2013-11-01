@@ -22,8 +22,8 @@ task :start do
   Thread.abort_on_exception = true
 
   # We use a logger to print some information on when things are happening.
-  $logger = Logger.new($stderr)
-  $logger.level = Logger::INFO
+  $logger = Logger.new('spotify_jukbox.log', 'daily')
+  $logger.level = Logger::DEBUG
 
   queue = { :player => Queue.new, :web => Queue.new }
   session_wrapper = SessionWrapper.new config, queue
