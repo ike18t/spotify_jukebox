@@ -3,6 +3,7 @@ require 'bundler/setup'
 require 'logger'
 require 'rspec/core/rake_task'
 require 'pry'
+require_relative './app/multi_io'
 require_relative './app/jukebox_web'
 require_relative './app/jukebox_player'
 require_relative './app/track_historian'
@@ -22,7 +23,8 @@ task :start do
   Thread.abort_on_exception = true
 
   # We use a logger to print some information on when things are happening.
-  $logger = Logger.new('spotify_jukbox.log', 'daily')
+  log_file = File.open('spotify_jukebox.log', 'a')
+  $logger = Logger.new(MultiIO.new(STDOUT, log_file), 'daily')
   $logger.level = Logger::DEBUG
 
   queue = { :player => Queue.new, :web => Queue.new }
