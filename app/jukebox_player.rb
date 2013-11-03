@@ -27,7 +27,7 @@ class JukeboxPlayer
       next if track.nil?
       play_track(track)
       log_metadata(track, current_user)
-      @session_wrapper.poll { $end_of_track }
+      @session_wrapper.poll { @session_wrapper.end_of_track }
     end
   end
 
@@ -37,11 +37,11 @@ class JukeboxPlayer
     Spotify.try(:session_player_play, @session_wrapper.session, false)
     Spotify.try(:session_player_load, @session_wrapper.session, track)
     Spotify.try(:session_player_play, @session_wrapper.session, true)
-    $end_of_track = false
+    @session_wrapper.end_of_track = false
   rescue Spotify::Error => e
     logger.error e.message
     if e.message =~ /^\[TRACK_NOT_PLAYABLE\]/
-      $end_of_track = true
+      @session_wrapper.end_of_track = true
     else
       throw
     end

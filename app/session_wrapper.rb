@@ -3,6 +3,7 @@ class SessionWrapper
   require_relative 'frame_reader'
 
   attr_accessor :session
+  attr_accessor :end_of_track
 
   def initialize config, queue
     @plaything = Plaything.new
@@ -65,7 +66,7 @@ class SessionWrapper
       end,
 
       end_of_track: proc do |session|
-        $end_of_track = true
+        @end_of_track = true
         $logger.debug('session (player)') { 'end of track' }
         @plaything.stop
       end,
