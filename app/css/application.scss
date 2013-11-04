@@ -10,19 +10,25 @@ body {
   font-family: 'Roboto', sans-serif;
 }
 
+h3 a {
+  color: #497220;
+}
+
 a {
   display: inline-block;
-  padding: 4px 10px;
-  text-decoration: none;
+  padding: 2px 10px;
+  margin: 1px 0;
 }
+
 a.enabled {
-  background: #666;
-  color: #FFF;
+  background: #497220;
+  color: #e0ddb4;
   border-radius: 5px;
   font-weight: 100;
 }
+
 a.disabled {
-  color: #666;
+  color: #e0ddb4;
 }
 
 #spotify_wrapper {
