@@ -11,7 +11,18 @@ body {
 }
 
 a {
+  display: inline-block;
+  padding: 4px 10px;
   text-decoration: none;
+}
+a.enabled {
+  background: #666;
+  color: #FFF;
+  border-radius: 5px;
+  font-weight: 100;
+}
+a.disabled {
+  color: #666;
 }
 
 #spotify_wrapper {
