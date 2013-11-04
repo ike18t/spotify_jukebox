@@ -11,24 +11,20 @@ body {
 }
 
 h3 a {
-  color: #497220;
+  color: #3016b0;
 }
 
-a {
+a.enabled, a.disabled {
   display: inline-block;
   padding: 2px 10px;
   margin: 1px 0;
-}
-
-a.enabled {
-  background: #497220;
-  color: #e0ddb4;
-  border-radius: 5px;
+  color: #9999FF;
   font-weight: 100;
 }
 
-a.disabled {
-  color: #e0ddb4;
+a.enabled {
+  background: #3016b0;
+  border-radius: 5px;
 }
 
 #spotify_wrapper {
