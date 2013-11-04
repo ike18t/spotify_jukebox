@@ -13,6 +13,7 @@ class JukeboxPlayer
   def start!
     playlist = get_playlist
 
+    current_user = nil
     loop do
       enabled_users = CacheHandler.get_enabled_users
       @historian.update_enabled_users_list enabled_users
