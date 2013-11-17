@@ -95,7 +95,7 @@ class JukeboxWeb < Sinatra::Base
     enabled = CacheHandler.get_enabled_users
     if get_user_list.include? name and not enabled.include? name
       enabled << name
-      CacheHandler.cache_enabled! enabled
+      CacheHandler.cache_enabled_users! enabled
     end
     redirect '/'
   end
@@ -105,7 +105,7 @@ class JukeboxWeb < Sinatra::Base
     enabled = CacheHandler.get_enabled_users
     if get_user_list.include? name and enabled.include? name
       enabled.delete name
-      CacheHandler.cache_enabled! enabled
+      CacheHandler.cache_enabled_users! enabled
     end
     redirect '/'
   end
