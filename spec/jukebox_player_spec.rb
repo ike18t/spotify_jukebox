@@ -1,4 +1,4 @@
-require 'spec_helper'
+require_relative 'spec_helper'
 
 describe JukeboxPlayer do
   context 'get_tracks_for_user' do
@@ -18,7 +18,7 @@ describe JukeboxPlayer do
       Spotify.stubs(:artist_name).returns('artist_name')
       @historian.stubs(:played_recently?).returns(true)
       session_wrapper = double(poll: true)
-      jukebox_player = JukeboxPlayer.new session_wrapper, @historian
+      jukebox_player = JukeboxPlayer.new session_wrapper, nil, nil, @historian
       jukebox_player.send(:get_tracks_for_user, 'playlist', 'user').should eql([])
     end
 
@@ -30,7 +30,7 @@ describe JukeboxPlayer do
       @historian.stubs(:played_recently?).returns(false)
       @historian.stubs(:played_recently?).with('a', 'b').returns(true)
       session_wrapper = double(poll: true)
-      jukebox_player = JukeboxPlayer.new session_wrapper, @historian
+      jukebox_player = JukeboxPlayer.new session_wrapper, nil, nil, @historian
       jukebox_player.send(:get_tracks_for_user, 'playlist', 'user').should eql(['a', 'c'])
     end
   end

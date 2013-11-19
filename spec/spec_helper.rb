@@ -7,8 +7,9 @@ require 'mocha/api'
 
 ENV['RACK_ENV'] = 'test'
 
-files = Dir.glob('app/**/*.rb')
-files.each{ |file| require File.expand_path("#{file}"); }
+file = File.join(File.dirname(__FILE__), '../app')
+files = Dir.glob("#{file}/**/*.rb")
+files.each{ |file| require file }
 
 JukeboxWeb.set(
   :environment => :test,
