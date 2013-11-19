@@ -34,7 +34,7 @@ describe TrackHistorian do
 
   context 'record' do
     it 'should add track key to the array' do
-      track_key = 'artist => track'
+      track_key = { 'artist' => 'track'}
       @track_historian.instance_variable_set(:@track_history, [])
       @track_historian.stubs(:generate_track_key).returns(track_key)
       @track_historian.stubs(:get_calculated_size).returns(1)
@@ -43,12 +43,11 @@ describe TrackHistorian do
     end
 
     it 'should bump value in index 0 if max size has been met' do
-      track_key = 'artist => track'
+      track_key = { 'artist' => 'track' }
       @track_historian.instance_variable_set(:@track_history, [:a, :b, :c])
-      @track_historian.stubs(:generate_track_key).returns(:d)
       @track_historian.stubs(:get_calculated_size).returns(3)
       @track_historian.record 'artist', 'track'
-      @track_historian.instance_variable_get(:@track_history).should eq([:b, :c, :d])
+      @track_historian.instance_variable_get(:@track_history).should eq([:b, :c, track_key])
     end
 
     it 'should persist history to cache' do
@@ -63,7 +62,7 @@ describe TrackHistorian do
 
   context 'played_recently?' do
     it 'should return true if the track key is in the track_history array' do
-      track_key = 'artist => track'
+      track_key = { 'artist' => 'track' }
       @track_historian.instance_variable_set(:@track_history, [:a, track_key, :c])
       @track_historian.stubs(:generate_track_key).returns(track_key)
       @track_historian.played_recently?('artist', 'track').should be_true
@@ -74,12 +73,6 @@ describe TrackHistorian do
       @track_historian.instance_variable_set(:@track_history, [:a, :b, :c])
       @track_historian.stubs(:generate_track_key).returns(track_key)
       @track_historian.played_recently?('artist', 'track').should be_false
-    end
-  end
-
-  context 'generate_track_key' do
-    it 'should generate a track key in the format artist_name => track_name' do
-      @track_historian.send(:generate_track_key, 'artist_name', 'track_name').should eq('artist_name => track_name')
     end
   end
 

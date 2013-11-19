@@ -1,7 +1,5 @@
 class TrackHistorian
 
-  TRACK_FORMAT = '%s => %s'
-
   def initialize
     @user_track_counts = {}
     @track_history = CacheHandler.get_track_history
@@ -17,21 +15,16 @@ class TrackHistorian
   end
 
   def record artist_name, track_name
-    @track_history.push generate_track_key(artist_name, track_name)
+    @track_history.push({ artist_name => track_name })
     @track_history.shift if @track_history.size > get_calculated_size
     CacheHandler.cache_track_history! @track_history
   end
 
   def played_recently? artist_name, track_name
-    track_key = generate_track_key(artist_name, track_name)
-    not @track_history.index(track_key).nil?
+    not @track_history.index({ artist_name => track_name }).nil?
   end
 
   protected
-
-  def generate_track_key artist_name, track_name
-    TRACK_FORMAT % [ artist_name, track_name ]
-  end
 
   def get_calculated_size
     @enabled_users.inject(0){ |count, user| count + (@user_track_counts[user] || 0) } * 0.50
