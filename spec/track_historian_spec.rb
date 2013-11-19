@@ -1,8 +1,19 @@
-require 'spec_helper'
+require_relative 'spec_helper'
 
 describe TrackHistorian do
   before do
     @track_historian = TrackHistorian.new
+    CacheHandler.stubs(:get_track_history)
+    CacheHandler.stubs(:cache_track_history!)
+  end
+
+  context 'initialize' do
+    it 'should pull history from cache' do
+      track_history = [:a, :b, :c]
+      CacheHandler.stubs(:get_track_history).returns(track_history)
+      @track_historian = TrackHistorian.new
+      @track_historian.instance_variable_get(:@track_history).should eq(track_history)
+    end
   end
 
   context 'update_enabled_users_list' do
@@ -24,6 +35,7 @@ describe TrackHistorian do
   context 'record' do
     it 'should add track key to the array' do
       track_key = 'artist => track'
+      @track_historian.instance_variable_set(:@track_history, [])
       @track_historian.stubs(:generate_track_key).returns(track_key)
       @track_historian.stubs(:get_calculated_size).returns(1)
       @track_historian.record 'artist', 'track'
@@ -37,6 +49,15 @@ describe TrackHistorian do
       @track_historian.stubs(:get_calculated_size).returns(3)
       @track_historian.record 'artist', 'track'
       @track_historian.instance_variable_get(:@track_history).should eq([:b, :c, :d])
+    end
+
+    it 'should persist history to cache' do
+      track_key = 'artist => track'
+      @track_historian.instance_variable_set(:@track_history, [:a, :b, :c])
+      @track_historian.stubs(:generate_track_key).returns(:d)
+      @track_historian.stubs(:get_calculated_size).returns(3)
+      @track_historian.record 'artist', 'track'
+      CacheHandler.stubs(:cache_track_history!).with(@track_historian.instance_variable_get(:@track_history))
     end
   end
 

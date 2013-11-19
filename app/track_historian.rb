@@ -4,7 +4,7 @@ class TrackHistorian
 
   def initialize
     @user_track_counts = {}
-    @track_history = []
+    @track_history = CacheHandler.get_track_history
     @enabled_users = []
   end
 
@@ -19,6 +19,7 @@ class TrackHistorian
   def record artist_name, track_name
     @track_history.push generate_track_key(artist_name, track_name)
     @track_history.shift if @track_history.size > get_calculated_size
+    CacheHandler.cache_track_history! @track_history
   end
 
   def played_recently? artist_name, track_name
