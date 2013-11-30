@@ -93,7 +93,6 @@ class JukeboxPlayer
       track = Spotify.playlist_track(playlist, index)
       @session_wrapper.poll { Spotify.track_is_loaded(track) }
       creator = Spotify.playlist_track_creator(playlist, index)
-      @session_wrapper.poll { Spotify.user_is_loaded(creator) }
       tracks << track if Spotify.user_canonical_name(creator) == user
     end
     @historian.update_user_track_count user, tracks.count
@@ -115,7 +114,6 @@ class JukeboxPlayer
     random_track_index = rand(Spotify.playlist_num_tracks(playlist))
 
     creator = Spotify.playlist_track_creator(playlist, random_track_index)
-    @session_wrapper.poll { Spotify.user_is_loaded(creator) }
     added_by = Spotify.user_canonical_name creator
     track = Spotify.playlist_track(playlist, random_track_index)
     @session_wrapper.poll { Spotify.track_is_loaded(track) }

@@ -5,7 +5,6 @@ describe JukeboxPlayer do
     before do
       Spotify.stubs(:playlist_track_creator)
       Spotify.stubs(:track_is_loaded).returns('true')
-      Spotify.stubs(:user_is_loaded).returns('true')
       Spotify.stubs(:track_name).returns('track_name')
       Spotify.stubs(:track_artist).returns('artist')
       Spotify.stubs(:user_canonical_name).returns('user')
