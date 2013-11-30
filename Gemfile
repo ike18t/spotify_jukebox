@@ -3,6 +3,7 @@ source :rubygems
 
 gem 'sinatra', '1.4.4'
 gem 'sinatra-assetpack', '0.3.1'
+gem 'sinatra-websocket'
 gem 'spotify', '12.5.2'
 gem 'plaything', '~> 1.1'
 gem 'haml', '4.0.3'

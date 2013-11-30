@@ -1,4 +1,5 @@
 require 'sinatra'
+require 'sinatra-websocket'
 require 'sinatra/assetpack'
 
 class JukeboxWeb < Sinatra::Base
@@ -10,6 +11,7 @@ class JukeboxWeb < Sinatra::Base
   register Sinatra::AssetPack
   set :root, File.join(File.dirname(__FILE__), '..')
   set :bind, '0.0.0.0'
+  set :sockets, []
 
   assets do
     js :application, ['/js/*.js']
@@ -23,18 +25,36 @@ class JukeboxWeb < Sinatra::Base
     @@playlist_uri = settings.custom[:playlist_uri]
   end
 
-  def get_current_track_info
-    @@current_track = @@queue[:web].pop unless @@queue[:web].empty?
-    @@current_track || nil
+  @@queue, @@current_track = nil
+  Thread.new do
+    loop do
+      if not @@queue.nil? and not @@queue[:web].empty?
+        @@current_track = @@queue[:web].pop
+        settings.sockets.each {|s| s.send(@@current_track.to_json.to_s) }
+      end
+      sleep 0.1
+    end
   end
 
   get '/whatbeplayin' do
-    headers 'Access-Control-Allow-Origin'         => '*',
-            'Access-Conformation-Request-Method'  => '*'
-    content_type 'application/json'
-    current_track = get_current_track_info
-    current_track[:adder] = translate_name current_track[:adder]
-    current_track.to_json
+    if not request.websocket?
+      headers 'Access-Control-Allow-Origin'         => '*',
+              'Access-Conformation-Request-Method'  => '*'
+      content_type 'application/json'
+      current_track = @@current_track
+      current_track[:adder] = translate_name current_track[:adder]
+      current_track.to_json
+    else
+      request.websocket do |ws|
+        ws.onopen do
+          ws.send @@current_track.to_json.to_s unless @@current_track.nil?
+          settings.sockets << ws
+        end
+        ws.onclose do
+          settings.sockets.delete ws
+        end
+      end
+    end
   end
 
   get '/pause' do
@@ -69,7 +89,6 @@ class JukeboxWeb < Sinatra::Base
 
   get '/' do
     @user_mapping = CacheHandler.get_user_mappings
-    @current_track = get_current_track_info
     @playlist_url = uri_to_url @@playlist_uri
 
     users = get_user_list
