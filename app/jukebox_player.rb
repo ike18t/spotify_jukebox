@@ -34,9 +34,14 @@ class JukeboxPlayer
 
   private
   def play_track(track)
+    $logger.debug "play_track"
+    $logger.debug "track_is_loaded"
     @session_wrapper.poll { Spotify.track_is_loaded(track) }
+    $logger.debug "session_player_play: false"
     Spotify.try(:session_player_play, @session_wrapper.session, false)
+    $logger.debug "session_player_load"
     Spotify.try(:session_player_load, @session_wrapper.session, track)
+    $logger.debug "session_player_play: true"
     Spotify.try(:session_player_play, @session_wrapper.session, true)
     @session_wrapper.end_of_track = false
   rescue Spotify::Error => e

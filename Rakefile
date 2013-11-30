@@ -23,8 +23,8 @@ task :start do
   Thread.abort_on_exception = true
 
   # We use a logger to print some information on when things are happening.
-  log_file = File.open('spotify_jukebox.log', 'a')
-  $logger = Logger.new(MultiIO.new(STDOUT, log_file), 'daily')
+  log_file = File.open('spotify_jukebox.log', 'w')
+  $logger = Logger.new(MultiIO.new(STDOUT, log_file))
   $logger.level = Logger::DEBUG
 
   queue = { :player => Queue.new, :web => Queue.new }
