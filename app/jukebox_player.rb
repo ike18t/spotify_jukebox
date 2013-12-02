@@ -90,16 +90,13 @@ class JukeboxPlayer
     tracks = []
     num_tracks = Spotify.playlist_num_tracks(playlist)
     (0..num_tracks-1).each do |index|
-      track = Spotify.playlist_track(playlist, index)
-      @session_wrapper.poll { Spotify.track_is_loaded(track) }
       creator = Spotify.playlist_track_creator(playlist, index)
-      tracks << track if Spotify.user_canonical_name(creator) == user
+      tracks << Spotify.playlist_track(playlist, index) if Spotify.user_canonical_name(creator) == user
     end
     @historian.update_user_track_count user, tracks.count
     tracks.reject do |track|
       track_name = Spotify.track_name track
       artist = Spotify.track_artist track, 0
-      @session_wrapper.poll { Spotify.artist_is_loaded(artist) }
       artist_name = Spotify.artist_name artist
       @historian.played_recently?(artist_name, track_name)
     end
@@ -116,7 +113,6 @@ class JukeboxPlayer
     creator = Spotify.playlist_track_creator(playlist, random_track_index)
     added_by = Spotify.user_canonical_name creator
     track = Spotify.playlist_track(playlist, random_track_index)
-    @session_wrapper.poll { Spotify.track_is_loaded(track) }
     { :user => added_by, :track => track }
   end
 
