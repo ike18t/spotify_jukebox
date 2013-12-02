@@ -77,9 +77,9 @@ class SessionWrapper
     session_config = Spotify::SessionConfig.new({
       api_version: Spotify::API_VERSION.to_i,
       application_key: config.app_key,
-      cache_location: '../.spotify/',
-      settings_location: '../.spotify/',
-      tracefile: '../spotify_tracefile.txt',
+      cache_location: '.spotify/',
+      settings_location: '.spotify/',
+      tracefile: 'spotify_tracefile.txt',
       user_agent: 'spotify for ruby',
       callbacks: Spotify::SessionCallbacks.new(get_callbacks),
     })
