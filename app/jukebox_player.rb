@@ -26,24 +26,24 @@ class JukeboxPlayer
         track = get_random_track_for_user playlist, current_user
       end
       next if track.nil?
-      play_track(track)
       log_metadata(track, current_user)
+      play_track(track)
       @session_wrapper.poll { @session_wrapper.end_of_track }
     end
   end
 
   private
   def play_track(track)
+    @session_wrapper.end_of_track = false
     $logger.debug "play_track"
-    $logger.debug "track_is_loaded"
-    @session_wrapper.poll { Spotify.track_is_loaded(track) }
     $logger.debug "session_player_play: false"
     Spotify.try(:session_player_play, @session_wrapper.session, false)
     $logger.debug "session_player_load"
     Spotify.try(:session_player_load, @session_wrapper.session, track)
+    $logger.debug "track_is_loaded"
+    @session_wrapper.poll { Spotify.track_is_loaded(track) }
     $logger.debug "session_player_play: true"
     Spotify.try(:session_player_play, @session_wrapper.session, true)
-    @session_wrapper.end_of_track = false
   rescue Spotify::Error => e
     logger.error e.message
     if e.message =~ /^\[TRACK_NOT_PLAYABLE\]/
@@ -95,8 +95,10 @@ class JukeboxPlayer
     end
     @historian.update_user_track_count user, tracks.count
     tracks.reject do |track|
+      @session_wrapper.poll { Spotify.track_is_loaded(track) }
       track_name = Spotify.track_name track
       artist = Spotify.track_artist track, 0
+      @session_wrapper.poll { Spotify.artist_is_loaded(artist) }
       artist_name = Spotify.artist_name artist
       @historian.played_recently?(artist_name, track_name)
     end

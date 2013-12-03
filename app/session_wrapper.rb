@@ -9,6 +9,7 @@ class SessionWrapper
     @plaything = Plaything.new
     @queue = queue
     @session = initialize_session config
+    @end_of_track = false
   end
 
   # Global callback procs.
@@ -37,6 +38,7 @@ class SessionWrapper
       end,
 
       start_playback: proc do |session|
+        @end_of_track = false
         $logger.debug('session (player)') { 'start playback' }
         @plaything.play
       end,
@@ -69,6 +71,7 @@ class SessionWrapper
         @end_of_track = true
         $logger.debug('session (player)') { 'end of track' }
         @plaything.stop
+        Spotify.try(:session_player_unload, self.session)
       end,
     }
   end
