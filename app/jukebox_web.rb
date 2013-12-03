@@ -30,6 +30,8 @@ class JukeboxWeb < Sinatra::Base
     loop do
       if not @@queue.nil? and not @@queue[:web].empty?
         @@current_track = @@queue[:web].pop
+        current_track = @@current_track
+        current_track[:adder] = translate_name(current_track[:adder])
         settings.sockets.each {|s| s.send(@@current_track.to_json.to_s) }
       end
       sleep 0.1
@@ -37,17 +39,17 @@ class JukeboxWeb < Sinatra::Base
   end
 
   get '/whatbeplayin' do
+    current_track = @@current_track
+    current_track[:adder] = translate_name current_track[:adder] if not @@current_track.nil?
     if not request.websocket?
       headers 'Access-Control-Allow-Origin'         => '*',
               'Access-Conformation-Request-Method'  => '*'
       content_type 'application/json'
-      current_track = @@current_track
-      current_track[:adder] = translate_name current_track[:adder]
       current_track.to_json
     else
       request.websocket do |ws|
         ws.onopen do
-          ws.send @@current_track.to_json.to_s unless @@current_track.nil?
+          ws.send current_track.to_json.to_s unless current_track.nil?
           settings.sockets << ws
         end
         ws.onclose do
