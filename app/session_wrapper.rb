@@ -104,6 +104,14 @@ class SessionWrapper
     session
   end
 
+  def play
+    Spotify.try(:session_player_play, self.session, true)
+  end
+
+  def pause
+    Spotify.try(:session_player_play, self.session, false)
+  end
+
   # libspotify supports callbacks, but they are not useful for waiting on
   # operations (how they fire can be strange at times, and sometimes they
   # might not fire at all). As a result, polling is the way to go.
@@ -111,16 +119,6 @@ class SessionWrapper
     until yield
       FFI::MemoryPointer.new(:int) do |ptr|
         Spotify.session_process_events(session, ptr)
-      end
-      if not @queue[:player].empty?
-        case @queue[:player].pop
-        when :play
-          Spotify.try(:session_player_play, self.session, true)
-        when :pause
-          Spotify.try(:session_player_play, self.session, false)
-        else
-          $logger.error "There was an unrecognized command passed to player"
-        end
       end
       sleep(0.1)
     end

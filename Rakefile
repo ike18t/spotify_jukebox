@@ -27,7 +27,7 @@ task :start do
   $logger = Logger.new(MultiIO.new(STDOUT, log_file))
   $logger.level = Logger::INFO
 
-  queue = { :player => Queue.new, :web => Queue.new }
+  queue = { :web => Queue.new }
   session_wrapper = SessionWrapper.new config, queue
   Thread.new do
     JukeboxPlayer.new(session_wrapper, queue, config.playlist_uri, TrackHistorian.new).start!

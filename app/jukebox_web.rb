@@ -63,11 +63,11 @@ class JukeboxWeb < Sinatra::Base
   end
 
   get '/pause' do
-    @@queue[:player].push(:pause)
+    @@session_wrapper.pause
   end
 
   get '/play' do
-    @@queue[:player].push(:play)
+    @@session_wrapper.play
   end
 
   get '/' do
