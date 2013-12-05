@@ -4,12 +4,9 @@ require 'sinatra/assetpack'
 
 class JukeboxWeb < Sinatra::Base
   require 'json'
-  require 'spotify'
   require 'haml'
-  require 'memoize'
+  require 'sass'
   require_relative 'name_translator'
-
-  extend Memoize
 
   register Sinatra::AssetPack
   set :root, File.join(File.dirname(__FILE__), '..')
@@ -73,19 +70,19 @@ class JukeboxWeb < Sinatra::Base
   get '/' do
     enabled_users = CacheHandler.get_enabled_users
 
-    user_list = get_user_list
+    user_list = @@session_wrapper.get_collaborator_list
     user_list.map! do |user_name|
       display_name = NameTranslator.get_for user_name
       enabled_flag = enabled_users.include?(user_name)
       { :user_name => user_name, :display_name => display_name, :enabled_flag => enabled_flag }
     end
-    haml :index, :locals => { :users => user_list, :playlist_url => get_playlist_url }
+    haml :index, :locals => { :users => user_list, :playlist_url => get_playlist_url, :playing => @@session_wrapper.playing? }
   end
 
   get '/enable/:name' do
     name = params[:name]
     enabled = CacheHandler.get_enabled_users
-    if get_user_list.include? name and not enabled.include? name
+    if @@session_wrapper.get_collaborator_list.include? name and not enabled.include? name
       enabled << name
       CacheHandler.cache_enabled_users! enabled
     end
@@ -95,30 +92,16 @@ class JukeboxWeb < Sinatra::Base
   get '/disable/:name' do
     name = params[:name]
     enabled = CacheHandler.get_enabled_users
-    if get_user_list.include? name and enabled.include? name
+    if @@session_wrapper.get_collaborator_list.include? name and enabled.include? name
       enabled.delete name
       CacheHandler.cache_enabled_users! enabled
     end
     redirect '/'
   end
 
-  def get_user_list
-    link = Spotify.link_create_from_string @@playlist_uri
-    playlist = Spotify.playlist_create @@session_wrapper.session, link
-    @@session_wrapper.poll { Spotify.playlist_is_loaded(playlist) }
-    (0..Spotify.playlist_num_tracks(playlist)-1).map{|index|
-      creator = Spotify.playlist_track_creator(playlist, index)
-      user = Spotify.user_canonical_name creator
-      creator.free
-      user
-    }.uniq.sort
-  end
-  memoize :get_user_list
-
   def get_playlist_url
     uri = @@playlist_uri.gsub ':', '/'
     uri.gsub 'spotify', 'http://play.spotify.com'
   end
-  memoize :get_playlist_url
 
 end

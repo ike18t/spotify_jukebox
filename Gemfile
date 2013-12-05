@@ -11,7 +11,6 @@ gem 'rake', '10.1.0'
 gem 'sass', '3.2.12'
 gem 'nokogiri', '1.6.0'
 gem 'thin', '1.6.0'
-gem 'memoize', '1.3.1'
 
 group :test do
   gem 'pry', '0.9.12.2'
