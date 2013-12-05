@@ -112,6 +112,10 @@ class SessionWrapper
     Spotify.try(:session_player_play, self.session, false)
   end
 
+  def playing?
+    @plaything.source.should_be_playing?
+  end
+
   # libspotify supports callbacks, but they are not useful for waiting on
   # operations (how they fire can be strange at times, and sometimes they
   # might not fire at all). As a result, polling is the way to go.
