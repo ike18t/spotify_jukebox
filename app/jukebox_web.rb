@@ -6,7 +6,10 @@ class JukeboxWeb < Sinatra::Base
   require 'json'
   require 'spotify'
   require 'haml'
-  require_relative 'spotify_scraper'
+  require 'memoize'
+  require_relative 'name_translator'
+
+  extend Memoize
 
   register Sinatra::AssetPack
   set :root, File.join(File.dirname(__FILE__), '..')
@@ -30,17 +33,17 @@ class JukeboxWeb < Sinatra::Base
     loop do
       if not @@queue.nil? and not @@queue[:web].empty?
         @@current_track = @@queue[:web].pop
-        current_track = @@current_track
-        current_track[:adder] = translate_name(current_track[:adder])
-        settings.sockets.each {|s| s.send(@@current_track.to_json.to_s) }
+        current_track = @@current_track.clone
+        current_track[:adder] = NameTranslator.get_for current_track[:adder]
+        settings.sockets.each {|s| s.send(current_track.to_json.to_s) }
       end
       sleep 0.1
     end
   end
 
   get '/whatbeplayin' do
-    current_track = @@current_track
-    current_track[:adder] = translate_name current_track[:adder] if not @@current_track.nil?
+    current_track = @@current_track.clone
+    current_track[:adder] = NameTranslator.get_for(@@current_track[:adder]) if not @@current_track.nil?
     if not request.websocket?
       headers 'Access-Control-Allow-Origin'         => '*',
               'Access-Conformation-Request-Method'  => '*'
@@ -67,48 +70,16 @@ class JukeboxWeb < Sinatra::Base
     @@queue[:player].push(:play)
   end
 
-  def get_user_list
-    @@user ||=  begin
-                  link = Spotify.link_create_from_string @@playlist_uri
-                  playlist = Spotify.playlist_create @@session_wrapper.session, link
-                  @@session_wrapper.poll { Spotify.playlist_is_loaded(playlist) }
-                  (0..Spotify.playlist_num_tracks(playlist)-1).map{|index|
-                    creator = Spotify.playlist_track_creator(playlist, index)
-                    Spotify.user_canonical_name creator
-                  }.uniq.sort
-                end
-  end
-
-  def uri_to_url uri
-    uri = uri.gsub ':', '/'
-    uri.gsub 'spotify', 'http://play.spotify.com'
-  end
-
-  def translate_name name
-    user_mapping = CacheHandler.get_user_mappings
-    user_mapping[name] || name
-  end
-
   get '/' do
-    @user_mapping = CacheHandler.get_user_mappings
-    @playlist_url = uri_to_url @@playlist_uri
+    enabled_users = CacheHandler.get_enabled_users
 
-    users = get_user_list
-    enabled = CacheHandler.get_enabled_users
-    @users_for_view = {}
-    mapping_update = false
-    users.each {|user|
-      if not @user_mapping.keys.include? user
-        $logger.info "pulling user #{user} display name"
-        @user_mapping[user] = SpotifyScraper.name_from_spotify_id(user)
-      end
-      @users_for_view[user] = enabled.include?(user)
-      mapping_update = true
-    }
-    if mapping_update
-      CacheHandler.cache_user_mappings! @user_mapping
+    user_list = get_user_list
+    user_list.map! do |user_name|
+      display_name = NameTranslator.get_for user_name
+      enabled_flag = enabled_users.include?(user_name)
+      { :user_name => user_name, :display_name => display_name, :enabled_flag => enabled_flag }
     end
-    haml :index
+    haml :index, :locals => { :users => user_list, :playlist_url => get_playlist_url }
   end
 
   get '/enable/:name' do
@@ -130,5 +101,24 @@ class JukeboxWeb < Sinatra::Base
     end
     redirect '/'
   end
+
+  def get_user_list
+    link = Spotify.link_create_from_string @@playlist_uri
+    playlist = Spotify.playlist_create @@session_wrapper.session, link
+    @@session_wrapper.poll { Spotify.playlist_is_loaded(playlist) }
+    (0..Spotify.playlist_num_tracks(playlist)-1).map{|index|
+      creator = Spotify.playlist_track_creator(playlist, index)
+      user = Spotify.user_canonical_name creator
+      creator.free
+      user
+    }.uniq.sort
+  end
+  memoize :get_user_list
+
+  def get_playlist_url
+    uri = @@playlist_uri.gsub ':', '/'
+    uri.gsub 'spotify', 'http://play.spotify.com'
+  end
+  memoize :get_playlist_url
 
 end

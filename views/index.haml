@@ -1,11 +1,11 @@
 %h3
-  %a{:href => @playlist_url}
+  %a{:href => locals[:playlist_url]}
     Playlist URL
-- @users_for_view.each_key do |user|
-- enabled_or_disabled = @users_for_view[user] == false ? 'disabled' : 'enabled'
-- to_enable_or_disable = @users_for_view[user] == true ? 'disable' : 'enable'
-  %a{:href => "/#{to_enable_or_disable}/#{user}", :class => "#{enabled_or_disabled}"}
-    = @user_mapping[user.to_s]
+- locals[:users].each do |user|
+  - enabled_or_disabled = user[:enabled_flag] == false ? 'disabled' : 'enabled'
+  - to_enable_or_disable = user[:enabled_flag] == true ? 'disable' : 'enable'
+  %a{:href => "/#{to_enable_or_disable}/#{user[:user_name]}", :class => "#{enabled_or_disabled}"}
+    =user[:display_name]
   %br
 
 #spotify_wrapper

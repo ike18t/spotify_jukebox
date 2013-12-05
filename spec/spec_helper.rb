@@ -4,6 +4,7 @@ require 'rspec'
 require 'pry'
 require 'autotest'
 require 'mocha/api'
+require_relative 'mock_logger'
 
 ENV['RACK_ENV'] = 'test'
 
@@ -35,3 +36,5 @@ module TestHelper
   include Rack::Test::Methods
 
 end
+
+$logger = MockLogger.new
