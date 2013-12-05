@@ -25,7 +25,7 @@ task :start do
   # We use a logger to print some information on when things are happening.
   log_file = File.open('spotify_jukebox.log', 'w')
   $logger = Logger.new(MultiIO.new(STDOUT, log_file))
-  $logger.level = Logger::DEBUG
+  $logger.level = Logger::INFO
 
   queue = { :player => Queue.new, :web => Queue.new }
   session_wrapper = SessionWrapper.new config, queue
