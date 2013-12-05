@@ -21,7 +21,7 @@ class JukeboxWeb < Sinatra::Base
   def initialize
     super
     @@queue = settings.custom[:queue]
-    @@session_wrapper = settings.custom[:session_wrapper]
+    @@spotify_wrapper = settings.custom[:spotify_wrapper]
     @@playlist_uri = settings.custom[:playlist_uri]
   end
 
@@ -60,29 +60,29 @@ class JukeboxWeb < Sinatra::Base
   end
 
   get '/pause' do
-    @@session_wrapper.pause
+    @@spotify_wrapper.pause
   end
 
   get '/play' do
-    @@session_wrapper.play
+    @@spotify_wrapper.play
   end
 
   get '/' do
     enabled_users = CacheHandler.get_enabled_users
 
-    user_list = @@session_wrapper.get_collaborator_list
+    user_list = @@spotify_wrapper.get_collaborator_list
     user_list.map! do |user_name|
       display_name = NameTranslator.get_for user_name
       enabled_flag = enabled_users.include?(user_name)
       { :user_name => user_name, :display_name => display_name, :enabled_flag => enabled_flag }
     end
-    haml :index, :locals => { :users => user_list, :playlist_url => get_playlist_url, :playing => @@session_wrapper.playing? }
+    haml :index, :locals => { :users => user_list, :playlist_url => get_playlist_url, :playing => @@spotify_wrapper.playing? }
   end
 
   get '/enable/:name' do
     name = params[:name]
     enabled = CacheHandler.get_enabled_users
-    if @@session_wrapper.get_collaborator_list.include? name and not enabled.include? name
+    if @@spotify_wrapper.get_collaborator_list.include? name and not enabled.include? name
       enabled << name
       CacheHandler.cache_enabled_users! enabled
     end
@@ -92,7 +92,7 @@ class JukeboxWeb < Sinatra::Base
   get '/disable/:name' do
     name = params[:name]
     enabled = CacheHandler.get_enabled_users
-    if @@session_wrapper.get_collaborator_list.include? name and enabled.include? name
+    if @@spotify_wrapper.get_collaborator_list.include? name and enabled.include? name
       enabled.delete name
       CacheHandler.cache_enabled_users! enabled
     end

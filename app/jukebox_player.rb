@@ -2,9 +2,9 @@ class JukeboxPlayer
   require_relative 'cache_handler'
 
   SP_IMAGE_SIZE_NORMAL = 0
-  attr_accessor :session_wrapper
-  def initialize session_wrapper, queue, playlist_uri, track_historian
-    @session_wrapper = session_wrapper
+  attr_accessor :spotify_wrapper
+  def initialize spotify_wrapper, queue, playlist_uri, track_historian
+    @spotify_wrapper = spotify_wrapper
     @historian = track_historian
     @queue = queue
     @playlist_uri = playlist_uri
@@ -28,26 +28,26 @@ class JukeboxPlayer
       next if track.nil?
       log_metadata(track, current_user)
       play_track(track)
-      @session_wrapper.poll { @session_wrapper.end_of_track }
+      @spotify_wrapper.poll { @spotify_wrapper.end_of_track }
     end
   end
 
   private
   def play_track(track)
-    @session_wrapper.end_of_track = false
+    @spotify_wrapper.end_of_track = false
     $logger.debug "play_track"
     $logger.debug "session_player_play: false"
-    Spotify.try(:session_player_play, @session_wrapper.session, false)
+    Spotify.try(:session_player_play, @spotify_wrapper.session, false)
     $logger.debug "session_player_load"
-    Spotify.try(:session_player_load, @session_wrapper.session, track)
+    Spotify.try(:session_player_load, @spotify_wrapper.session, track)
     $logger.debug "track_is_loaded"
-    @session_wrapper.poll { Spotify.track_is_loaded(track) }
+    @spotify_wrapper.poll { Spotify.track_is_loaded(track) }
     $logger.debug "session_player_play: true"
-    Spotify.try(:session_player_play, @session_wrapper.session, true)
+    Spotify.try(:session_player_play, @spotify_wrapper.session, true)
   rescue Spotify::Error => e
     logger.error e.message
     if e.message =~ /^\[TRACK_NOT_PLAYABLE\]/
-      @session_wrapper.end_of_track = true
+      @spotify_wrapper.end_of_track = true
     else
       throw
     end
@@ -57,11 +57,11 @@ class JukeboxPlayer
     track_name = Spotify.track_name track
     artists = (0..Spotify.track_num_artists(track) - 1).map do |i|
       artist = Spotify.track_artist track, i
-      @session_wrapper.poll { Spotify.artist_is_loaded(artist) }
+      @spotify_wrapper.poll { Spotify.artist_is_loaded(artist) }
       Spotify.artist_name artist
     end
     album = Spotify.track_album(track)
-    @session_wrapper.poll { Spotify.album_is_loaded(album) }
+    @spotify_wrapper.poll { Spotify.album_is_loaded(album) }
     album_name = Spotify.album_name album
     album_cover_id = Spotify.album_cover(Spotify.track_album(track), SP_IMAGE_SIZE_NORMAL)
     image_hex = if album_cover_id
@@ -80,9 +80,9 @@ class JukeboxPlayer
 
   def get_playlist
     link = Spotify.link_create_from_string @playlist_uri
-    playlist = Spotify.playlist_create @session_wrapper.session, link
+    playlist = Spotify.playlist_create @spotify_wrapper.session, link
 
-    @session_wrapper.poll { Spotify.playlist_is_loaded(playlist) }
+    @spotify_wrapper.poll { Spotify.playlist_is_loaded(playlist) }
     playlist
   end
 

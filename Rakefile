@@ -7,7 +7,7 @@ require_relative './app/multi_io'
 require_relative './app/jukebox_web'
 require_relative './app/jukebox_player'
 require_relative './app/track_historian'
-require_relative './app/session_wrapper'
+require_relative './app/spotify_wrapper'
 require_relative './app/config_loader'
 
 RSpec::Core::RakeTask.new :spec
@@ -28,9 +28,9 @@ task :start do
   $logger.level = Logger::INFO
 
   queue = { :web => Queue.new }
-  session_wrapper = SessionWrapper.new config, queue
+  spotify_wrapper = SpotifyWrapper.new config, queue
   Thread.new do
-    JukeboxPlayer.new(session_wrapper, queue, config.playlist_uri, TrackHistorian.new).start!
+    JukeboxPlayer.new(spotify_wrapper, queue, config.playlist_uri, TrackHistorian.new).start!
   end
-  JukeboxWeb.run!({ :server => 'thin', :custom => { :session_wrapper => session_wrapper, :queue => queue, :playlist_uri => config.playlist_uri }})
+  JukeboxWeb.run!({ :server => 'thin', :custom => { :spotify_wrapper => spotify_wrapper, :queue => queue, :playlist_uri => config.playlist_uri }})
 end

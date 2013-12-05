@@ -16,8 +16,8 @@ describe JukeboxPlayer do
       Spotify.stubs(:playlist_num_tracks).returns(2)
       Spotify.stubs(:artist_name).returns('artist_name')
       @historian.stubs(:played_recently?).returns(true)
-      session_wrapper = double(poll: true)
-      jukebox_player = JukeboxPlayer.new session_wrapper, nil, nil, @historian
+      spotify_wrapper = double(poll: true)
+      jukebox_player = JukeboxPlayer.new spotify_wrapper, nil, nil, @historian
       jukebox_player.send(:get_tracks_for_user, 'playlist', 'user').should eql([])
     end
 
@@ -29,8 +29,8 @@ describe JukeboxPlayer do
       Spotify.stubs(:track_name).returns('a', 'b', 'c')
       @historian.stubs(:played_recently?).returns(false)
       @historian.stubs(:played_recently?).with('a', 'b').returns(true)
-      session_wrapper = double(poll: true)
-      jukebox_player = JukeboxPlayer.new session_wrapper, nil, nil, @historian
+      spotify_wrapper = double(poll: true)
+      jukebox_player = JukeboxPlayer.new spotify_wrapper, nil, nil, @historian
       jukebox_player.send(:get_tracks_for_user, 'playlist', 'user').should eql([a, c])
     end
   end

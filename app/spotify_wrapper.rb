@@ -1,4 +1,4 @@
-class SessionWrapper
+class SpotifyWrapper
   require 'plaything'
   require 'spotify'
   require_relative 'frame_reader'
