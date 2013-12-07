@@ -60,11 +60,11 @@ class JukeboxWeb < Sinatra::Base
   end
 
   get '/pause' do
-    @@spotify_wrapper.pause
+    @@spotify_wrapper.stop!
   end
 
   get '/play' do
-    @@spotify_wrapper.play
+    @@spotify_wrapper.play!
   end
 
   get '/' do
