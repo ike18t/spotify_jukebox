@@ -4,7 +4,7 @@ var currentTrackPoller = function() {
     var art_image = $('<img id="album_art">').attr('src', url);
     $('#art').html(art_image);
     $('#artist').text(data.artists);
-    $('#title').text(data.track_name);
+    $('#title').text(data.name);
     $('#added_by').text(data.adder);
   };
 
