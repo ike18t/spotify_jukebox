@@ -59,12 +59,12 @@ class SpotifyWrapper
     @collaborator_list ||= begin
       link = Spotify.link_create_from_string @config.playlist_uri
       playlist = Spotify.playlist_create @session, link
-      poll { Spotify.playlist_is_loaded(playlist) }
+      poll { Spotify.playlist_is_loaded playlist }
       (0..Spotify.playlist_num_tracks(playlist)-1).map{|index|
         creator = Spotify.playlist_track_creator(playlist, index)
-        user = Spotify.user_canonical_name creator
+        user_name = Spotify.user_canonical_name creator
         creator.free
-        user
+        user_name
       }.uniq.sort
     end
     @collaborator_list.clone
@@ -75,7 +75,6 @@ class SpotifyWrapper
 
     creator = Spotify.playlist_track_creator(playlist, random_track_index)
     added_by = Spotify.user_canonical_name creator
-    creator.free
     track = Spotify.playlist_track(playlist, random_track_index)
     { :user => added_by, :track => track }
   end
@@ -85,7 +84,9 @@ class SpotifyWrapper
     num_tracks = Spotify.playlist_num_tracks(playlist)
     (0..num_tracks-1).each do |index|
       creator = Spotify.playlist_track_creator(playlist, index)
-      tracks << Spotify.playlist_track(playlist, index) if Spotify.user_canonical_name(creator) == collaborator_username
+      track = Spotify.playlist_track(playlist, index)
+      tracks << track if Spotify.user_canonical_name(creator) == collaborator_username
+      track.free
       creator.free
     end
     tracks
@@ -100,14 +101,19 @@ class SpotifyWrapper
   end
 
   def get_track_metadata track
+    poll { Spotify.track_is_loaded track }
     track_name = Spotify.track_name track
     artists = (0..Spotify.track_num_artists(track) - 1).map do |i|
       artist = Spotify.track_artist track, i
-      Spotify.artist_name artist
+      artist_name = Spotify.artist_name artist
+      artist.free
+      artist_name
     end
-    album = Spotify.track_album(track)
+    album = Spotify.track_album track
     album_name = Spotify.album_name album
-    album_cover_id = Spotify.album_cover(Spotify.track_album(track), SP_IMAGE_SIZE_NORMAL)
+    album_cover_id = Spotify.album_cover(album, SP_IMAGE_SIZE_NORMAL)
+    track.free
+    album.free
     image_hex = if album_cover_id
                   album_cover_id.unpack('H40')[0]
                 end
