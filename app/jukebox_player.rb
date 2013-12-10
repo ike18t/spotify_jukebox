@@ -44,7 +44,7 @@ class JukeboxPlayer
     @historian.update_user_track_count user, tracks.count
     tracks.reject do |track|
       metadata = @spotify_wrapper.get_track_metadata track
-      @historian.played_recently?(metadata[:artist], metadata[:name])
+      @historian.played_recently?(metadata[:artists], metadata[:name])
     end
     tracks.sample
   end
