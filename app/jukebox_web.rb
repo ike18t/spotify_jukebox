@@ -70,8 +70,7 @@ class JukeboxWeb < Sinatra::Base
   get '/' do
     enabled_users = CacheHandler.get_enabled_users
 
-    user_list = @@spotify_wrapper.get_collaborator_list
-    user_list.map! do |user_name|
+    user_list = get_collaborator_list.map do |user_name|
       display_name = NameTranslator.get_for user_name
       enabled_flag = enabled_users.include?(user_name)
       { :user_name => user_name, :display_name => display_name, :enabled_flag => enabled_flag }
@@ -82,7 +81,7 @@ class JukeboxWeb < Sinatra::Base
   get '/enable/:name' do
     name = params[:name]
     enabled = CacheHandler.get_enabled_users
-    if @@spotify_wrapper.get_collaborator_list.include? name and not enabled.include? name
+    if get_collaborator_list.include? name and not enabled.include? name
       enabled << name
       CacheHandler.cache_enabled_users! enabled
     end
@@ -92,7 +91,7 @@ class JukeboxWeb < Sinatra::Base
   get '/disable/:name' do
     name = params[:name]
     enabled = CacheHandler.get_enabled_users
-    if @@spotify_wrapper.get_collaborator_list.include? name and enabled.include? name
+    if get_collaborator_list.include? name and enabled.include? name
       enabled.delete name
       CacheHandler.cache_enabled_users! enabled
     end
@@ -102,6 +101,10 @@ class JukeboxWeb < Sinatra::Base
   def get_playlist_url
     uri = @@playlist_uri.gsub ':', '/'
     uri.gsub 'spotify', 'http://play.spotify.com'
+  end
+
+  def get_collaborator_list
+    @@collaborator_list ||= @@spotify_wrapper.get_collaborator_list
   end
 
 end

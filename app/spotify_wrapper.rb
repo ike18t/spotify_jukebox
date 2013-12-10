@@ -56,18 +56,15 @@ class SpotifyWrapper
   end
 
   def get_collaborator_list
-    @collaborator_list ||= begin
-      link = Spotify.link_create_from_string @config.playlist_uri
-      playlist = Spotify.playlist_create @session, link
-      poll { Spotify.playlist_is_loaded playlist }
-      (0..Spotify.playlist_num_tracks(playlist)-1).map{|index|
-        creator = Spotify.playlist_track_creator(playlist, index)
-        user_name = Spotify.user_canonical_name creator
-        creator.free
-        user_name
-      }.uniq.sort
-    end
-    @collaborator_list.clone
+    link = Spotify.link_create_from_string @config.playlist_uri
+    playlist = Spotify.playlist_create @session, link
+    poll { Spotify.playlist_is_loaded playlist }
+    (0..Spotify.playlist_num_tracks(playlist)-1).map{|index|
+      creator = Spotify.playlist_track_creator(playlist, index)
+      user_name = Spotify.user_canonical_name creator
+      creator.free
+      user_name
+    }.uniq.sort
   end
 
   def get_random_track playlist
