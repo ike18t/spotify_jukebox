@@ -42,7 +42,7 @@ class JukeboxPlayer
   def get_random_track_for_user playlist, user
     tracks = @spotify_wrapper.get_tracks_for_collaborator playlist, user
     @historian.update_user_track_count user, tracks.count
-    tracks.reject do |track|
+    tracks.reject! do |track|
       metadata = @spotify_wrapper.get_track_metadata track
       @historian.played_recently?(metadata[:artists], metadata[:name])
     end

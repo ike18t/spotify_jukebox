@@ -105,7 +105,7 @@ class SpotifyWrapper
       artist_name = Spotify.artist_name artist
       artist.free
       artist_name
-    end
+    end.join(',')
     album = Spotify.track_album track
     album_name = Spotify.album_name album
     album_cover_id = Spotify.album_cover(album, SP_IMAGE_SIZE_NORMAL)
@@ -116,7 +116,7 @@ class SpotifyWrapper
                 end
     {
        :name    => track_name,
-       :artists => artists.join(", "),
+       :artists => artists,
        :album   => album_name,
        :image   => image_hex
     }
