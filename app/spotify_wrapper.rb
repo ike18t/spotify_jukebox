@@ -130,7 +130,7 @@ class SpotifyWrapper
     play!
     poll { @end_of_track }
   rescue Spotify::Error => e
-    logger.error e.message
+    $logger.error e.message
     if e.message =~ /^\[TRACK_NOT_PLAYABLE\]/
       @end_of_track = true
     else
