@@ -1,10 +1,16 @@
-<h1>Spotify Jukebox</h1>
-<h4>A collaborative jukebox solution</h4>
+Spotify Jukebox
+===============
+**A collaborative jukebox solution**
+
+
+**Setup**
+
+Use the configure script located in the application's root directory to setup username, password, [Spotify application key](https://developer.spotify.com/technologies/libspotify/#application-keys) file path, and the collaborative playlist URI.
 **WARNING: A Spotify premium account is required!**
 
-Use the configure script located in the application's root directory to setup username, password, api_key location, and the collaborative playlist uri.
+**Usage**
 
-To start: <code>bundle exec rake start</code>
+```bundle exec rake start```
 
 Once started the player will begin and a web server will be available on port 4567 which can be used to enable and disable collaborators on the playlist.
 
@@ -12,15 +18,23 @@ Once started the player will begin and a web server will be available on port 45
 **This application is dependent on the openal library.**
 
 **YUM:**
-<code>sudo yum install openal-soft-devel-1.12.854-1.el6.x86_64</code>
+```
+sudo yum install openal-soft-devel-1.12.854-1.el6.x86_64
+```
 
 **APT:**
-<code>sudo apt-get install libopenal-dev</code>
+```
+sudo apt-get install libopenal-dev
+```
 
-**HOMEBREW:** Requires adding a mirror to download the gem.
+**HOMEBREW:** 
 
-<code>brew edit freealut</code>
+_Requires adding a mirror to download._
 
-<code>mirror 'http://ftp.de.debian.org/debian/pool/main/f/freealut/freealut_1.1.0.orig.tar.gz'</code>
+```
+brew edit freealut
 
-<code>brew install freealut</code>
+mirror 'http://ftp.de.debian.org/debian/pool/main/f/freealut/freealut_1.1.0.orig.tar.gz'
+
+brew install freealut
+```
