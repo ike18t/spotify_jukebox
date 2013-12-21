@@ -4,31 +4,19 @@ class CacheHandler
   class << self
     CACHE_FILE_NAME = '.cache'
 
-    def get_enabled_users
-      cache = get_cache 'enabled_users'
-      cache['enabled_users'] || []
-    end
+    CACHE_TYPES = [:enabled_users, :user_mappings, :track_history]
 
-    def get_user_mappings
-      cache = get_cache 'user_mappings'
-      cache['user_mappings'] || {}
-    end
+    CACHE_TYPES.each do |type|
+      type = type.to_s
 
-    def get_track_history
-      cache = get_cache 'track_history'
-      cache['track_history'] || []
-    end
+      define_method("get_#{type}") do
+        cache = get_cache type
+        cache[type] || (type == 'user_mappings' ? {} : [])
+      end
 
-    def cache_enabled_users! users
-      cache! 'enabled_users', users
-    end
-
-    def cache_user_mappings! mappings
-      cache! 'user_mappings', mappings
-    end
-
-    def cache_track_history! history
-      cache! 'track_history', history
+      define_method("cache_#{type}!") do |value|
+        cache! type, value
+      end
     end
 
     private
