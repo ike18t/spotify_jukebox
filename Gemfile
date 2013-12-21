@@ -1,5 +1,4 @@
-# A sample Gemfile
-source :rubygems
+source 'https://rubygems.org'
 
 gem 'sinatra', '1.4.4'
 gem 'sinatra-assetpack', '0.3.1'
@@ -11,6 +10,8 @@ gem 'rake', '10.1.0'
 gem 'sass', '3.2.12'
 gem 'nokogiri', '1.6.0'
 gem 'thin', '1.6.0'
+gem 'aescrypt', '~> 1.0.0'
+gem 'main', '~> 5.2.0'
 
 group :test do
   gem 'pry', '0.9.12.2'

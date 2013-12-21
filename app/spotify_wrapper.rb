@@ -18,7 +18,7 @@ class SpotifyWrapper
   def initialize_session config
     session_config = Spotify::SessionConfig.new({
       api_version: Spotify::API_VERSION.to_i,
-      application_key: config.app_key,
+      application_key: config.api_key,
       cache_location: '.spotify/',
       settings_location: '.spotify/',
       tracefile: 'spotify_tracefile.txt',

@@ -8,7 +8,7 @@ require_relative './app/jukebox_web'
 require_relative './app/jukebox_player'
 require_relative './app/track_historian'
 require_relative './app/spotify_wrapper'
-require_relative './app/config_loader'
+require_relative './app/config_service'
 
 RSpec::Core::RakeTask.new :spec
 
@@ -17,7 +17,7 @@ task :default => :spec
 task :start do
   APP_ROOT = File.expand_path(File.join(File.dirname(__FILE__)))
 
-  config = ConfigLoader.load
+  config = ConfigService.get
 
   # Kill main thread if any other thread dies.
   Thread.abort_on_exception = true
