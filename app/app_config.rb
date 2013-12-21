@@ -2,7 +2,7 @@ class AppConfig
   require 'base64'
   require 'aescrypt'
 
-  attr_accessor :username, :password, :playlist_uri, :api_key
+  attr_accessor :username, :password, :playlist_uri, :app_key
 
   def initialize params={}
     params.each do |key, value|
@@ -19,10 +19,10 @@ class AppConfig
     AESCrypt.decrypt(@password, 'secret_key') unless @password.nil?
   end
 
-  def api_key
-    return nil if @api_key.nil?
-    api_key = File.expand_path(@api_key)
-    return nil unless File.exists? api_key
-    IO.read(api_key, encoding: 'BINARY')
+  def app_key
+    return nil if @app_key.nil?
+    app_key = File.expand_path(@app_key)
+    return nil unless File.exists? app_key
+    IO.read(app_key, encoding: 'BINARY')
   end
 end

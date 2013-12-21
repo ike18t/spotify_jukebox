@@ -19,9 +19,9 @@ Main {
     description 'Set the playlist_uri'
   }
 
-  option(:api_key) {
+  option(:app_key) {
     argument :optional
-    description 'Set the absolute path to the api key'
+    description 'Set the path to the application key'
   }
 
   def run
