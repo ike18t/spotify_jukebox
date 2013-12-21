@@ -1,17 +1,26 @@
-install openal for playing
+<h1>Spotify Jukebox</h1>
+<h4>A collaborative jukebox solution</h4>
+**WARNING: A Spotify premium account is required!**
 
-YUM
-sudo yum install openal-soft-devel-1.12.854-1.el6.x86_64
+Use the configure script located in the application's root directory to setup username, password, api_key location, and the collaborative playlist uri.
 
-APT:
-sudo apt-get install libopenal-dev
+To start: <code>bundle exec rake start</code>
 
-HOMEBREW:
-brew edit freealut
-mirror 'http://ftp.de.debian.org/debian/pool/main/f/freealut/freealut_1.1.0.orig.tar.gz'
-brew install freealut
+Once started the player will begin and a web server will be available on port 4567 which can be used to enable and disable collaborators on the playlist.
 
-You'll need to drop your binary Spotify API into a folder on the root called key, retaining the original file name from Spotify.
-Add you credentials to the config.yml like so:
-  username: myusername
-  password: mypassword
+
+**This application is dependent on the openal library.**
+
+**YUM:**
+<code>sudo yum install openal-soft-devel-1.12.854-1.el6.x86_64</code>
+
+**APT:**
+<code>sudo apt-get install libopenal-dev</code>
+
+**HOMEBREW:** Requires adding a mirror to download the gem.
+
+<code>brew edit freealut</code>
+
+<code>mirror 'http://ftp.de.debian.org/debian/pool/main/f/freealut/freealut_1.1.0.orig.tar.gz'</code>
+
+<code>brew install freealut</code>
