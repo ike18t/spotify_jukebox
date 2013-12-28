@@ -28,13 +28,6 @@ sudo apt-get install libopenal-dev
 ```
 
 **HOMEBREW:** 
-
-_Requires adding a mirror to download._
-
 ```
-brew edit freealut
-
-mirror 'http://ftp.de.debian.org/debian/pool/main/f/freealut/freealut_1.1.0.orig.tar.gz'
-
 brew install freealut
 ```
