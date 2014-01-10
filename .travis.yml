@@ -4,10 +4,12 @@ cache: bundler
 rvm:
   - 2.0.0
   - 2.1.0
-before_install:
-  - sudo apt-get install libopenal-dev
+  - ruby-head
 env:
   - RUBY_PLATFORM="x86_64-linux"
+  - RUBY_PLATFORM="x86_64-darwin11.3.0"
+before_install:
+  - sudo apt-get install libopenal-dev
 matrix:
   allow_failures:
     - rvm: ruby-head
