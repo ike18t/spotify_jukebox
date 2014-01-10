@@ -1,0 +1,19 @@
+language: ruby
+script: 'bundle exec rake spec'
+cache: bundler
+rvm:
+  - 2.0.0
+  - 2.1.0
+before_install:
+  - sudo apt-get install libopenal-dev
+env:
+  - RUBY_PLATFORM="x86_64-linux"
+matrix:
+  allow_failures:
+    - rvm: ruby-head
+  notifications:
+    email:
+      recipients:
+        - ike18t@gmail.com
+      on_success: change
+      on_failure: change
