@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/ike18t/spotify_jukebox.png?branch=master)](https://travis-ci.org/ike18t/spotify_jukebox)
 Spotify Jukebox
 ===============
 **A collaborative jukebox solution**
