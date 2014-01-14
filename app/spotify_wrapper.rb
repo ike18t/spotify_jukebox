@@ -51,6 +51,10 @@ class SpotifyWrapper
     Spotify.try(:session_player_play, self.session, false)
   end
 
+  def skip!
+    get_callbacks()[:end_of_track].call(@session)
+  end
+
   def playing?
     @plaything.source.should_be_playing?
   end

@@ -67,6 +67,10 @@ class JukeboxWeb < Sinatra::Base
     @@spotify_wrapper.play!
   end
 
+  get '/skip' do
+    @@spotify_wrapper.skip!
+  end
+
   get '/' do
     enabled_users = CacheHandler.get_enabled_users
 
