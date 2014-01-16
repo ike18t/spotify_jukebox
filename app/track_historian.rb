@@ -27,7 +27,7 @@ class TrackHistorian
   protected
 
   def get_calculated_size
-    @enabled_users.inject(0){ |count, user| count + (@user_track_counts[user] || 0) } * 0.50
+    @enabled_users.inject(0){ |count, user| count + (@user_track_counts[user] || 0) } * 0.75
   end
 
 end
