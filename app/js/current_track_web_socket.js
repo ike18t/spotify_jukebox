@@ -8,14 +8,27 @@ var currentTrackWebSocket = function() {
     $('#added_by').text(data.adder);
   };
 
+  var updateEnabledUsers = function(data) {
+    $('#user_list').children('li').each(function(idx, item) {
+      var $item = $(item);
+      data.indexOf(item.id) >= 0 ? $item.addClass('enabled', 500) : $item.removeClass('enabled', 500);
+    });
+  };
+
   var webSocket;
   this.initialize = function(){
-    webSocket = new WebSocket('ws://' + window.location.host + '/whatbeplayin');
+    webSocket = new WebSocket('ws://' + window.location.host + '/websocket_connect');
     webSocket.onopen    = function()  { console.log('websocket opened'); };
     webSocket.onclose   = function()  { console.log('websocket closed'); };
     webSocket.onmessage = function(m) {
       console.log('websocket message: ' +  m.data);
-      updateTrackInfo(JSON.parse(m.data));
+      var json_message = JSON.parse(m.data);
+      if (json_message.hasOwnProperty('current_track')) {
+        updateTrackInfo(json_message.current_track);
+      }
+      if (json_message.hasOwnProperty('enabled_users')) {
+        updateEnabledUsers(json_message.enabled_users);
+      }
     };
   };
 

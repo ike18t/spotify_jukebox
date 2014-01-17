@@ -32,31 +32,35 @@ class JukeboxWeb < Sinatra::Base
         @@current_track = @@queue[:web].pop
         current_track = @@current_track.clone
         current_track[:adder] = NameTranslator.get_for current_track[:adder]
-        settings.sockets.each {|s| s.send(current_track.to_json.to_s) }
+        settings.sockets.each {|s| s.send({:current_track => current_track}.to_json.to_s) }
       end
       sleep 0.1
+    end
+  end
+
+  get '/websocket_connect' do
+    if not request.websocket? then return 'Websocket connection required' end
+    enabled = CacheHandler.get_enabled_users
+    current_track = @@current_track.clone
+    current_track[:adder] = NameTranslator.get_for(@@current_track[:adder]) if not @@current_track.nil?
+    request.websocket do |ws|
+      ws.onopen do
+        ws.send({ :current_track => current_track }.to_json.to_s) unless current_track.nil?
+        settings.sockets << ws
+      end
+      ws.onclose do
+        settings.sockets.delete ws
+      end
     end
   end
 
   get '/whatbeplayin' do
     current_track = @@current_track.clone
     current_track[:adder] = NameTranslator.get_for(@@current_track[:adder]) if not @@current_track.nil?
-    if not request.websocket?
-      headers 'Access-Control-Allow-Origin'         => '*',
-              'Access-Conformation-Request-Method'  => '*'
-      content_type 'application/json'
-      current_track.to_json
-    else
-      request.websocket do |ws|
-        ws.onopen do
-          ws.send current_track.to_json.to_s unless current_track.nil?
-          settings.sockets << ws
-        end
-        ws.onclose do
-          settings.sockets.delete ws
-        end
-      end
-    end
+    headers 'Access-Control-Allow-Origin'         => '*',
+            'Access-Conformation-Request-Method'  => '*'
+    content_type 'application/json'
+    current_track.to_json
   end
 
   get '/pause' do
@@ -82,24 +86,30 @@ class JukeboxWeb < Sinatra::Base
     haml :index, :locals => { :users => user_list, :playlist_url => get_playlist_url, :playing => @@spotify_wrapper.playing? }
   end
 
-  get '/enable/:name' do
+  post '/enable/:name' do
     name = params[:name]
     enabled = CacheHandler.get_enabled_users
     if get_collaborator_list.include? name and not enabled.include? name
       enabled << name
       CacheHandler.cache_enabled_users! enabled
     end
-    redirect '/'
+    broadcast_enabled enabled
+    return :ok
   end
 
-  get '/disable/:name' do
+  post '/disable/:name' do
     name = params[:name]
     enabled = CacheHandler.get_enabled_users
     if get_collaborator_list.include? name and enabled.include? name
       enabled.delete name
       CacheHandler.cache_enabled_users! enabled
     end
-    redirect '/'
+    broadcast_enabled enabled
+    return :ok
+  end
+
+  def broadcast_enabled enabled
+    settings.sockets.each {|s| s.send({:enabled_users => enabled}.to_json.to_s) }
   end
 
   def get_playlist_url

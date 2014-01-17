@@ -1,12 +1,10 @@
 %h3
   %a{:href => locals[:playlist_url]}
     Playlist URL
-- locals[:users].each do |user|
-  - enabled_or_disabled = user[:enabled_flag] == false ? 'disabled' : 'enabled'
-  - to_enable_or_disable = user[:enabled_flag] == true ? 'disable' : 'enable'
-  %a{:href => "/#{to_enable_or_disable}/#{user[:user_name]}", :class => "#{enabled_or_disabled}"}
-    =user[:display_name]
-  %br
+%ul#user_list
+  - locals[:users].each do |user|
+    %li{:id => user[:user_name], :class => if user[:enabled_flag] then 'enabled' end}
+      =user[:display_name]
 
 #spotify_wrapper
   #art{:style => "display: inline"}
@@ -19,4 +17,13 @@
   $(document).ready(function(){
     var trackHandler = WebSocket ? currentTrackWebSocket() : currentTrackPoller();
     trackHandler.initialize()
+
+    $('#user_list li').on('click', function(e) {
+      var isEnabled = $(e.target).hasClass('enabled');
+      $.ajax({
+        url: (isEnabled ? 'disable/' : 'enable/') + e.target.id,
+        type: 'POST'
+      });
+      if (!WebSocket) location.reload();
+    });
   });
