@@ -10,7 +10,7 @@ var currentTrackWebSocket = function() {
   };
 
   var updateEnabledUsers = function(data) {
-    $('#user_list').children('li').each(function(idx, item) {
+    $('#user_list li').each(function(idx, item) {
       var $item = $(item);
       data.indexOf(item.id) >= 0 ? $item.addClass('enabled', 500) : $item.removeClass('enabled', 500);
     });
