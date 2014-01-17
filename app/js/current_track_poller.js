@@ -1,11 +1,12 @@
 var currentTrackPoller = function() {
   var updateTrackInfo = function(data) {
     var url = 'https://d3rt1990lpmkn.cloudfront.net/cover/' + data.image;
-    var art_image = $('<img id="album_art">').attr('src', url);
-    $('#art').html(art_image);
-    $('#artist').text(data.artists);
-    $('#title').text(data.name);
-    $('#added_by').text(data.adder);
+    var $art_image = $('<img id="album_art">').attr('src', url);
+    var $container = $('#current_track_container');
+    $container.find('#art').html($art_image);
+    $container.find('#artist').text(data.artists);
+    $container.find('#title').text(data.name);
+    $container.find('#added_by').text(data.adder);
   };
 
   var pollTrack = function() {
