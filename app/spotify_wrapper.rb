@@ -8,9 +8,8 @@ class SpotifyWrapper
   attr_accessor :session
   attr_accessor :end_of_track
 
-  def initialize config, queue
+  def initialize config
     @config = config
-    @queue = queue
     @plaything = Plaything.new
     @session = initialize_session config
   end

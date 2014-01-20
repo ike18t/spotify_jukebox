@@ -2,10 +2,10 @@ class JukeboxPlayer
   require_relative 'cache_handler'
 
   attr_accessor :spotify_wrapper
-  def initialize spotify_wrapper, queue, playlist_uri, track_historian
+  def initialize spotify_wrapper, message_queue, playlist_uri, track_historian
     @spotify_wrapper = spotify_wrapper
     @historian = track_historian
-    @queue = queue
+    @message_queue = message_queue
     @playlist_uri = playlist_uri
   end
 
@@ -36,7 +36,7 @@ class JukeboxPlayer
     metadata = @spotify_wrapper.get_track_metadata(track).merge({ :adder => who_added })
     @historian.record metadata[:artists], metadata[:name]
     $logger.info "Now playing #{metadata[:name]} by #{metadata[:artists]} on the album #{metadata[:album]}"
-    @queue[:web].push(metadata)
+    @message_queue.push(metadata)
   end
 
   def get_random_track_for_user playlist, user

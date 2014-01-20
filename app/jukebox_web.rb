@@ -20,16 +20,16 @@ class JukeboxWeb < Sinatra::Base
 
   def initialize
     super
-    @@queue = settings.custom[:queue]
+    @@message_queue = settings.custom[:message_queue]
     @@spotify_wrapper = settings.custom[:spotify_wrapper]
     @@playlist_uri = settings.custom[:playlist_uri]
   end
 
-  @@queue, @@current_track = nil
+  @@message_queue, @@current_track = nil
   Thread.new do
     loop do
-      if not @@queue.nil? and not @@queue[:web].empty?
-        @@current_track = @@queue[:web].pop
+      if not @@message_queue.nil? and not @@message_queue.empty?
+        @@current_track = @@message_queue.pop
         current_track = @@current_track.clone
         current_track[:adder] = NameTranslator.get_for current_track[:adder]
         settings.sockets.each {|s| s.send({:current_track => current_track}.to_json.to_s) }
