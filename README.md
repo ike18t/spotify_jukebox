@@ -2,36 +2,57 @@
 [![Code Climate](https://codeclimate.com/github/ike18t/spotify_jukebox.png)](https://codeclimate.com/github/ike18t/spotify_jukebox)
 [![Dependency Status](https://gemnasium.com/ike18t/spotify_jukebox.png)](https://gemnasium.com/ike18t/spotify_jukebox)
 
-Spotify Jukebox
-===============
+##Spotify Jukebox
+
 **A collaborative jukebox solution**
 
-
-**Setup**
-
-Use the configure script located in the application's root directory to setup username, password, [Spotify application key](https://developer.spotify.com/technologies/libspotify/#application-keys) file path, and the collaborative playlist URI.
-**WARNING: A Spotify premium account is required!**
-
-**Usage**
-
-```bundle exec rake start```
-
-Once started the player will begin and a web server will be available on port 4567 which can be used to enable and disable collaborators on the playlist.
+###Dependencies###
+* Spotify premium account
+* [Spotify application key](https://developer.spotify.com/technologies/libspotify/#application-keys)
+* Spotify collaborative playlist URI
+* OpenAL
 
 
-**This application is dependent on the openal library.**
+###Setup###
 
-**YUM:**
+Use the configure script located in the application's root directory.
+######Options######
+* username
+* password
+* app_key
+* playlist_uri
+
+######Example######
+
+
+```
+./configure --username=homer --password==doh1 --app_key=/path/to/app_key --playlist_uri=spotify:user:123456789:playlist:0Zr8DSONMuu3HWj4G63S42
+```
+
+###Usage###
+
+```
+bundle exec rake start
+```
+
+Once started, the player will begin and a web server will be available on port 4567.  Once the web server is running the web interface can be used to enable and disable collaborators on the playlist as well as show the current track information.
+
+###Installing OpenAL###
+
+**YUM**
+
 ```
 sudo yum install openal-soft-devel-1.12.854-1.el6.x86_64
 ```
 
-**APT:**
+**APT**
+
 ```
 sudo apt-get install libopenal-dev
 ```
 
-**HOMEBREW:** 
+**HOMEBREW**
+
 ```
 brew install freealut
 ```
