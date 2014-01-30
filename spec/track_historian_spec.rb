@@ -42,12 +42,12 @@ describe TrackHistorian do
       @track_historian.instance_variable_get(:@track_history).should include(track_key)
     end
 
-    it 'should bump value in index 0 if max size has been met' do
+    it 'should bump value in index 0..1 if max size has been met' do
       track_key = { 'artist' => 'track' }
-      @track_historian.instance_variable_set(:@track_history, [:a, :b, :c])
+      @track_historian.instance_variable_set(:@track_history, [:a, :b, :c, :d])
       @track_historian.stubs(:get_calculated_size).returns(3)
       @track_historian.record 'artist', 'track'
-      @track_historian.instance_variable_get(:@track_history).should eq([:b, :c, track_key])
+      @track_historian.instance_variable_get(:@track_history).should eq([:c, :d, track_key])
     end
 
     it 'should persist history to cache' do
