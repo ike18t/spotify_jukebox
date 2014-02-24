@@ -16,8 +16,7 @@ class TrackHistorian
 
   def record artist_name, track_name
     @track_history.push({ artist_name => track_name })
-    calculated_size = get_calculated_size.to_i
-    @track_history.shift(@track_history.size - calculated_size) if @track_history.size > calculated_size
+    @track_history.shift if @track_history.size > get_calculated_size
     CacheHandler.cache_track_history! @track_history
   end
 
