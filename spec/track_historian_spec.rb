@@ -86,13 +86,13 @@ describe TrackHistorian do
     it 'should add enabled users track counts and return 75%' do
       user_track_counts = {'a' => 1, 'b' => 4, 'c' => 3}
       @track_historian.instance_variable_set(:@user_track_counts, user_track_counts)
-      @track_historian.send(:get_calculated_size).should eq(6)
+      @track_historian.send(:get_calculated_size).should eq(4)
     end
 
     it 'should not error if an enabled_user is not in the list' do
       user_track_counts = {'a' => 1, 'c' => 3}
       @track_historian.instance_variable_set(:@user_track_counts, user_track_counts)
-      @track_historian.send(:get_calculated_size).should eq(3)
+      @track_historian.send(:get_calculated_size).should eq(2)
     end
   end
 
