@@ -1,7 +1,8 @@
+require 'plaything'
+require 'spotify'
+require_relative '../monkey_patches/plaything.rb'
+
 class SpotifyWrapper
-  require 'plaything'
-  require 'spotify'
-  require_relative 'frame_reader'
 
   SP_IMAGE_SIZE_NORMAL = 0
 
@@ -193,18 +194,13 @@ class SpotifyWrapper
       get_audio_buffer_stats: proc do |session, stats|
         stats[:samples] = @plaything.queue_size
         stats[:stutter] = @plaything.drops
-        $logger.debug('session (player)') { "queue size [#{stats[:samples]}, #{stats[:stutter]}]" }
       end,
 
       music_delivery: proc do |session, format, frames, num_frames|
         if num_frames == 0
           @plaything.stop
-          $logger.debug('session (player)') { "music delivery audio discontuity" }
         else
-          frames = FrameReader.new(format[:channels], format[:sample_type], num_frames, frames)
-          consumed_frames = @plaything.stream(frames, format.to_h)
-          $logger.debug('session (player)') { "#{format.to_h}" }
-          $logger.debug('session (player)') { "music delivery #{consumed_frames} of #{num_frames}" }
+          consumed_frames = @plaything.stream(format.to_h, frames, num_frames)
           consumed_frames
         end
       end,
