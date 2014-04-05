@@ -65,14 +65,17 @@ class JukeboxWeb < Sinatra::Base
 
   get '/pause' do
     @@spotify_wrapper.stop!
+    redirect '/'
   end
 
   get '/play' do
     @@spotify_wrapper.play!
+    redirect '/'
   end
 
   get '/skip' do
     @@spotify_wrapper.skip!
+    redirect '/'
   end
 
   get '/' do
@@ -106,6 +109,11 @@ class JukeboxWeb < Sinatra::Base
     end
     broadcast_enabled enabled
     return :ok
+  end
+
+  get '/refresh_users' do
+    @@collaborator_list = @@spotify_wrapper.get_collaborator_list
+    redirect '/'
   end
 
   def broadcast_enabled enabled
