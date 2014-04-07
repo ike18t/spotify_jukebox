@@ -21,7 +21,6 @@ class SpotifyWrapper
       application_key: config.app_key,
       cache_location: '.spotify/',
       settings_location: '.spotify/',
-      tracefile: 'spotify_tracefile.txt',
       user_agent: 'spotify for ruby',
       callbacks: Spotify::SessionCallbacks.new(get_callbacks),
     })
