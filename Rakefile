@@ -3,12 +3,11 @@ require 'bundler/setup'
 require 'logger'
 require 'rspec/core/rake_task'
 require 'thin'
-require_relative './app/multi_io'
-require_relative './app/jukebox_web'
-require_relative './app/jukebox_player'
-require_relative './app/track_historian'
-require_relative './app/spotify_wrapper'
-require_relative './app/config_service'
+require 'autoload_for'
+require_relative 'app/multi_io'
+
+include AutoloadFor
+autoload_for './app'
 
 RSpec::Core::RakeTask.new :spec
 

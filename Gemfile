@@ -12,6 +12,7 @@ gem 'nokogiri'
 gem 'thin'
 gem 'aescrypt'
 gem 'main'
+gem 'autoload_for'
 
 group :test do
   gem 'pry'
