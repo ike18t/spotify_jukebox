@@ -11,3 +11,5 @@ nohup.out
 .cache
 *.swp
 *.log
+.DS_Store
+coverage
