@@ -3,11 +3,22 @@ require 'bundler/setup'
 require 'logger'
 require 'rspec/core/rake_task'
 require 'thin'
-require 'autoload_for'
-require_relative 'app/multi_io'
 
-include AutoloadFor
-autoload_for './app'
+def autoload_all path
+  Dir.glob("#{path}**/*.rb").each do |file|
+    File.open(file, 'r') do |infile|
+      while (line = infile.gets)
+        match = line.match /^(class|module)\s([A-Z]\w+)/
+        if not match.nil? and not match[2].nil?
+          autoload match[2].to_sym, File.expand_path(file)
+          break
+        end
+      end
+    end
+  end
+end
+
+autoload_all 'app/'
 
 RSpec::Core::RakeTask.new :spec
 
