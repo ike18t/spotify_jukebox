@@ -1,14 +1,14 @@
 require 'sinatra'
 require 'sinatra-websocket'
 require 'sinatra/assetpack'
+require 'json'
+require 'haml'
+require 'sass'
+require_relative 'playlist'
 
 class JukeboxWeb < Sinatra::Base
-  require 'json'
-  require 'haml'
-  require 'sass'
-  require_relative 'name_translator'
-
   register Sinatra::AssetPack
+
   set :root, File.join(File.dirname(__FILE__), '..')
   set :bind, '0.0.0.0'
   set :sockets, []
@@ -31,7 +31,6 @@ class JukeboxWeb < Sinatra::Base
       if not @@message_queue.nil? and not @@message_queue.empty?
         @@current_track = @@message_queue.pop
         current_track = @@current_track.clone
-        current_track[:adder] = NameTranslator.get_for current_track[:adder]
         settings.sockets.each {|s| s.send({:current_track => current_track}.to_json.to_s) }
       end
       sleep 0.1
@@ -40,9 +39,7 @@ class JukeboxWeb < Sinatra::Base
 
   get '/websocket_connect' do
     if not request.websocket? then return 'Websocket connection required' end
-    enabled = CacheHandler.get_enabled_users
-    current_track = @@current_track.clone
-    current_track[:adder] = NameTranslator.get_for(@@current_track[:adder]) if not @@current_track.nil?
+    current_track = @@current_track ? @@current_track.clone : nil
     request.websocket do |ws|
       ws.onopen do
         ws.send({ :current_track => current_track }.to_json.to_s) unless current_track.nil?
@@ -56,7 +53,6 @@ class JukeboxWeb < Sinatra::Base
 
   get '/whatbeplayin' do
     current_track = @@current_track.clone
-    current_track[:adder] = NameTranslator.get_for(@@current_track[:adder]) if not @@current_track.nil?
     headers 'Access-Control-Allow-Origin'         => '*',
             'Access-Conformation-Request-Method'  => '*'
     content_type 'application/json'
@@ -79,54 +75,52 @@ class JukeboxWeb < Sinatra::Base
   end
 
   get '/' do
-    enabled_users = CacheHandler.get_enabled_users
-
-    user_list = get_collaborator_list.map do |user_name|
-      display_name = NameTranslator.get_for user_name
-      enabled_flag = enabled_users.include?(user_name)
-      { :user_name => user_name, :display_name => display_name, :enabled_flag => enabled_flag }
-    end
-    haml :index, :locals => { :users => user_list, :playlist_url => get_playlist_url, :playing => @@spotify_wrapper.playing? }
+    playlists = CacheHandler.get_playlists
+    haml :index, :locals => { :playlists => playlists, :playing => @@spotify_wrapper.playing? }
   end
 
-  post '/enable/:name' do
+  post '/add_playlist' do
     name = params[:name]
-    enabled = CacheHandler.get_enabled_users
-    if get_collaborator_list.include? name and not enabled.include? name
-      enabled << name
-      CacheHandler.cache_enabled_users! enabled
-    end
-    broadcast_enabled enabled
-    return :ok
-  end
-
-  post '/disable/:name' do
-    name = params[:name]
-    enabled = CacheHandler.get_enabled_users
-    if get_collaborator_list.include? name and enabled.include? name
-      enabled.delete name
-      CacheHandler.cache_enabled_users! enabled
-    end
-    broadcast_enabled enabled
-    return :ok
-  end
-
-  get '/refresh_users' do
-    @@collaborator_list = @@spotify_wrapper.get_collaborator_list
+    url  = params[:url]
+    playlist = Playlist.new :name => name, :url => url
+    playlists = CacheHandler.get_playlists
+    playlists << playlist
+    CacheHandler.cache_playlists! playlists
     redirect '/'
   end
 
-  def broadcast_enabled enabled
-    settings.sockets.each {|s| s.send({:enabled_users => enabled}.to_json.to_s) }
+  post '/remove_playlist' do
+    name = params[:name]
+    playlists = CacheHandler.get_playlists
+    playlists.reject!{ |p| p.name == name }
+    CacheHandler.cache_playlists! playlists
+    redirect '/'
   end
 
-  def get_playlist_url
-    uri = @@playlist_uri.gsub ':', '/'
-    uri.gsub 'spotify', 'http://play.spotify.com'
+  post '/enable/:playlist_name' do
+    playlist_name = params[:playlist_name]
+    playlists = CacheHandler.get_playlists
+    playlist_index = playlists.index { |playlist| playlist.name == playlist_name }
+    return :error if playlist_index < 0
+    playlists[playlist_index].enabled = true
+    CacheHandler.cache_playlists! playlists
+    broadcast_enabled playlists
+    return :ok
   end
 
-  def get_collaborator_list
-    @@collaborator_list ||= @@spotify_wrapper.get_collaborator_list
+  post '/disable/:playlist_name' do
+    playlist_name = params[:playlist_name]
+    playlists = CacheHandler.get_playlists
+    playlist_index = playlists.index { |playlist| playlist.name == playlist_name }
+    return :error if playlist_index < 0
+    playlists[playlist_index].enabled = false
+    CacheHandler.cache_playlists! playlists
+    broadcast_enabled playlists
+    return :ok
+  end
+
+  def broadcast_enabled playlists
+    settings.sockets.each { |s| s.send({ :enabled_playlists => playlists.select{ |p| p.enabled? }.map { |p| p.name } }.to_json.to_s) }
   end
 
 end

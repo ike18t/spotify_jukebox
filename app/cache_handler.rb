@@ -4,14 +4,14 @@ class CacheHandler
   class << self
     CACHE_FILE_NAME = '.cache'
 
-    CACHE_TYPES = [:enabled_users, :user_mappings, :track_history]
+    CACHE_TYPES = [:playlists, :track_history]
 
     CACHE_TYPES.each do |type|
       type = type.to_s
 
       define_method("get_#{type}") do
         cache = get_cache type
-        cache[type] || (type == 'user_mappings' ? {} : [])
+        cache[type] || []
       end
 
       define_method("cache_#{type}!") do |value|

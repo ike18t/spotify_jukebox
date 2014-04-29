@@ -1,17 +1,17 @@
 class TrackHistorian
 
   def initialize
-    @user_track_counts = {}
+    @playlist_track_counts = {}
     @track_history = CacheHandler.get_track_history
-    @enabled_users = []
+    @enabled_playlists = []
   end
 
-  def update_enabled_users_list enabled_users
-    @enabled_users = enabled_users
+  def update_enabled_playlists_list enabled_playlists
+    @enabled_playlists = enabled_playlists
   end
 
-  def update_user_track_count user, count
-    @user_track_counts[user] = count
+  def update_playlist_track_count playlist, count
+    @playlist_track_counts[playlist.name] = count
   end
 
   def record artist_name, track_name
@@ -27,7 +27,7 @@ class TrackHistorian
   protected
 
   def get_calculated_size
-    (@enabled_users.inject(0){ |count, user| count + (@user_track_counts[user] || 0) } * 0.50).to_i
+    (@enabled_playlists.inject(0){ |count, playlist| count + (@playlist_track_counts[playlist] || 0) } * 0.50).to_i
   end
 
 end

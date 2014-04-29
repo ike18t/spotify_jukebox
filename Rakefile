@@ -29,7 +29,7 @@ task :start do
   message_queue = Queue.new
   spotify_wrapper = SpotifyWrapper.new config
   Thread.new do
-    JukeboxPlayer.new(spotify_wrapper, message_queue, config.playlist_uri, TrackHistorian.new).start!
+    JukeboxPlayer.new(spotify_wrapper, message_queue, TrackHistorian.new).start!
   end
-  JukeboxWeb.run!({ :server => 'thin', :custom => { :spotify_wrapper => spotify_wrapper, :message_queue => message_queue, :playlist_uri => config.playlist_uri }})
+  JukeboxWeb.run!({ :server => 'thin', :custom => { :spotify_wrapper => spotify_wrapper, :message_queue => message_queue }})
 end

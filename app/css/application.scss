@@ -9,7 +9,7 @@ h3 a {
   color: #3016b0;
 }
 
-#user_list {
+#playlists {
   list-style-type: none;
   padding: 0px;
   display: table;
@@ -19,7 +19,7 @@ a {
   text-decoration: none;
 }
 
-#user_list li {
+#playlists li {
   padding: 2px 10px;
   margin: 1px 0;
   color: #9999FF;
@@ -27,7 +27,7 @@ a {
   cursor: pointer;
 }
 
-#user_list li.enabled {
+#playlists li.enabled {
   background: #3016b0;
   border-radius: 5px;
 }
@@ -52,6 +52,6 @@ a {
   font-size: 16pt;
 }
 
-#added_by {
+#playlist {
   font-size: 10pt;
 }

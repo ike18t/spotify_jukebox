@@ -1,24 +1,33 @@
-%h3
-  %a{:href => locals[:playlist_url]}
-    Playlist URL
-%ul#user_list
-  - locals[:users].each do |user|
-    %li{:id => user[:user_name], :class => if user[:enabled_flag] then 'enabled' end}
-      =user[:display_name]
+%ul#playlists
+  - locals[:playlists].each do |playlist|
+    %li{:id => playlist.name, :class => if playlist.enabled? then 'enabled' end}
+      = playlist.name
 
 #current_track_container
-  #art{:style => "display: inline"}
-  #track_info{:style => "display: inline-block"}
+  #art{:style => 'display: inline'}
+  #track_info{:style => 'display: inline-block'}
     #title
     #artist
-    #added_by
+    #playlist
+
+%a#add_playlist Add Playlist
+
+%form#dialog_form{:action => 'add_playlist', :method => 'POST'}
+  %fieldset
+    %label{:for => 'name'} Name:
+    %input#name{:required => 'required', :type => 'text', :name => 'name'}
+    %label{:for => 'url'} URL:
+    %input#url{:required => 'required', :type => 'url', :name => 'url'}
+
+#dialog_confirm
+  %span Are you sure you want to remove this playlist?
 
 :javascript
   $(document).ready(function(){
     var trackHandler = WebSocket ? currentTrackWebSocket() : currentTrackPoller();
-    trackHandler.initialize()
+    trackHandler.initialize();
 
-    $('#user_list li').on('click', function(e) {
+    $('#playlists li').on('click', function(e) {
       var isEnabled = $(e.target).hasClass('enabled');
       $.ajax({
         url: (isEnabled ? 'disable/' : 'enable/') + e.target.id,
@@ -26,4 +35,38 @@
       });
       if (!WebSocket) location.reload();
     });
+
+    $('#dialog_form').dialog({
+      autoOpen:  false,
+      height:    300,
+      width:     350,
+      resizable: false,
+      modal:     true,
+      buttons: {
+        ok: function() {
+          this.submit();
+        },
+        cancel: function() {
+          $(this).dialog('close');
+        }
+      }
+    });
+
+    $('#dialog_confirm').dialog({
+      autoOpen:  false,
+      resizable: false,
+      height:    200,
+      modal:     true,
+      draggable: false,
+      buttons: {
+        YOLO: function() {
+          $(this).dialog('close');
+        },
+        'Abort!': function() {
+          $(this).dialog('close');
+        }
+      }
+    });
+
+    $('#add_playlist').on('click', function() { $('#dialog_form').dialog('open'); });
   });

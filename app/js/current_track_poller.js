@@ -6,7 +6,7 @@ var currentTrackPoller = function() {
     $container.find('#art').html($art_image);
     $container.find('#artist').text(data.artists);
     $container.find('#title').text(data.name);
-    $container.find('#added_by').text(data.adder);
+    $container.find('#playlist').text(data.playlist);
   };
 
   var pollTrack = function() {

@@ -25,45 +25,24 @@ describe CacheHandler do
     end
   end
 
-  context 'get_enabled_users' do
+  context 'get_playlists' do
     it 'should return [] if cache does not contain a enabled key' do
-      CacheHandler.stubs(:get_cache).with('enabled_users').returns({})
-      CacheHandler.get_enabled_users.should eq([])
+      CacheHandler.stubs(:get_cache).with('playlists').returns({})
+      CacheHandler.get_playlists.should eq([])
     end
 
-    it 'should return enabled list from hash' do
+    it 'should return playlists from hash' do
       expected = [:a, :b, :c]
-      CacheHandler.stubs(:get_cache).with('enabled_users').returns({ 'enabled_users' => expected })
-      CacheHandler.get_enabled_users.should eq(expected)
+      CacheHandler.stubs(:get_cache).with('playlists').returns({ 'playlists' => expected })
+      CacheHandler.get_playlists.should eq(expected)
     end
   end
 
-  context 'cache_enabled_users!' do
+  context 'cache_playlists!' do
     it 'should call cache! with the appropriate params' do
-      users = {:a => 'a'}
-      expect(CacheHandler).to receive(:cache!).with('enabled_users', users)
-      CacheHandler.cache_enabled_users! users
-    end
-  end
-
-  context 'get_user_mappings' do
-    it 'should return {} if cache does not contain a mappings key' do
-      CacheHandler.stubs(:get_cache).with('user_mappings').returns({})
-      CacheHandler.get_user_mappings.should eq({})
-    end
-
-    it 'should return mappings list from hash' do
-      expected = {:a => 'a', :b => 'b', :c => 'c'}
-      CacheHandler.stubs(:get_cache).with('user_mappings').returns({ 'user_mappings' => expected })
-      CacheHandler.get_user_mappings.should eq(expected)
-    end
-  end
-
-  context 'cache_user_mappings!' do
-    it 'should call cache! with the appropriate params' do
-      mappings = {:a => 'a'}
-      expect(CacheHandler).to receive(:cache!).with('user_mappings', mappings)
-      CacheHandler.cache_user_mappings! mappings
+      playlists = {:a => 'a'}
+      expect(CacheHandler).to receive(:cache!).with('playlists', playlists)
+      CacheHandler.cache_playlists! playlists
     end
   end
 

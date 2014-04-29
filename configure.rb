@@ -14,11 +14,6 @@ Main {
     description 'Set the password'
   }
 
-  option(:playlist_uri) {
-    argument :optional
-    description 'Set the playlist_uri'
-  }
-
   option(:app_key) {
     argument :optional
     description 'Set the path to the application key'

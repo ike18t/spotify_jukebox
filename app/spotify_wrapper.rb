@@ -58,46 +58,35 @@ class SpotifyWrapper
     @plaything.source.should_be_playing?
   end
 
-  def get_collaborator_list
-    link = Spotify.link_create_from_string @config.playlist_uri
-    playlist = Spotify.playlist_create @session, link
-    poll { Spotify.playlist_is_loaded playlist }
-    (0..Spotify.playlist_num_tracks(playlist)-1).map{|index|
-      creator = Spotify.playlist_track_creator(playlist, index)
-      user_name = Spotify.user_canonical_name creator
-      creator.free
-      user_name
-    }.uniq.sort
-  end
-
-  def get_random_track playlist
-    random_track_index = rand(Spotify.playlist_num_tracks(playlist))
-
-    creator = Spotify.playlist_track_creator(playlist, random_track_index)
-    added_by = Spotify.user_canonical_name creator
-    track = Spotify.playlist_track(playlist, random_track_index)
-    { :user => added_by, :track => track }
-  end
-
-  def get_tracks_for_collaborator playlist, collaborator_username
+  def get_tracks_for_playlist playlist
+    spotify_playlist = get_playlist playlist.url
+    num_tracks = Spotify.playlist_num_tracks(spotify_playlist)
     tracks = []
-    num_tracks = Spotify.playlist_num_tracks(playlist)
-    (0..num_tracks-1).each do |index|
-      creator = Spotify.playlist_track_creator(playlist, index)
-      track = Spotify.playlist_track(playlist, index)
-      tracks << track if Spotify.user_canonical_name(creator) == collaborator_username
+    (0..num_tracks-1).map do |index|
+      track = Spotify.playlist_track spotify_playlist, index
+      tracks << track
       track.free
-      creator.free
     end
     tracks
   end
 
-  def get_playlist
-    link = Spotify.link_create_from_string @config.playlist_uri
+  def get_playlist playlist_url
+    playlist_uri = convert_spotify_url_to_uri playlist_url
+
+    link = Spotify.link_create_from_string playlist_uri
     playlist = Spotify.playlist_create @session, link
 
     poll { Spotify.playlist_is_loaded(playlist) }
     playlist
+  end
+  private :get_playlist
+
+  def convert_spotify_url_to_uri url
+    match_data = url.match /^.*user\/(.*)\/playlist\/(.*)$/
+    user_id = match_data[1]
+    playlist_id = match_data[2]
+    uri_format = 'spotify:user:%s:playlist:%s'
+    uri_format % [user_id, playlist_id]
   end
 
   def get_track_metadata track
@@ -108,7 +97,7 @@ class SpotifyWrapper
       artist_name = Spotify.artist_name artist
       artist.free
       artist_name
-    end.join(',')
+    end.join(', ')
     album = Spotify.track_album track
     album_name = Spotify.album_name album
     album_cover_id = Spotify.album_cover(album, SP_IMAGE_SIZE_NORMAL)

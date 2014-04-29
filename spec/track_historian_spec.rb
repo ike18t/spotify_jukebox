@@ -16,19 +16,19 @@ describe TrackHistorian do
     end
   end
 
-  context 'update_enabled_users_list' do
-    it 'should update enabled user list should do what its name implies' do
+  context 'update_enabled_playlists_list' do
+    it 'should update enabled playlist list should do what its name implies' do
       dummy_list = [:a, :b]
-      @track_historian.update_enabled_users_list dummy_list
-      @track_historian.instance_variable_get(:@enabled_users).should eq(dummy_list)
+      @track_historian.update_enabled_playlists_list dummy_list
+      @track_historian.instance_variable_get(:@enabled_playlists).should eq(dummy_list)
     end
   end
 
-  context 'update_user_track_count' do
-    it 'should store the user count key value pair in the user_track_counts instance variable' do
-      user, count = 'ike', 2
-      @track_historian.update_user_track_count user, count
-      @track_historian.instance_variable_get(:@user_track_counts).should eq({user => count})
+  context 'update_playlist_track_count' do
+    it 'should store the playlist count key value pair in the playlist_track_counts instance variable' do
+      playlist, count = Playlist.new(:name => 'bah'), 2
+      @track_historian.update_playlist_track_count playlist, count
+      @track_historian.instance_variable_get(:@playlist_track_counts).should eq({playlist.name => count})
     end
   end
 
@@ -78,20 +78,20 @@ describe TrackHistorian do
 
   context 'get_calculated_size' do
     before do
-      @track_historian.instance_variable_set(:@enabled_users, ['a', 'b', 'c'])
+      @track_historian.instance_variable_set(:@enabled_playlists, ['a', 'b', 'c'])
     end
 
     it { @track_historian.send(:get_calculated_size).should eq(0) }
 
-    it 'should add enabled users track counts and return 75%' do
-      user_track_counts = {'a' => 1, 'b' => 4, 'c' => 3}
-      @track_historian.instance_variable_set(:@user_track_counts, user_track_counts)
+    it 'should add enabled playlists track counts and return 75%' do
+      playlist_track_counts = {'a' => 1, 'b' => 4, 'c' => 3}
+      @track_historian.instance_variable_set(:@playlist_track_counts, playlist_track_counts)
       @track_historian.send(:get_calculated_size).should eq(4)
     end
 
-    it 'should not error if an enabled_user is not in the list' do
-      user_track_counts = {'a' => 1, 'c' => 3}
-      @track_historian.instance_variable_set(:@user_track_counts, user_track_counts)
+    it 'should not error if an enabled_playlist is not in the list' do
+      playlist_track_counts = {'a' => 1, 'c' => 3}
+      @track_historian.instance_variable_set(:@playlist_track_counts, playlist_track_counts)
       @track_historian.send(:get_calculated_size).should eq(2)
     end
   end

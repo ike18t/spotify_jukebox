@@ -3,9 +3,8 @@ require_relative 'spec_helper'
 describe AppConfig do
   it 'should update attributes with the values passed into initialize' do
     username, playlist_uri = 'ike', 'http://bah'
-    config = AppConfig.new :username => username, :playlist_uri => playlist_uri
+    config = AppConfig.new :username => username
     config.username.should eq(username)
-    config.playlist_uri.should eq(playlist_uri)
   end
 
   it 'should IO read binary the app_key if the file exists' do
@@ -28,6 +27,5 @@ describe AppConfig do
     config.username.should be_nil
     config.password.should be_nil
     config.app_key.should be_nil
-    config.playlist_uri.should be_nil
   end
 end

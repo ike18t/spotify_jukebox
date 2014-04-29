@@ -2,7 +2,7 @@ class AppConfig
   require 'base64'
   require 'aescrypt'
 
-  attr_accessor :username, :password, :playlist_uri, :app_key
+  attr_accessor :username, :password, :app_key
 
   def initialize params={}
     params.each do |key, value|

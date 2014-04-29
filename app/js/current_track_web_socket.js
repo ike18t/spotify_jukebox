@@ -6,11 +6,11 @@ var currentTrackWebSocket = function() {
     $container.find('#art').html($art_image);
     $container.find('#artist').text(data.artists);
     $container.find('#title').text(data.name);
-    $container.find('#added_by').text(data.adder);
+    $container.find('#playlist').text(data.playlist);
   };
 
-  var updateEnabledUsers = function(data) {
-    $('#user_list li').each(function(idx, item) {
+  var updateEnabledPlaylists = function(data) {
+    $('#playlists li').each(function(idx, item) {
       var $item = $(item);
       data.indexOf(item.id) >= 0 ? $item.addClass('enabled', 500) : $item.removeClass('enabled', 500);
     });
@@ -27,8 +27,8 @@ var currentTrackWebSocket = function() {
       if (json_message.hasOwnProperty('current_track')) {
         updateTrackInfo(json_message.current_track);
       }
-      if (json_message.hasOwnProperty('enabled_users')) {
-        updateEnabledUsers(json_message.enabled_users);
+      if (json_message.hasOwnProperty('enabled_playlists')) {
+        updateEnabledPlaylists(json_message.enabled_playlists);
       }
     };
   };

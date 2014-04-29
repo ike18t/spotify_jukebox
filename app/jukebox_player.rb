@@ -1,47 +1,43 @@
+require_relative 'cache_handler'
+
 class JukeboxPlayer
-  require_relative 'cache_handler'
 
   attr_accessor :spotify_wrapper
-  def initialize spotify_wrapper, message_queue, playlist_uri, track_historian
+  def initialize spotify_wrapper, message_queue, track_historian
     @spotify_wrapper = spotify_wrapper
     @historian = track_historian
     @message_queue = message_queue
-    @playlist_uri = playlist_uri
   end
 
   def start!
-    playlist = @spotify_wrapper.get_playlist
+    playlists = CacheHandler.get_playlists
 
-    current_user = nil
+    current_playlist = nil
     loop do
-      enabled_users = CacheHandler.get_enabled_users
-      @historian.update_enabled_users_list enabled_users
-      if enabled_users.empty?
-        rando = @spotify_wrapper.get_random_track playlist
-        current_user = rando[:user]
-        track = rando[:track]
-      else
-        current_user = get_next_user enabled_users, current_user
-        track = get_random_track_for_user playlist, current_user
+      enabled_playlists = CacheHandler.get_playlists.keep_if {|p| p.enabled?}
+      @historian.update_enabled_playlists_list enabled_playlists.map{|p| p.name}
+      if not enabled_playlists.empty?
+        current_playlist = get_next_playlist enabled_playlists, current_playlist
+        track = get_random_track_for_playlist current_playlist
       end
       next if track.nil?
-      notify_metadata(track, current_user)
+      notify_metadata(track, current_playlist)
       @spotify_wrapper.play_track(track)
     end
   end
 
   private
 
-  def notify_metadata(track, who_added)
-    metadata = @spotify_wrapper.get_track_metadata(track).merge({ :adder => who_added })
+  def notify_metadata(track, playlist)
+    metadata = @spotify_wrapper.get_track_metadata(track).merge({ :playlist => playlist.name })
     @historian.record metadata[:artists], metadata[:name]
     $logger.info "Now playing #{metadata[:name]} by #{metadata[:artists]} on the album #{metadata[:album]}"
     @message_queue.push(metadata)
   end
 
-  def get_random_track_for_user playlist, user
-    tracks = @spotify_wrapper.get_tracks_for_collaborator playlist, user
-    @historian.update_user_track_count user, tracks.count
+  def get_random_track_for_playlist playlist
+    tracks = @spotify_wrapper.get_tracks_for_playlist playlist
+    @historian.update_playlist_track_count playlist, tracks.count
     tracks.reject! do |track|
       metadata = @spotify_wrapper.get_track_metadata track
       @historian.played_recently?(metadata[:artists], metadata[:name])
@@ -49,10 +45,10 @@ class JukeboxPlayer
     tracks.sample
   end
 
-  def get_next_user enabled_users, last_user
-    last_index = enabled_users.index(last_user) || rand(enabled_users.count)
-    enabled_users.rotate! last_index + 1
-    enabled_users.first
+  def get_next_playlist enabled_playlists, last_playlist
+    last_index = enabled_playlists.index(last_playlist) || rand(enabled_playlists.count)
+    enabled_playlists.rotate! last_index + 1
+    enabled_playlists.first
   end
 
 end
