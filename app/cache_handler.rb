@@ -21,7 +21,7 @@ class CacheHandler
 
     private
     def get_cache type
-      cache = File.exists?(CACHE_FILE_NAME) ? YAML.load_file(CACHE_FILE_NAME) : {}
+      cache = File.exists?(CACHE_FILE_NAME) ? YAML.load_file(CACHE_FILE_NAME) : ((type == :playlists) ? [] : {})
       cache
     end
 

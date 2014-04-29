@@ -2,9 +2,14 @@ require_relative 'spec_helper'
 
 describe CacheHandler do
   context 'get_cache' do
-    it 'should return empty users hash if file does not exist' do
+    it 'should return empty playlists array if file does not exist' do
       File.stubs(:exists?).returns(false)
-      CacheHandler.send(:get_cache, 'users').should eq({})
+      CacheHandler.send(:get_cache, :playlists).should eq([])
+    end
+
+    it 'should return empty  track_history hash if file does not exist' do
+      File.stubs(:exists?).returns(false)
+      CacheHandler.send(:get_cache, :track_history).should eq({})
     end
 
     it 'should read users hash from file' do
