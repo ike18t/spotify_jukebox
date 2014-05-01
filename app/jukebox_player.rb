@@ -1,54 +1,48 @@
-require_relative 'cache_handler'
-
 class JukeboxPlayer
 
-  attr_accessor :spotify_wrapper
-  def initialize spotify_wrapper, message_queue, track_historian
-    @spotify_wrapper = spotify_wrapper
+  def initialize message_queue, track_historian
     @historian = track_historian
     @message_queue = message_queue
   end
 
   def start!
-    playlists = CacheHandler.get_playlists
-
-    current_playlist = nil
+    current_user = nil
     loop do
-      enabled_playlists = CacheHandler.get_playlists.keep_if {|p| p.enabled?}
-      @historian.update_enabled_playlists_list enabled_playlists.map{|p| p.name}
-      if not enabled_playlists.empty?
-        current_playlist = get_next_playlist enabled_playlists, current_playlist
-        track = get_random_track_for_playlist current_playlist
+      sleep 2
+      enabled_users = UserService.get_enabled_users
+      #@historian.update_enabled_playlists_list enabled_playlists.map{|p| p.name}
+      if not enabled_users.empty?
+        current_user = get_next_item enabled_users, current_user
+        playlists = PlaylistService.get_playlists_for_user current_user.id
+        track = get_random_track_for_playlist playlists.sample
       end
       next if track.nil?
-      notify_metadata(track, current_playlist)
-      @spotify_wrapper.play_track(track)
+      notify track
+      MusicService.play track
     end
   end
 
   private
 
-  def notify_metadata(track, playlist)
-    metadata = @spotify_wrapper.get_track_metadata(track).merge({ :playlist => playlist.name })
-    @historian.record metadata[:artists], metadata[:name]
-    $logger.info "Now playing #{metadata[:name]} by #{metadata[:artists]} on the album #{metadata[:album]}"
-    @message_queue.push(metadata)
+  def notify track
+    #@historian.record metadata[:artists], metadata[:name]
+    $logger.info "Now playing #{track.name} by #{track.artists} on the album #{track.album.name}"
+    @message_queue.push track
   end
 
   def get_random_track_for_playlist playlist
-    tracks = @spotify_wrapper.get_tracks_for_playlist playlist
-    @historian.update_playlist_track_count playlist, tracks.count
-    tracks.reject! do |track|
-      metadata = @spotify_wrapper.get_track_metadata track
-      @historian.played_recently?(metadata[:artists], metadata[:name])
-    end
+    tracks = PlaylistService.get_tracks_for_playlist playlist
+    #@historian.update_playlist_track_count playlist, tracks.count
+    #tracks.reject! do |track|
+    #  @historian.played_recently?(track.artists, track.name)
+    #end
     tracks.sample
   end
 
-  def get_next_playlist enabled_playlists, last_playlist
-    last_index = enabled_playlists.index(last_playlist) || rand(enabled_playlists.count)
-    enabled_playlists.rotate! last_index + 1
-    enabled_playlists.first
+  def get_next_item list, last
+    last_index = list.index(last) || rand(list.count)
+    list.rotate! last_index + 1
+    list.first
   end
 
 end

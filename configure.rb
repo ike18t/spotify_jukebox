@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 require 'bundler/setup'
 require 'main'
-require_relative 'app/config_service'
+require_relative 'app/services/config_service'
 
 Main {
   option(:username) {

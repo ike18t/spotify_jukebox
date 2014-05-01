@@ -1,4 +1,4 @@
-require_relative 'spec_helper'
+require_relative '../spec_helper'
 
 describe AppConfig do
   it 'should update attributes with the values passed into initialize' do

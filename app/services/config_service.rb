@@ -1,5 +1,4 @@
 require 'yaml'
-require_relative 'app_config'
 
 class ConfigService
   def self.update updates

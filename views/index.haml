@@ -1,23 +1,22 @@
-%ul#playlists
-  - locals[:playlists].each do |playlist|
-    %li{:id => playlist.name, :class => if playlist.enabled? then 'enabled' end}
-      = playlist.name
+%ul#users
+  - locals[:users].each do |user|
+    %li{:id => user.id, :class => if user.enabled? then 'enabled' end}
+      %img{:src => user.image_url}
+      = user.name
 
 #current_track_container
   #art{:style => 'display: inline'}
   #track_info{:style => 'display: inline-block'}
     #title
     #artist
-    #playlist
+    #user
 
 %a#add_playlist Add Playlist
 
 %form#dialog_form{:action => 'add_playlist', :method => 'POST'}
   %fieldset
-    %label{:for => 'name'} Name:
-    %input#name{:required => 'required', :type => 'text', :name => 'name'}
-    %label{:for => 'url'} URL:
-    %input#url{:required => 'required', :type => 'url', :name => 'url'}
+    %label{:for => 'playlist_url'} Playlist URL:
+    %input#playlist_url{:required => 'required', :type => 'url', :name => 'playlist_url'}
 
 #dialog_confirm
   %span Are you sure you want to remove this playlist?
@@ -27,10 +26,10 @@
     var trackHandler = WebSocket ? currentTrackWebSocket() : currentTrackPoller();
     trackHandler.initialize();
 
-    $('#playlists li').on('click', function(e) {
+    $('#users li').on('click', function(e) {
       var isEnabled = $(e.target).hasClass('enabled');
       $.ajax({
-        url: (isEnabled ? 'disable/' : 'enable/') + e.target.id,
+        url: (isEnabled ? 'disable_user/' : 'enable_user/') + e.target.id,
         type: 'POST'
       });
       if (!WebSocket) location.reload();

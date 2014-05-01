@@ -8,9 +8,21 @@ require_relative 'mock_logger'
 
 ENV['RACK_ENV'] = 'test'
 
-file = File.join(File.dirname(__FILE__), '../app')
-files = Dir.glob("#{file}/**/*.rb")
-files.each{ |file| require file }
+def autoload_all path
+  Dir.glob("#{path}**/*.rb").each do |file|
+    File.open(file, 'r') do |infile|
+      while (line = infile.gets)
+        match = line.match /^(class|module)\s([A-Z]\w+)/
+        if not match.nil? and not match[2].nil?
+          autoload match[2].to_sym, File.expand_path(file)
+          break
+        end
+      end
+    end
+  end
+end
+
+autoload_all 'app/'
 
 JukeboxWeb.set(
   :environment => :test,

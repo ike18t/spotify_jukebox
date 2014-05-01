@@ -1,14 +1,8 @@
-class AppConfig
+class AppConfig < ModelBase
   require 'base64'
   require 'aescrypt'
 
   attr_accessor :username, :password, :app_key
-
-  def initialize params={}
-    params.each do |key, value|
-      instance_variable_set "@#{key}", value
-    end
-  end
 
   def password= value
     @password = AESCrypt.encrypt(value, 'secret_key')

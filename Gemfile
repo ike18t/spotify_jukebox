@@ -12,6 +12,7 @@ gem 'nokogiri'
 gem 'thin'
 gem 'aescrypt'
 gem 'main'
+gem 'leveldb-ruby'
 
 group :test do
   gem 'pry'

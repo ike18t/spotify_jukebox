@@ -27,8 +27,6 @@ task :default => :spec
 task :start do
   APP_ROOT = File.expand_path(File.join(File.dirname(__FILE__)))
 
-  config = ConfigService.get
-
   # Kill main thread if any other thread dies.
   Thread.abort_on_exception = true
 
@@ -38,9 +36,8 @@ task :start do
   $logger.level = Logger::INFO
 
   message_queue = Queue.new
-  spotify_wrapper = SpotifyWrapper.new config
   Thread.new do
-    JukeboxPlayer.new(spotify_wrapper, message_queue, TrackHistorian.new).start!
+    JukeboxPlayer.new(message_queue, TrackHistorian.new).start!
   end
-  JukeboxWeb.run!({ :server => 'thin', :custom => { :spotify_wrapper => spotify_wrapper, :message_queue => message_queue }})
+  JukeboxWeb.run!({ :server => 'thin', :custom => { :message_queue => message_queue }})
 end

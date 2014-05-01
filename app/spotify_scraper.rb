@@ -1,9 +1,11 @@
 require 'open-uri'
 require 'nokogiri'
 
-class SpotifyScraper
-  def self.name_from_spotify_id(spotify_id)
+module SpotifyScraper
+  def self.name_and_image_from_spotify_id(spotify_id)
     doc = Nokogiri::HTML(open("http://open.spotify.com/user/#{spotify_id}"))
-    doc.css("meta[property='og:title']").first['content']
+    name = doc.css("meta[property='og:title']").first['content']
+    image_url = doc.css("meta[property='og:image']").first['content']
+    { :name => name, :image_url => image_url }
   end
 end
