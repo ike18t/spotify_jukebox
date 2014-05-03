@@ -9,6 +9,12 @@ env:
   - RUBY_PLATFORM="x86_64-linux"
   - RUBY_PLATFORM="x86_64-darwin11.3.0"
 before_install:
+  - git clone https://code.google.com/p/leveldb/
+  - cd leveldb
+  - make
+  - cp --preserve=links libleveldb.* /usr/local/lib
+  - cp -r include/leveldb /usr/local/include/
+  - ldconfig
   - sudo apt-get install libopenal-dev
 matrix:
   allow_failures:
