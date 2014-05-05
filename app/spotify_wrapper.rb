@@ -76,6 +76,12 @@ class SpotifyWrapper
     Spotify.track_num_artists spotify_track
   end
 
+  def get_track_album spotify_track
+    album = Spotify.track_album spotify_track
+    poll { Spotify.album_is_loaded(album) }
+    album
+  end
+
   def get_playlist playlist_uri
     link = Spotify.link_create_from_string playlist_uri
     playlist = Spotify.playlist_create @session, link
