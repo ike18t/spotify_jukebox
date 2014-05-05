@@ -9,6 +9,8 @@ describe CacheService do
 
   context 'get_cache' do
     CacheService::CACHE_TYPES.each do |type|
+      type = type.to_s
+
       context "get_#{type}" do
         it 'should return an empty array if the key is not in cache' do
           CacheService.get_playlists.should eq([])
