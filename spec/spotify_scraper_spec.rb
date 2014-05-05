@@ -2,6 +2,10 @@ require_relative 'spec_helper'
 
 describe SpotifyScraper do
   context 'name_and_image_from_spotify_id' do
+    before do
+      SpotifyScraper.unstub(:name_and_image_from_spotify_id)
+    end
+
     it 'should set the image_url if it is found' do
       str = <<-HTML
         <head>

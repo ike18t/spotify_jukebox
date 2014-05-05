@@ -13,7 +13,7 @@ class JukeboxPlayer
       #@historian.update_enabled_playlists_list enabled_playlists.map{|p| p.name}
       if not enabled_users.empty?
         current_user = get_next_item enabled_users, current_user
-        playlists = PlaylistService.get_playlists_for_user current_user.id
+        playlists = PlaylistService.get_enabled_playlists_for_user current_user.id
         track = get_random_track_for_playlist playlists.sample
       end
       next if track.nil?

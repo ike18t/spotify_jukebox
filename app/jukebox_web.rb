@@ -100,7 +100,7 @@ class JukeboxWeb < Sinatra::Base
     playlist_url = params[:playlist_url]
     playlist_info = get_playlist_id_and_user_id_from_url playlist_url
     playlist_uri = create_playlist_uri playlist_info[:playlist_id], playlist_info[:user_id]
-    PlaylistService.create_playlist playlist_uri, playlist_info[:playlist_id], playlist_info[:user_id]
+    PlaylistService.create_playlist playlist_info[:playlist_id], playlist_info[:user_id], playlist_uri
     redirect '/'
   end
 
