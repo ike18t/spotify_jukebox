@@ -1,7 +1,8 @@
 %ul#users
   - locals[:users].each do |user|
     %li{:id => user.id, :class => if user.enabled? then 'enabled' end}
-      %img{:src => user.image_url}
+      - if user.image_url
+        %img{:src => user.image_url}
       = user.name
 
 #current_track_container
