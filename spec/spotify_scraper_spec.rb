@@ -2,10 +2,6 @@ require_relative 'spec_helper'
 
 describe SpotifyScraper do
   context 'name_and_image_from_spotify_id' do
-    before do
-      SpotifyScraper.unstub(:name_and_image_from_spotify_id)
-    end
-
     it 'should set the image_url if it is found' do
       str = <<-HTML
         <head>
@@ -13,7 +9,7 @@ describe SpotifyScraper do
           <meta property="og:image" content="http://google.com/ike.jpg">
         </head>
       HTML
-      SpotifyScraper.stubs(:open).returns(str)
+      allow(SpotifyScraper).to receive(:open).and_return(str)
       name_and_url = SpotifyScraper.name_and_image_from_spotify_id 123
       name_and_url[:name].should eq('idatlof')
       name_and_url[:image_url].should eq('http://google.com/ike.jpg')
@@ -25,7 +21,7 @@ describe SpotifyScraper do
           <meta property="og:title" content="idatlof">
         </head>
       HTML
-      SpotifyScraper.stubs(:open).returns(str)
+      allow(SpotifyScraper).to receive(:open).and_return(str)
       name_and_url = SpotifyScraper.name_and_image_from_spotify_id 123
       name_and_url[:name].should eq('idatlof')
       name_and_url[:image_url].should eq(nil)

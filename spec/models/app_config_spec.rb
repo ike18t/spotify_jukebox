@@ -10,15 +10,15 @@ describe AppConfig do
   it 'should IO read binary the app_key if the file exists' do
     app_key = '/path'
     config = AppConfig.new :app_key => app_key
-    File.stubs(:exists?).returns(true)
-    IO.expects(:read)
+    expect(File).to receive(:exists?).and_return(true)
+    expect(IO).to receive(:read)
     config.app_key
   end
 
   it 'should return nil for app_key if file does not exist' do
     app_key = '/path'
     config = AppConfig.new :app_key => app_key
-    File.stubs(:exists?).returns(false)
+    expect(File).to receive(:exists?).and_return(false)
     config.app_key.should be_nil
   end
 

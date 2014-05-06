@@ -4,7 +4,7 @@ describe CacheService do
 
   before do
     @leveldb = {}
-    CacheService.stubs(:leveldb).returns(@leveldb);
+    allow(CacheService).to receive(:leveldb).and_return(@leveldb);
   end
 
   context 'get_cache' do

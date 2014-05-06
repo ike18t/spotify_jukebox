@@ -2,8 +2,8 @@ require_relative '../spec_helper'
 
 describe ConfigService do
   before do
-    ConfigService.stubs(:save)
-    ConfigService.stubs(:read).returns(AppConfig.new)
+    allow(ConfigService).to receive(:save)
+    allow(ConfigService).to receive(:read).and_return(AppConfig.new)
   end
 
   context 'update' do

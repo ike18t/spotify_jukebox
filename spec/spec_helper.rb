@@ -3,7 +3,6 @@ require 'rack/test'
 require 'rspec'
 require 'pry'
 require 'autotest'
-require 'mocha/api'
 require_relative 'mock_logger'
 
 ENV['RACK_ENV'] = 'test'

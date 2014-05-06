@@ -5,7 +5,7 @@ describe MusicService do
     [:playing?, :skip!, :stop!, :play!].each do |method_name|
       wrapper_double = double
       expect(wrapper_double).to receive(method_name)
-      MusicService.should_receive(:spotify_wrapper).and_return(wrapper_double)
+      expect(MusicService).to receive(:spotify_wrapper).and_return(wrapper_double)
       MusicService.send method_name
     end
   end
@@ -14,8 +14,8 @@ describe MusicService do
     it 'should call play_track on wrapper with the spotify_track' do
       track_double = double({:spotify_track => ''})
       wrapper_double = double
-      MusicService.should_receive(:spotify_wrapper).and_return(wrapper_double)
-      wrapper_double.should_receive(:play_track).with(track_double.spotify_track)
+      expect(MusicService).to receive(:spotify_wrapper).and_return(wrapper_double)
+      expect(wrapper_double).to receive(:play_track).with(track_double.spotify_track)
       MusicService.play track_double
     end
   end

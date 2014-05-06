@@ -19,5 +19,4 @@ group :test do
   gem 'autotest-standalone'
   gem 'autotest-growl'
   gem 'rspec'
-  gem 'mocha'
 end
