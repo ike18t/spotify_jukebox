@@ -9,7 +9,6 @@ class SpotifyWrapper
                        :artist_name,
                        :track_name,
                        :playlist_name,
-                       :playlist_track,
                        :track_album,
                        :track_artist ]
 
@@ -80,6 +79,12 @@ class SpotifyWrapper
     album = Spotify.track_album spotify_track
     poll { Spotify.album_is_loaded(album) }
     album
+  end
+
+  def get_playlist_track playlist, index
+    track = Spotify.playlist_track playlist, index
+    poll { Spotify.track_is_loaded(track) }
+    track
   end
 
   def get_playlist playlist_uri
