@@ -27,6 +27,8 @@ describe CacheService do
 
   context 'cache_type!' do
     CacheService::CACHE_TYPES.each do |type|
+      type = type.to_s
+
       context "cache_#{type}!" do
         it "should update #{type} hash and write to file as yaml" do
           hash = {type => { :a => 'a', :b => 'b' }}
