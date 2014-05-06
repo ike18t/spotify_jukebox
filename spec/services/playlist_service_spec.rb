@@ -48,7 +48,22 @@ describe PlaylistService do
 
       PlaylistService.should_receive(:spotify_wrapper).twice.and_return(wrapper_double)
       UserService.expects(:create_user).once
+      PlaylistService.create_playlist 123, 567, ''
+    end
+
+    it 'should default enabled to true' do
+      UserService.stubs(:create_user)
+      existing = []
+      PlaylistService.stubs(:get_playlists).returns(existing)
+
+      wrapper_double = double
+      wrapper_double.stubs(:get_playlist).returns(double)
+      expect(wrapper_double).to receive(:get_playlist_name).and_return('bah')
+
+      PlaylistService.should_receive(:spotify_wrapper).twice.and_return(wrapper_double)
+      PlaylistService.expects(:save_playlists)
       playlist = PlaylistService.create_playlist 123, 567, ''
+      playlist.enabled?.should be_true
     end
   end
 

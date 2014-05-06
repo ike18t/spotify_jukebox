@@ -7,7 +7,7 @@ class PlaylistService < ServiceBase
       if playlists.select{ |p| p.id == id }.empty?
         playlist = spotify_wrapper.get_playlist uri
         playlist_name = spotify_wrapper.get_playlist_name playlist
-        playlist = Playlist.new :id => id, :name => playlist_name, :uri => uri, :user_id => user_id
+        playlist = Playlist.new :id => id, :name => playlist_name, :uri => uri, :user_id => user_id, :enabled => true
         playlists << playlist
         save_playlists playlists
         UserService.create_user user_id
