@@ -10,7 +10,8 @@ class JukeboxPlayer
     loop do
       sleep 2
       enabled_users = UserService.get_enabled_users
-      #@historian.update_enabled_playlists_list enabled_playlists.map{|p| p.name}
+      enabled_playlists = PlaylistService.get_enabled_playlists
+      @historian.update_enabled_playlists_list enabled_playlists.map{ |p| p.name }
       if not enabled_users.empty?
         current_user = get_next_item enabled_users, current_user
         playlists = PlaylistService.get_enabled_playlists_for_user current_user.id
@@ -26,17 +27,17 @@ class JukeboxPlayer
   private
 
   def notify track
-    #@historian.record metadata[:artists], metadata[:name]
+    @historian.record track.artists, track.name
     $logger.info "Now playing #{track.name} by #{track.artists} on the album #{track.album.name}"
     @message_queue.push track
   end
 
   def get_random_track_for_playlist playlist
     tracks = PlaylistService.get_tracks_for_playlist playlist
-    #@historian.update_playlist_track_count playlist, tracks.count
-    #tracks.reject! do |track|
-    #  @historian.played_recently?(track.artists, track.name)
-    #end
+    @historian.update_playlist_track_count playlist, tracks.count
+    tracks.reject! do |track|
+      @historian.played_recently?(track.artists, track.name)
+    end
     tracks.sample
   end
 

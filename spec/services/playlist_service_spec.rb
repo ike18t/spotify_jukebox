@@ -88,6 +88,17 @@ describe PlaylistService do
     end
   end
 
+  context 'get_enabled_playlists' do
+    it 'should only return enabled playlists' do
+      enabled  = [ Playlist.new(:enabled => true),
+                   Playlist.new(:enabled => true) ]
+      disabled = [ Playlist.new(:enabled => false) ]
+
+      expect(PlaylistService).to receive(:get_playlists).and_return(enabled + disabled)
+      PlaylistService.get_enabled_playlists.should eq(enabled)
+    end
+  end
+
   context 'get_enabled_playlists_for_user' do
     it 'should get playlists' do
       expect(PlaylistService).to receive(:get_playlists_for_user).with(1).and_return({})

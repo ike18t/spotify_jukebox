@@ -30,6 +30,11 @@ class PlaylistService < ServiceBase
       playlists.select(&:enabled?)
     end
 
+    def get_enabled_playlists
+      playlists = get_playlists
+      playlists.select(&:enabled?)
+    end
+
     def enable_playlist id
       playlists = get_playlists
       playlist_index = playlists.index { |playlist| playlist.id == id }

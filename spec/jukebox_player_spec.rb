@@ -8,14 +8,13 @@ describe JukeboxPlayer do
       not_expected_3 = { :artist => 'artist_3', :name => 'track_3' }
       tracks = [ not_expected_1, not_expected_2, not_expected_3 ]
       spotify_wrapper = double(SpotifyWrapper)
-      spotify_wrapper.stubs(:get_tracks_for_playlist).returns(tracks)
+      allow(spotify_wrapper).to receive(:get_tracks_for_playlist).and_return(tracks)
       tracks.each do |track|
-        spotify_wrapper.stubs(:get_track_metadata).with(track).returns(track)
+        allow(spotify_wrapper).to receive(:get_track_metadata).with(track).and_return(track)
       end
 
-      historian = TrackHistorian.new
-      historian.stubs(:played_recently?).returns(true)
-      jukebox_player = JukeboxPlayer.new spotify_wrapper, nil, historian
+      historian = double(:played_recently? => true)
+      jukebox_player = JukeboxPlayer.new nil, historian
       jukebox_player.send(:get_random_track_for_playlist, Playlist.new).should eql(nil)
     end
 
