@@ -24,20 +24,29 @@ RSpec::Core::RakeTask.new :spec
 
 task :default => :spec
 
-task :start do
-  APP_ROOT = File.expand_path(File.join(File.dirname(__FILE__)))
+APP_ROOT = File.expand_path(File.join(File.dirname(__FILE__)))
 
+log_file = File.open('spotify_jukebox.log', 'w')
+$logger = Logger.new(MultiIO.new(STDOUT, log_file))
+$logger.level = Logger::INFO
+
+@message_queue = Queue.new
+
+task :start_web_only do
+  JukeboxWeb.run!({ :server => 'thin', :custom => { :message_queue => @message_queue }})
+end
+
+task :start_player_only do
+  JukeboxPlayer.new(@message_queue, TrackHistorian.new).start!
+end
+
+task :start do
   # Kill main thread if any other thread dies.
   Thread.abort_on_exception = true
 
-  # We use a logger to print some information on when things are happening.
-  log_file = File.open('spotify_jukebox.log', 'w')
-  $logger = Logger.new(MultiIO.new(STDOUT, log_file))
-  $logger.level = Logger::INFO
-
-  message_queue = Queue.new
   Thread.new do
-    JukeboxPlayer.new(message_queue, TrackHistorian.new).start!
+    Rake::Task[:start_player_only].execute
   end
-  JukeboxWeb.run!({ :server => 'thin', :custom => { :message_queue => message_queue }})
+  Rake::Task[:start_web_only].execute
 end
+
