@@ -22,25 +22,6 @@ class JukeboxWeb < Sinatra::Base
     @@message_queue = settings.custom[:message_queue]
   end
 
-  def get_playlist_id_and_user_id_from_url url
-    match_data = url.match /^.*user\/(.*)\/playlist\/(.*)$/
-    { :user_id => match_data[1], :playlist_id => match_data[2] }
-  end
-
-  def create_playlist_uri playlist_id, owner_id
-    uri_format = 'spotify:user:%s:playlist:%s'
-    uri_format % [owner_id, playlist_id]
-  end
-
-  def track_info_to_json track, user
-    json = { :current_track => { :name => @@current_track.name,
-                                 :artists => @@current_track.artists.join(', '),
-                                 :album => @@current_track.album.name,
-                                 :image => @@current_track.album.art_hex,
-                                 :user => { :name => @@current_user.name }
-                               } }.to_json.to_s
-  end
-
   @@message_queue, @@current_track = nil
   Thread.new do
     loop do
@@ -48,7 +29,7 @@ class JukeboxWeb < Sinatra::Base
         message = @@message_queue.pop
         @@current_track = message[:track]
         @@current_user = message[:user]
-        settings.sockets.each { |socket| socket.send(track_info_to_json(@@current_track, @@current_user)) }
+        settings.sockets.each { |socket| socket.send(WebHelper.track_info_to_json(@@current_track, @@current_user)) }
       end
       sleep 1
     end
@@ -59,7 +40,7 @@ class JukeboxWeb < Sinatra::Base
     request.websocket do |ws|
       ws.onopen do
         if not @@current_track.nil?
-          ws.send(track_info_to_json(@@current_track, @@current_user))
+          ws.send(WebHelper.track_info_to_json(@@current_track, @@current_user))
         end
         settings.sockets << ws
       end
@@ -73,7 +54,7 @@ class JukeboxWeb < Sinatra::Base
     headers 'Access-Control-Allow-Origin'         => '*',
             'Access-Conformation-Request-Method'  => '*'
     content_type 'application/json'
-    track_info_to_json(@@current_track, @@current_user)
+    WebHelper.track_info_to_json(@@current_track, @@current_user)
   end
 
   get '/pause' do
@@ -98,8 +79,8 @@ class JukeboxWeb < Sinatra::Base
 
   post '/add_playlist' do
     playlist_url = params[:playlist_url]
-    playlist_info = get_playlist_id_and_user_id_from_url playlist_url
-    playlist_uri = create_playlist_uri playlist_info[:playlist_id], playlist_info[:user_id]
+    playlist_info = WebHelper.get_playlist_id_and_user_id_from_url playlist_url
+    playlist_uri = WebHelper.create_playlist_uri playlist_info[:playlist_id], playlist_info[:user_id]
     PlaylistService.create_playlist playlist_info[:playlist_id], playlist_info[:user_id], playlist_uri
     redirect '/'
   end
