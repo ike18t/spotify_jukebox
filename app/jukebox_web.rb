@@ -32,16 +32,23 @@ class JukeboxWeb < Sinatra::Base
     uri_format % [owner_id, playlist_id]
   end
 
+  def track_info_to_json track, user
+    json = { :current_track => { :name => @@current_track.name,
+                                 :artists => @@current_track.artists.join(', '),
+                                 :album => @@current_track.album.name,
+                                 :image => @@current_track.album.art_hex,
+                                 :user => { :name => @@current_user.name }
+                               } }.to_json.to_s
+  end
+
   @@message_queue, @@current_track = nil
   Thread.new do
     loop do
       if not @@message_queue.nil? and not @@message_queue.empty?
-        @@current_track = @@message_queue.pop
-        json = { :current_track => { :name => @@current_track.name,
-                                     :artists => @@current_track.artists.join(', '),
-                                     :album => @@current_track.album.name,
-                                     :image => @@current_track.album.art_hex} }.to_json.to_s
-        settings.sockets.each { |socket| socket.send(json) }
+        message = @@message_queue.pop
+        @@current_track = message[:track]
+        @@current_user = message[:user]
+        settings.sockets.each { |socket| socket.send(track_info_to_json(@@current_track, @@current_user)) }
       end
       sleep 1
     end
@@ -52,11 +59,7 @@ class JukeboxWeb < Sinatra::Base
     request.websocket do |ws|
       ws.onopen do
         if not @@current_track.nil?
-          json = { :current_track => { :name => @@current_track.name,
-                                       :artists => @@current_track.artists.join(', '),
-                                       :album => @@current_track.album.name,
-                                       :image => @@current_track.album.art_hex} }.to_json.to_s
-          ws.send(json)
+          ws.send(track_info_to_json(@@current_track, @@current_user))
         end
         settings.sockets << ws
       end
@@ -70,10 +73,7 @@ class JukeboxWeb < Sinatra::Base
     headers 'Access-Control-Allow-Origin'         => '*',
             'Access-Conformation-Request-Method'  => '*'
     content_type 'application/json'
-    { :current_track => { :name => @@current_track.name,
-                          :artists => @@current_track.artists.join(', '),
-                          :album => @@current_track.album.name,
-                          :image => @@current_track.album.art_hex} }.to_json.to_s
+    track_info_to_json(@@current_track, @@current_user)
   end
 
   get '/pause' do

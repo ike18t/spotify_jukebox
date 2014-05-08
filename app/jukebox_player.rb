@@ -19,17 +19,17 @@ class JukeboxPlayer
         track = get_random_track_for_playlist playlists.sample
       end
       next if track.nil?
-      notify track
+      notify track, current_user
       MusicService.play track
     end
   end
 
   private
 
-  def notify track
+  def notify track, user
     @historian.record track.artists, track.name
     $logger.info "Now playing #{track.name} by #{track.artists} on the album #{track.album.name}"
-    @message_queue.push track
+    @message_queue.push({ :track => track, :user => user })
   end
 
   def get_random_track_for_playlist playlist
