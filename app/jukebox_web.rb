@@ -122,6 +122,12 @@ class JukeboxWeb < Sinatra::Base
     return :ok
   end
 
+  post '/remove_user' do
+    user_id = params[:id]
+    UserService.remove_user user_id
+    redirect '/'
+  end
+
   post '/enable_user/:id' do
     user_id = params[:id]
     UserService.enable_user user_id

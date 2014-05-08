@@ -16,6 +16,15 @@ class UserService < ServiceBase
       users.select(&:enabled?)
     end
 
+    def remove_user id
+      users = get_users
+      users.reject!{ |p| p.id == id }
+      PlaylistService.get_playlists_for_user(id).each do |playlist|
+        PlaylistService.remove_playlist playlist.id
+      end
+      save_users users
+    end
+
     def enable_user id
       users = get_users
       user_index = users.index { |user| user.id == id }

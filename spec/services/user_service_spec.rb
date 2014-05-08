@@ -90,4 +90,26 @@ describe UserService do
       UserService.disable_user 123
     end
   end
+
+  context 'remove_user' do
+    it 'should remove user form array and save' do
+      users =  [ User.new(:id => 321),
+                 User.new(:id => 123) ]
+      allow(UserService).to receive(:get_users).and_return(users)
+      expect(UserService).to receive(:save_users).with([users[0]])
+      UserService.remove_user(123)
+    end
+
+    it 'should remove users playlist form array and save' do
+      users =  [ User.new(:id => 321),
+                 User.new(:id => 123) ]
+      @playlists = [ Playlist.new(:id => 321, :user_id => 123),
+                     Playlist.new(:id => 123, :user_id => 123) ]
+      allow(UserService).to receive(:get_users).and_return(users)
+      expect(PlaylistService).to receive(:get_playlists_for_user).with(123).and_return(@playlists)
+      expect(UserService).to receive(:save_users).with([users[0]])
+      UserService.remove_user(123)
+      @playlists.count == 0
+    end
+  end
 end
