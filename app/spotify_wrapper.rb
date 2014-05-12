@@ -23,7 +23,6 @@ class SpotifyWrapper
   end
 
   def initialize config
-    @config = config
     @session = initialize_session config
   end
 
