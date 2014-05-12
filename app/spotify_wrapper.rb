@@ -18,9 +18,12 @@ class SpotifyWrapper
     end
   end
 
+  def self.plaything
+    @@plaything ||= Plaything.new
+  end
+
   def initialize config
     @config = config
-    @plaything = Plaything.new
     @session = initialize_session config
   end
 
@@ -64,7 +67,7 @@ class SpotifyWrapper
   end
 
   def playing?
-    @plaything.source.should_be_playing?
+    SpotifyWrapper.plaything.source.should_be_playing?
   end
 
   def get_track_count spotify_playlist
@@ -152,24 +155,24 @@ class SpotifyWrapper
       start_playback: proc do |session|
         @end_of_track = false
         $logger.debug('session (player)') { 'start playback' }
-        @plaything.play
+        SpotifyWrapper.plaything.play
       end,
 
       stop_playback: proc do |session|
         $logger.debug('session (player)') { 'stop playback' }
-        @plaything.stop
+        SpotifyWrapper.plaything.stop
       end,
 
       get_audio_buffer_stats: proc do |session, stats|
-        stats[:samples] = @plaything.queue_size
-        stats[:stutter] = @plaything.drops
+        stats[:samples] = SpotifyWrapper.plaything.queue_size
+        stats[:stutter] = SpotifyWrapper.plaything.drops
       end,
 
       music_delivery: proc do |session, format, frames, num_frames|
         if num_frames == 0
-          @plaything.stop
+          SpotifyWrapper.plaything.stop
         else
-          consumed_frames = @plaything.stream(format.to_h, frames, num_frames)
+          consumed_frames = SpotifyWrapper.plaything.stream(format.to_h, frames, num_frames)
           consumed_frames
         end
       end,
@@ -177,7 +180,7 @@ class SpotifyWrapper
       end_of_track: proc do |session|
         @end_of_track = true
         $logger.debug('session (player)') { 'end of track' }
-        @plaything.stop
+        SpotifyWrapper.plaything.stop
         Spotify.try(:session_player_unload, @session)
       end,
     }
