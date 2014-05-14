@@ -26,21 +26,11 @@ class UserService < ServiceBase
     end
 
     def enable_user id
-      users = get_users
-      user_index = users.index { |user| user.id == id }
-      if not user_index.nil?
-        users[user_index].enabled = true
-        save_users users
-      end
+      set_enabled id, true
     end
 
     def disable_user id
-      users = get_users
-      user_index = users.index { |user| user.id == id }
-      if not user_index.nil?
-        users[user_index].enabled = false
-        save_users users
-      end
+      set_enabled id, false
     end
 
     def get_users
@@ -48,6 +38,15 @@ class UserService < ServiceBase
     end
 
     private
+    def set_enabled user_id, enabled
+      users = get_users
+      user_index = users.index { |user| user.id == user_id }
+      if not user_index.nil?
+        users[user_index].enabled = enabled
+        save_users users
+      end
+    end
+
     def save_users users
       CacheService.cache_users! users
     end

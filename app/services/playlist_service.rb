@@ -36,21 +36,11 @@ class PlaylistService < ServiceBase
     end
 
     def enable_playlist id
-      playlists = get_playlists
-      playlist_index = playlists.index { |playlist| playlist.id == id }
-      if not playlist_index.nil?
-        playlists[playlist_index].enabled = true
-        save_playlists playlists
-      end
+      set_enabled id, true
     end
 
     def disable_playlist id
-      playlists = get_playlists
-      playlist_index = playlists.index { |playlist| playlist.id == id }
-      if not playlist_index.nil?
-        playlists[playlist_index].enabled = false
-        save_playlists playlists
-      end
+      set_enabled id, false
     end
 
     def get_tracks_for_playlist playlist
@@ -69,6 +59,15 @@ class PlaylistService < ServiceBase
     private
     def save_playlists playlists
       CacheService.cache_playlists! playlists
+    end
+
+    def set_enabled playlist_id, enabled
+      playlists = get_playlists
+      playlist_index = playlists.index { |playlist| playlist.id == playlist_id }
+      if not playlist_index.nil?
+        playlists[playlist_index].enabled = enabled
+        save_playlists playlists
+      end
     end
 
     def spotify_track_to_model playlist, spotify_track
