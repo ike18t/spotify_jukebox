@@ -13,6 +13,7 @@ gem 'thin'
 gem 'aescrypt'
 gem 'main'
 gem 'leveldb-ruby'
+gem 'rest-client'
 
 group :test do
   gem 'pry'

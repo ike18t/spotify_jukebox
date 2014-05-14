@@ -17,30 +17,19 @@ class JukeboxWeb < Sinatra::Base
     css :application, ['/css/*.css']
   end
 
-  def initialize
-    super
-    @@message_queue = settings.custom[:message_queue]
-  end
-
-  @@message_queue, @@current_track = nil
-  Thread.new do
-    loop do
-      if not @@message_queue.nil? and not @@message_queue.empty?
-        message = @@message_queue.pop
-        @@current_track = message[:track]
-        @@current_user = message[:user]
-        settings.sockets.each { |socket| socket.send(WebHelper.track_info_to_json(@@current_track, @@current_user)) }
-      end
-      sleep 1
-    end
+  @@currently_playing = nil
+  post '/player_endpoint' do
+    @@currently_playing = params['player_info']
+    broadcast_json @@currently_playing
+    return :ok
   end
 
   get '/websocket_connect' do
     if not request.websocket? then return 'Websocket connection required' end
     request.websocket do |ws|
       ws.onopen do
-        if not @@current_track.nil?
-          ws.send(WebHelper.track_info_to_json(@@current_track, @@current_user))
+        if not @@currently_playing.nil?
+          ws.send(@@currently_playing)
         end
         settings.sockets << ws
       end
@@ -54,7 +43,7 @@ class JukeboxWeb < Sinatra::Base
     headers 'Access-Control-Allow-Origin'         => '*',
             'Access-Conformation-Request-Method'  => '*'
     content_type 'application/json'
-    WebHelper.track_info_to_json(@@current_track, @@current_user)
+    @@currently_playing
   end
 
   get '/pause' do
@@ -135,5 +124,4 @@ class JukeboxWeb < Sinatra::Base
       socket.send json.to_s
     end
   end
-
 end

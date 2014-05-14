@@ -1,8 +1,10 @@
+require 'rest_client'
+
 class JukeboxPlayer
 
-  def initialize message_queue, track_historian
-    @historian = track_historian
-    @message_queue = message_queue
+  def initialize player_update_endpoint
+    @player_update_endpoint = player_update_endpoint
+    @historian = TrackHistorian.new
   end
 
   def start!
@@ -29,7 +31,7 @@ class JukeboxPlayer
   def notify track, user
     @historian.record track.artists, track.name
     $logger.info "Now playing #{track.name} by #{track.artists} on the album #{track.album.name}"
-    @message_queue.push({ :track => track, :user => user })
+    RestClient.post @player_update_endpoint, { :player_info => WebHelper.track_info_to_json(track, user) }
   end
 
   def get_random_track_for_playlist playlist

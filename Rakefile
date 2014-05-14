@@ -25,19 +25,20 @@ RSpec::Core::RakeTask.new :spec
 task :default => :spec
 
 APP_ROOT = File.expand_path(File.join(File.dirname(__FILE__)))
+SINATRA_PORT = 4567
+PLAYER_ENDPOINT = 'http://localhost:%s/player_endpoint'
 
 log_file = File.open('spotify_jukebox.log', 'w')
 $logger = Logger.new(MultiIO.new(STDOUT, log_file))
 $logger.level = Logger::INFO
 
-@message_queue = Queue.new
-
 task :start_web_only do
-  JukeboxWeb.run!({ :server => 'thin', :custom => { :message_queue => @message_queue }})
+  JukeboxWeb.run!({ :server => 'thin', :port => SINATRA_PORT })
 end
 
 task :start_player_only do
-  JukeboxPlayer.new(@message_queue, TrackHistorian.new).start!
+  player_update_endpoint = PLAYER_ENDPOINT % SINATRA_PORT
+  JukeboxPlayer.new(player_update_endpoint).start!
 end
 
 task :start do
