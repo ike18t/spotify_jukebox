@@ -3,9 +3,11 @@ require 'rack/test'
 require 'rspec'
 require 'pry'
 require 'autotest'
+require 'codeclimate-test-reporter'
 require_relative 'mock_logger'
 
 ENV['RACK_ENV'] = 'test'
+CodeClimate::TestReporter.start
 
 def autoload_all path
   Dir.glob("#{path}**/*.rb").each do |file|

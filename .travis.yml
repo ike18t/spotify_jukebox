@@ -8,6 +8,7 @@ rvm:
 env:
   - RUBY_PLATFORM="x86_64-linux"
   - RUBY_PLATFORM="x86_64-darwin11.3.0"
+  - CODECLIMATE_REPO_TOKEN=bccfad5e9dbca0688a4ee7d9bb5aa3e7ce943b910b8f52bdea5c6701c2378ef4
 before_install:
   - git clone https://code.google.com/p/leveldb/
   - make -C $(pwd)/leveldb/
