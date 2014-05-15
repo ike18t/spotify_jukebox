@@ -51,3 +51,9 @@ module TestHelper
 end
 
 $logger = MockLogger.new
+
+class CacheService
+  def self.data_store
+    @@data_store ||= {}
+  end
+end

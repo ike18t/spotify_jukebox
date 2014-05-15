@@ -10,17 +10,17 @@ class CacheService
       type = type.to_s
 
       define_method("get_#{type}") do
-        value = leveldb[type]
+        value = data_store[type]
         value.nil? ? [] : YAML::load(value)
       end
 
       define_method("cache_#{type}!") do |value|
-        leveldb[type] = value.to_yaml
+        data_store[type] = value.to_yaml
       end
     end
 
     private
-    def leveldb
+    def data_store
       @@leveldb ||= LevelDB::DB.new '.cache'
     end
   end
