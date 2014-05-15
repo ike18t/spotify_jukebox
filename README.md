@@ -1,5 +1,6 @@
 [![Build Status](https://travis-ci.org/ike18t/spotify_jukebox.png?branch=master)](https://travis-ci.org/ike18t/spotify_jukebox)
 [![Code Climate](https://codeclimate.com/github/ike18t/spotify_jukebox.png)](https://codeclimate.com/github/ike18t/spotify_jukebox)
+[![Test Coverage](https://codeclimate.com/github/ike18t/spotify_jukebox/coverage.png)](https://codeclimate.com/github/ike18t/spotify_jukebox)
 [![Dependency Status](https://gemnasium.com/ike18t/spotify_jukebox.png)](https://gemnasium.com/ike18t/spotify_jukebox)
 
 ##Spotify Jukebox
