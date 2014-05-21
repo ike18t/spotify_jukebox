@@ -31,7 +31,13 @@ class JukeboxPlayer
   def notify track, user
     @historian.record track.artists, track.name
     $logger.info "Now playing #{track.name} by #{track.artists} on the album #{track.album.name}"
-    RestClient.post @player_update_endpoint, { :player_info => WebHelper.track_info_to_json(track, user) }
+    begin
+      RestClient.post @player_update_endpoint, { :player_info => WebHelper.track_info_to_json(track, user) }
+    rescue Errno::ECONNREFUSED => ex
+      $logger.info 'Jukebox server not available: ' + ex.message
+    rescue Exception => ex
+      $logger.info ex.message
+    end
   end
 
   def get_random_track_for_playlist playlist
