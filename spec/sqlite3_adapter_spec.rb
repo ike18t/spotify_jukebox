@@ -1,5 +1,4 @@
 require_relative 'spec_helper'
-require 'rake'
 
 describe SQLite3Adapter do
 
