@@ -32,11 +32,11 @@ log_file = File.open('spotify_jukebox.log', 'w')
 $logger = Logger.new(MultiIO.new(STDOUT, log_file))
 $logger.level = Logger::INFO
 
-task :start_web_only do
+task :start_web do
   JukeboxWeb.run!({ :server => 'thin', :port => SINATRA_PORT })
 end
 
-task :start_player_only do
+task :start_player do
   player_update_endpoint = PLAYER_ENDPOINT % SINATRA_PORT
   JukeboxPlayer.new(player_update_endpoint).start!
 end
@@ -52,8 +52,8 @@ task :start do
   Thread.abort_on_exception = true
 
   Thread.new do
-    Rake::Task[:start_player_only].execute
+    Rake::Task[:start_player].execute
   end
-  Rake::Task[:start_web_only].execute
+  Rake::Task[:start_web].execute
 end
 
