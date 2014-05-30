@@ -12,8 +12,8 @@ gem 'nokogiri'
 gem 'thin'
 gem 'aescrypt'
 gem 'main'
-gem 'leveldb-ruby'
 gem 'rest-client'
+gem 'sqlite3'
 
 group :test do
   gem 'pry'

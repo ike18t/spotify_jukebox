@@ -1,5 +1,4 @@
 require 'yaml'
-require 'leveldb'
 
 class CacheService
 
@@ -21,7 +20,7 @@ class CacheService
 
     private
     def data_store
-      @@leveldb ||= LevelDB::DB.new '.cache'
+      @data_store ||= SQLite3Adapter.new
     end
   end
 end
