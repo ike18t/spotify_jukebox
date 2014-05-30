@@ -41,7 +41,7 @@ task :start_player do
   JukeboxPlayer.new(player_update_endpoint).start!
 end
 
-task :db_init, :db_name do |task, args|
+task :db_init do
   require 'sqlite3'
   db = SQLite3::Database.new('jukebox.db')
   db.execute('CREATE TABLE key_value_store( key CHAR(100) PRIMARY KEY NOT NULL, value BLOB NOT NULL );')
