@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+
+set -e
+
+hrule() {
+  printf "\n"
+  printf '*%.0s' {1..80}
+  printf "\n"
+}
+
+printTitle() {
+  TITLE=$1
+  hrule
+  printf "\n$TITLE\n"
+  hrule
+}
+
+printTitle "Fetching Gem Dependencies"
+bundle install --path vendor/bundle
+
+printTitle "Verifying Application"
+bundle exec rspec -f d spec
+
+printTitle "Setting Up Database"
+bundle exec rake db_init
+
+
+printTitle "One Last Thing"
+printf "Configure Spotify using the following command\n\n"
+./configure.rb -h
