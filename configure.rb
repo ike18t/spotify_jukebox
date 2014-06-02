@@ -1,7 +1,22 @@
 #!/usr/bin/env ruby
 require 'bundler/setup'
 require 'main'
-require_relative 'app/services/config_service'
+
+def autoload_all path
+  Dir.glob("#{path}**/*.rb").each do |file|
+    File.open(file, 'r') do |infile|
+      while (line = infile.gets)
+        match = line.match /^(class|module)\s([A-Z]\w+)/
+        if not match.nil? and not match[2].nil?
+          autoload match[2].to_sym, File.expand_path(file)
+          break
+        end
+      end
+    end
+  end
+end
+
+autoload_all 'app/'
 
 Main {
   option(:username) {
