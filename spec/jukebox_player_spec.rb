@@ -15,7 +15,7 @@ describe JukeboxPlayer do
 
       historian = double(:played_recently? => true)
       jukebox_player = JukeboxPlayer.new nil, historian
-      jukebox_player.send(:get_random_track_for_playlist, Playlist.new).should eql(nil)
+      expect(jukebox_player.send(:get_random_track_for_playlist, Playlist.new)).to be nil
     end
 
     xit 'should return a track that has not been played recently' do
@@ -33,7 +33,7 @@ describe JukeboxPlayer do
       end
 
       jukebox_player = JukeboxPlayer.new spotify_wrapper, nil, historian
-      jukebox_player.send(:get_random_track_for_playlist, 'playlist').should eql(expected)
+      expect(jukebox_player.send(:get_random_track_for_playlist, 'playlist')).to eql(expected)
     end
   end
 end

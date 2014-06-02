@@ -13,13 +13,13 @@ describe CacheService do
 
       context "get_#{type}" do
         it 'should return an empty array if the key is not in cache' do
-          CacheService.get_playlists.should eq([])
+          expect(CacheService.get_playlists).to eq([])
         end
 
         it "should read #{type} hash from cache source" do
           hash = {type => { :a => 'a', :b => 'b' }}
           @data_store[type] = hash.to_yaml
-          CacheService.send("get_#{type}").should eq(hash)
+          expect(CacheService.send("get_#{type}")).to eq(hash)
         end
       end
     end
@@ -33,7 +33,7 @@ describe CacheService do
         it "should update #{type} hash and write to file as yaml" do
           hash = {type => { :a => 'a', :b => 'b' }}
           CacheService.send("cache_#{type}!", hash)
-          YAML::load(@data_store[type]).should eq(hash)
+          expect(YAML::load(@data_store[type])).to eq(hash)
         end
       end
     end

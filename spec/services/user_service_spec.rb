@@ -24,8 +24,8 @@ describe UserService do
       allow(UserService).to receive(:save_users).once
       expect(SpotifyScraper).to receive(:name_and_image_from_spotify_id).with(123).once.and_return({ :name => 'some_name', :image_url => 'some_url' })
       user = UserService.create_user 123
-      user.name.should eq('some_name')
-      user.image_url.should eq('some_url')
+      expect(user.name).to eq('some_name')
+      expect(user.image_url).to eq('some_url')
     end
   end
 
@@ -41,7 +41,7 @@ describe UserService do
       disabled = [ User.new(:id => 123, :name => 'name123', :image_url => 'url123', :enabled => false) ]
 
       expect(UserService).to receive(:get_users).and_return(enabled + disabled)
-      UserService.get_enabled_users.should eq(enabled)
+      expect(UserService.get_enabled_users).to eq(enabled)
     end
   end
 
@@ -65,7 +65,7 @@ describe UserService do
       expect(UserService).to receive(:get_users).and_return(users)
       expect(UserService).to receive(:save_users)
       UserService.enable_user 123
-      users[0].enabled?.should eq(true)
+      expect(users[0].enabled?).to be true
     end
 
     it 'should not save changes if user does not exist' do
@@ -81,7 +81,7 @@ describe UserService do
       allow(UserService).to receive(:get_users).and_return(users)
       allow(UserService).to receive(:save_users)
       UserService.disable_user 123
-      users[0].enabled?.should eq(false)
+      expect(users[0].enabled?).to be false
     end
 
     it 'should not save changes if user does not exist' do

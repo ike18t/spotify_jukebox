@@ -12,7 +12,7 @@ describe TrackHistorian do
       track_history = [:a, :b, :c]
       allow(CacheService).to receive(:get_track_history).and_return(track_history)
       @track_historian = TrackHistorian.new
-      @track_historian.instance_variable_get(:@track_history).should eq(track_history)
+      expect(@track_historian.instance_variable_get(:@track_history)).to eq(track_history)
     end
   end
 
@@ -20,7 +20,7 @@ describe TrackHistorian do
     it 'should update enabled playlist list should do what its name implies' do
       dummy_list = [:a, :b]
       @track_historian.update_enabled_playlists_list dummy_list
-      @track_historian.instance_variable_get(:@enabled_playlists).should eq(dummy_list)
+      expect(@track_historian.instance_variable_get(:@enabled_playlists)).to eq(dummy_list)
     end
   end
 
@@ -28,7 +28,7 @@ describe TrackHistorian do
     it 'should store the playlist count key value pair in the playlist_track_counts instance variable' do
       playlist, count = Playlist.new(:name => 'bah'), 2
       @track_historian.update_playlist_track_count playlist, count
-      @track_historian.instance_variable_get(:@playlist_track_counts).should eq({playlist.name => count})
+      expect(@track_historian.instance_variable_get(:@playlist_track_counts)).to eq({playlist.name => count})
     end
   end
 
@@ -39,7 +39,7 @@ describe TrackHistorian do
       allow(@track_historian).to receive(:generate_track_key).and_return(track_key)
       allow(@track_historian).to receive(:get_calculated_size).and_return(1)
       @track_historian.record 'artist', 'track'
-      @track_historian.instance_variable_get(:@track_history).should include(track_key)
+      expect(@track_historian.instance_variable_get(:@track_history)).to include(track_key)
     end
 
     it 'should bump value in index 0 if max size has been met' do
@@ -47,7 +47,7 @@ describe TrackHistorian do
       @track_historian.instance_variable_set(:@track_history, [:a, :b, :c])
       allow(@track_historian).to receive(:get_calculated_size).and_return(3)
       @track_historian.record 'artist', 'track'
-      @track_historian.instance_variable_get(:@track_history).should eq([:b, :c, track_key])
+      expect(@track_historian.instance_variable_get(:@track_history)).to eq([:b, :c, track_key])
     end
 
     it 'should persist history to cache' do
@@ -65,14 +65,14 @@ describe TrackHistorian do
       track_key = { 'artist' => 'track' }
       @track_historian.instance_variable_set(:@track_history, [:a, track_key, :c])
       allow(@track_historian).to receive(:generate_track_key).and_return(track_key)
-      @track_historian.played_recently?('artist', 'track').should be_true
+      expect(@track_historian.played_recently?('artist', 'track')).to be true
     end
 
     it 'should return false if the track key is not in the track_history array' do
       track_key = 'artist => track'
       @track_historian.instance_variable_set(:@track_history, [:a, :b, :c])
       allow(@track_historian).to receive(:generate_track_key).and_return(track_key)
-      @track_historian.played_recently?('artist', 'track').should be_false
+      expect(@track_historian.played_recently?('artist', 'track')).to be false
     end
   end
 
@@ -81,18 +81,18 @@ describe TrackHistorian do
       @track_historian.instance_variable_set(:@enabled_playlists, ['a', 'b', 'c'])
     end
 
-    it { @track_historian.send(:get_calculated_size).should eq(0) }
+    it { expect(@track_historian.send(:get_calculated_size)).to eq(0) }
 
     it 'should add enabled playlists track counts and return 75%' do
       playlist_track_counts = {'a' => 1, 'b' => 4, 'c' => 3}
       @track_historian.instance_variable_set(:@playlist_track_counts, playlist_track_counts)
-      @track_historian.send(:get_calculated_size).should eq(4)
+      expect(@track_historian.send(:get_calculated_size)).to eq(4)
     end
 
     it 'should not error if an enabled_playlist is not in the list' do
       playlist_track_counts = {'a' => 1, 'c' => 3}
       @track_historian.instance_variable_set(:@playlist_track_counts, playlist_track_counts)
-      @track_historian.send(:get_calculated_size).should eq(2)
+      expect(@track_historian.send(:get_calculated_size)).to eq(2)
     end
   end
 

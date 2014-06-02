@@ -11,8 +11,8 @@ describe SpotifyScraper do
       HTML
       allow(SpotifyScraper).to receive(:open).and_return(str)
       name_and_url = SpotifyScraper.name_and_image_from_spotify_id 123
-      name_and_url[:name].should eq('idatlof')
-      name_and_url[:image_url].should eq('http://google.com/ike.jpg')
+      expect(name_and_url[:name]).to eq('idatlof')
+      expect(name_and_url[:image_url]).to eq('http://google.com/ike.jpg')
     end
 
     it 'should set the image_url to nil if it is not found' do
@@ -23,8 +23,8 @@ describe SpotifyScraper do
       HTML
       allow(SpotifyScraper).to receive(:open).and_return(str)
       name_and_url = SpotifyScraper.name_and_image_from_spotify_id 123
-      name_and_url[:name].should eq('idatlof')
-      name_and_url[:image_url].should eq(nil)
+      expect(name_and_url[:name]).to eq('idatlof')
+      expect(name_and_url[:image_url]).to be nil
     end
   end
 end

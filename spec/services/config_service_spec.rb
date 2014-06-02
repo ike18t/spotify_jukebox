@@ -11,7 +11,7 @@ describe ConfigService do
       updates = { :username => 'ike' }
       ConfigService.update updates
       config = ConfigService.get
-      config.username.should eq(updates[:username])
+      expect(config.username).to eq(updates[:username])
     end
 
     it { expect { ConfigService.update({ :username1 => 'ike' }) }.to raise_error(NoMethodError) }

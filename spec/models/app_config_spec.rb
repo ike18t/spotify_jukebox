@@ -4,7 +4,7 @@ describe AppConfig do
   it 'should update attributes with the values passed into initialize' do
     username, playlist_uri = 'ike', 'http://bah'
     config = AppConfig.new :username => username
-    config.username.should eq(username)
+    expect(config.username).to eq(username)
   end
 
   it 'should IO read binary the app_key if the file exists' do
@@ -19,13 +19,13 @@ describe AppConfig do
     app_key = '/path'
     config = AppConfig.new :app_key => app_key
     expect(File).to receive(:exists?).and_return(false)
-    config.app_key.should be_nil
+    expect(config.app_key).to be nil
   end
 
   it 'should have blank values if nothing passed in on intialization' do
     config = AppConfig.new
-    config.username.should be_nil
-    config.password.should be_nil
-    config.app_key.should be_nil
+    expect(config.username).to be nil
+    expect(config.password).to be nil
+    expect(config.app_key).to be nil
   end
 end

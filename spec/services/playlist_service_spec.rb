@@ -35,7 +35,7 @@ describe PlaylistService do
 
       expect(PlaylistService).to receive(:spotify_wrapper).twice.and_return(wrapper_double)
       playlist = PlaylistService.create_playlist 123, 567, ''
-      playlist.name.should eq('bah')
+      expect(playlist.name).to eq('bah')
     end
 
     it 'should create_user if adding a playlist' do
@@ -63,7 +63,7 @@ describe PlaylistService do
       expect(PlaylistService).to receive(:spotify_wrapper).twice.and_return(wrapper_double)
       expect(PlaylistService).to receive(:save_playlists).once
       playlist = PlaylistService.create_playlist 123, 567, ''
-      playlist.enabled?.should be_true
+      expect(playlist.enabled?).to be true
     end
   end
 
@@ -84,7 +84,7 @@ describe PlaylistService do
       not_user_playlists = [ Playlist.new(:id => 567, :user_id => 123) ]
 
       expect(PlaylistService).to receive(:get_playlists).and_return(user_playlists + not_user_playlists)
-      PlaylistService.get_playlists_for_user(321).should eq(user_playlists)
+      expect(PlaylistService.get_playlists_for_user(321)).to eq(user_playlists)
     end
   end
 
@@ -95,7 +95,7 @@ describe PlaylistService do
       disabled = [ Playlist.new(:enabled => false) ]
 
       expect(PlaylistService).to receive(:get_playlists).and_return(enabled + disabled)
-      PlaylistService.get_enabled_playlists.should eq(enabled)
+      expect(PlaylistService.get_enabled_playlists).to eq(enabled)
     end
   end
 
@@ -111,7 +111,7 @@ describe PlaylistService do
       disabled = [ Playlist.new(:id => 123, :name => 'name123', :uri => 'uri123', :enabled => false) ]
 
       expect(PlaylistService).to receive(:get_playlists_for_user).with(1).and_return(enabled + disabled)
-      PlaylistService.get_enabled_playlists_for_user(1).should eq(enabled)
+      expect(PlaylistService.get_enabled_playlists_for_user(1)).to eq(enabled)
     end
   end
 
@@ -135,7 +135,7 @@ describe PlaylistService do
       allow(PlaylistService).to receive(:get_playlists).and_return(playlists)
       expect(PlaylistService).to receive(:save_playlists)
       PlaylistService.enable_playlist 123
-      playlists[0].enabled?.should eq(true)
+      expect(playlists[0].enabled?).to be true
     end
 
     it 'should not make save if playlist does not exist' do
@@ -151,7 +151,7 @@ describe PlaylistService do
       allow(PlaylistService).to receive(:get_playlists).and_return(playlists)
       allow(PlaylistService).to receive(:save_playlists)
       PlaylistService.disable_playlist 123
-      playlists[0].enabled?.should eq(false)
+      expect(playlists[0].enabled?).to be false
     end
 
     it 'should not save changes if playlist does not exist' do
@@ -189,11 +189,11 @@ describe PlaylistService do
       expect(PlaylistService).to receive(:spotify_wrapper).at_least(1).times.and_return(wrapper_double)
       expect(PlaylistService).to receive(:spotify_track_artists).with(track).and_return('track_artist')
       ret_track = PlaylistService.send(:spotify_track_to_model, playlist, track)
-      ret_track.name.should eq('track_name')
-      ret_track.playlist_id.should eq(123)
-      ret_track.artists.should eq('track_artist')
-      ret_track.album.should eq('track_album')
-      ret_track.spotify_track.should eq(track)
+      expect(ret_track.name).to eq('track_name')
+      expect(ret_track.playlist_id).to eq(123)
+      expect(ret_track.artists).to eq('track_artist')
+      expect(ret_track.album).to eq('track_album')
+      expect(ret_track.spotify_track).to eq(track)
     end
   end
 
@@ -209,7 +209,7 @@ describe PlaylistService do
       expect(wrapper_double).to receive(:get_artist_name).with(artist1).and_return(:artist1)
       expect(wrapper_double).to receive(:get_artist_name).with(artist2).and_return(:artist2)
       expect(PlaylistService).to receive(:spotify_wrapper).at_least(1).times.and_return(wrapper_double)
-      PlaylistService.send(:spotify_track_artists, track).should eq([:artist1, :artist2])
+      expect(PlaylistService.send(:spotify_track_artists, track)).to eq([:artist1, :artist2])
     end
   end
 
@@ -222,8 +222,8 @@ describe PlaylistService do
       expect(wrapper_double).to receive(:get_album_cover).with(album_double, PlaylistService::SP_IMAGE_SIZE_NORMAL).and_return(cover_double)
       expect(PlaylistService).to receive(:spotify_wrapper).at_least(1).times.and_return(wrapper_double)
       album = PlaylistService.send(:spotify_album_to_model, album_double)
-      album.name.should eq(:album_name)
-      album.art_hex.should eq(:hex)
+      expect(album.name).to eq(:album_name)
+      expect(album.art_hex).to eq(:hex)
     end
   end
 end
