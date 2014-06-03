@@ -107,7 +107,7 @@ class SpotifyWrapper
   rescue Spotify::Error => e
     $logger.error e.message
     if e.message =~ /^\[TRACK_NOT_PLAYABLE\]/
-      @end_of_track = true
+      get_callbacks()[:end_of_track].call(@session)
     else
       throw
     end
