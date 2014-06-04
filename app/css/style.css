@@ -1,0 +1,154 @@
+/*
+** Fonts
+*/
+@import url(http://fonts.googleapis.com/css?family=Oswald:400,700,300);
+@import url(http://fonts.googleapis.com/css?family=Titillium+Web:400,200,300,600,700);
+
+
+/*
+** Entity List
+*/
+
+body { background:black; font-size:16px; }
+
+
+/*
+** Entity List
+*/
+
+.entity-list {
+  list-style: none;
+  margin:0; padding:0;
+}
+
+
+/*
+** Users
+*/
+
+.users {
+  color: #FFF;
+  margin: 0 0 0 1em;
+}
+
+.user { margin: 2.5em 0 0 0; }
+.user:first-child { margin: 0; }
+
+.user > .name {
+  font: 300 1em 'Oswald', sans-serif;
+  padding: 1em 0 1em 1em;
+  text-transform: uppercase;
+}
+
+
+/*
+** Playlists
+*/
+
+.playlist { margin-bottom: 1em; }
+
+.playlist > .name {
+  font: 700 2em 'Titillium Web', sans-serif;
+  cursor: pointer;
+}
+
+.playlist .toggle { display: none; }
+
+.playlist.active > .name .content {
+  background: #0DBCFF;
+  box-shadow: 0px 0px .5em 0px #0DBCFF;
+  text-shadow: 0px 0px .5em #FFF;
+}
+
+/*
+** Add Playlist Button
+*/
+
+.add-playlist {
+  color: #FFF;
+  font: 300 1em 'Titillium Web', sans-serif;
+  margin: 2.5em 0 0 1em;
+  outline: none;
+}
+
+/*
+** Extending Extrusion Effect
+*/
+
+.transformed {
+  border: none;
+  display: inline-block;
+}
+
+
+/*
+** Now Playing
+*/
+
+.now-playing {
+  color: #FFF;
+  font: 300 1em 'Oswald', sans-serif;
+  padding: 1em 0 0 0;
+}
+
+.now-playing .album-art {
+  box-shadow: 0px 0px 50em 0;
+  color: #0DBCFF;
+  display: inline-block;
+  width: 25em; height: 25em;
+}
+
+.now-playing .album-art img {
+  width: 100%; height: 100%;
+}
+
+.now-playing .album-artist {
+  margin: 0 0 1em 0;
+  position: relative;
+  text-transform: uppercase;
+  z-index: 1;
+}
+
+
+.now-playing .album-title {
+  font-size: 2em;
+  margin: 0 0 1em 0 ;
+  position: relative;
+  z-index: 1;
+}
+
+
+/*
+** Dialog Boxes
+*/
+
+.ui-dialog {
+  color: #FFF;
+  font: 300 1em 'Titillium Web', sans-serif;
+  background: #0C71E8;
+}
+
+.ui-dialog,
+.ui-dialog form,
+.ui-dialog fieldset,
+.ui-dialog input,
+.ui-dialog button {
+  border: none;
+  outline: none;
+}
+
+.ui-dialog input[type="url"] {
+  line-height: 2em;
+  margin: 1em 0 1em 0;
+  width: 100%;
+}
+
+.ui-dialog fieldset,
+.ui-dialog-buttonset {
+  margin: 0;
+  padding: 1em;
+}
+.ui-dialog-buttonset { text-align: right; }
+.ui-dialog-buttonset button { margin: 0 1em 0 0; }
+
+.ui-dialog-titlebar { display: none; }
