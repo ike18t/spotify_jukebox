@@ -14,7 +14,7 @@ class JukeboxWeb < Sinatra::Base
 
   assets do
     js :application, ['/js/*.js']
-    css :application, ['/css/normalize.css', '/css/style.css', '/css/extruding-button.css']
+    css :application, ['/css/base-min.css', '/css/grids-min.css', '/css/grids-responsive-min.css', '/css/style.css', '/css/extruding-button.css']
   end
 
   @@currently_playing = nil

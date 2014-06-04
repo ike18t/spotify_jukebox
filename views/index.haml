@@ -1,21 +1,24 @@
-%ul.users.entity-list
-  - locals[:users].each do |user|
-    %li.user{ :id => "user_#{user.id}" }
-      .name= user.name
-      %ul.playlists.entity-list
-        - locals[:playlists][user.id].each do |playlist|
-          %li.playlist{ :id => playlist.id, :class => if playlist.enabled? then 'active' end }
-            %label.name.transformed.transform-extrude
-              %span.content= playlist.name
-              %span.right.side
-              %span.bottom.side
+.pure-g
+  .pure-u-1-2
+    %ul.users.entity-list
+      - locals[:users].each do |user|
+        %li.user{ :id => "user_#{user.id}" }
+          .name= user.name
+          %ul.playlists.entity-list
+            - locals[:playlists][user.id].each do |playlist|
+              %li.playlist{ :id => playlist.id, :class => if playlist.enabled? then 'active' end }
+                %label.name.transformed.transform-extrude
+                  %span.content= playlist.name
+                  %span.right.side
+                  %span.bottom.side
 
-#current_track_container
-  #art{:style => 'display: inline'}
-  #track_info{:style => 'display: inline-block'}
-    #title
-    #artist
-    #user
+  .pure-u-1-2
+    #current_track_container
+      #art{:style => 'display: inline'}
+      #track_info{:style => 'display: inline-block'}
+        #title
+        #artist
+        #user
 
 %a#add_playlist Add Playlist
 
