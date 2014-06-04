@@ -1,6 +1,6 @@
 %ul.users.entity-list
   - locals[:users].each do |user|
-    %li.user{:id => user.id, :class => if user.enabled? then 'enabled' end}
+    %li.user{ :id => "user_#{user.id}" }
       .name= user.name
       %ul.playlists.entity-list
         - locals[:playlists][user.id].each do |playlist|

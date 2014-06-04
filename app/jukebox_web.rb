@@ -101,25 +101,10 @@ class JukeboxWeb < Sinatra::Base
     redirect '/'
   end
 
-  post '/enable_user/:id' do
-    user_id = params[:id]
-    UserService.enable_user user_id
-    broadcast_enabled
-    return :ok
-  end
-
-  post '/disable_user/:id' do
-    user_id = params[:id]
-    UserService.disable_user user_id
-    broadcast_enabled
-    return :ok
-  end
-
   def broadcast_enabled
-    enabled_user_ids = UserService.get_enabled_users.map{ |user| user.id }
     enabled_playlist_ids = PlaylistService.get_enabled_playlists.map{ |playlist| playlist.id }
     settings.sockets.each do |socket|
-      broadcast_json({ :enabled_users => enabled_user_ids, :enabled_playlists => enabled_playlist_ids }.to_json)
+      broadcast_json({ :enabled_playlists => enabled_playlist_ids }.to_json)
     end
   end
 

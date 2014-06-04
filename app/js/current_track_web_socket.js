@@ -9,13 +9,6 @@ var currentTrackWebSocket = function() {
     $container.find('#user').text(data.user.name);
   };
 
-  var updateEnabledUsers = function(data) {
-    $('.users li').each(function(idx, item) {
-      var $item = $(item);
-      data.indexOf(item.id) >= 0 ? $item.addClass('enabled', 500) : $item.removeClass('enabled', 500);
-    });
-  };
-
   var updateEnabledPlaylists = function(data) {
     $('li.playlist').each(function(idx, item) {
       var $item = $(item);
@@ -33,9 +26,6 @@ var currentTrackWebSocket = function() {
       var json_message = JSON.parse(m.data);
       if (json_message.hasOwnProperty('current_track')) {
         updateTrackInfo(json_message.current_track);
-      }
-      if (json_message.hasOwnProperty('enabled_users')) {
-        updateEnabledUsers(json_message.enabled_users);
       }
       if (json_message.hasOwnProperty('enabled_playlists')) {
         updateEnabledPlaylists(json_message.enabled_playlists);
