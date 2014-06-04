@@ -1,0 +1,52 @@
+.transform-extrude {
+  background: none;
+  padding: 0;
+  position: relative;
+}
+
+.transform-extrude .content {
+  background-color: #0C71E8;
+  display: inline-block;
+  padding: .5em; padding-top: .35em;
+}
+
+.transform-extrude .side { position: absolute; }
+
+.transform-extrude .right {
+  background: #0DBCFF;
+  top: .25em; right: -.5em;
+  width: .5em; height: 100%;
+  -webkit-transform: skewY(45deg);
+  transform: skewY(45deg);
+}
+
+.transform-extrude .bottom {
+  background: #1A0C70;
+  bottom: -.5em; left: .25em;
+  position: absolute;
+  width: 100%; height: .5em;
+  -webkit-transform: skewX(45deg);
+  transform: skewX(45deg);
+}
+
+.transform-extrude .bottom.border {
+  border-right-color: transparent;
+  border-right-style: solid;
+  border-right-width: .5em;
+  border-bottom-color: #1A0C70;
+  border-bottom-style: solid;
+  border-bottom-width: .5em;
+}
+
+.transform-extrude:hover .content,
+.active .transform-extrude .content {
+  left: .5em; top: .5em;
+  position:relative; xmargin-left: .5em; xmargin-top: .5em;
+}
+
+.transform-extrude:hover .side,
+.active .transform-extrude .side{ display: none; }
+
+.transform-extrude:hover .border,
+.active .transform-extrude .border { border: none; }
+

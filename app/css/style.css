@@ -1,0 +1,74 @@
+/*
+** Fonts
+*/
+@import url(http://fonts.googleapis.com/css?family=Oswald:400,700,300);
+@import url(http://fonts.googleapis.com/css?family=Titillium+Web:400,200,300,600,700);
+
+
+/*
+** Entity List
+*/
+
+body { background:black; font-size:16px; }
+
+
+/*
+** Entity List
+*/
+
+.entity-list {
+  list-style: none;
+  margin:0;
+  padding:0;
+}
+
+
+/*
+** Users
+*/
+
+.users {
+  color: #FFF;
+  margin: 0 0 0 1em;
+}
+
+.user { margin-top: 2.5em; }
+.user:first-child { margin-top: 0; }
+
+.user > .name {
+  font: 300 1em 'Oswald', sans-serif;
+  padding: 1em 0 1em 1em;
+  text-transform: uppercase;
+}
+
+
+/*
+** Playlists
+*/
+
+.playlist { margin-bottom: 1em; }
+
+.playlist > .name {
+  font: 700 2em 'Titillium Web', sans-serif;
+  cursor: pointer;
+}
+
+.playlist .toggle { display: none; }
+
+.playlist.active > .name .content {
+  background: #0DBCFF;
+  box-shadow: 0px 0px .5em 0px #0DBCFF;
+  text-shadow: 0px 0px .5em #FFF;
+}
+
+
+/*
+** Extrusion Effect
+*/
+
+.transformed {
+  border: none;
+  display: inline-block;
+  margin: 0;
+}
+

@@ -10,11 +10,18 @@ var currentTrackWebSocket = function() {
   };
 
   var updateEnabledUsers = function(data) {
-    $('#users li').each(function(idx, item) {
+    $('.users li').each(function(idx, item) {
       var $item = $(item);
       data.indexOf(item.id) >= 0 ? $item.addClass('enabled', 500) : $item.removeClass('enabled', 500);
     });
   };
+
+  var updateEnabledPlaylists = function(data) {
+    $('li.playlist').each(function(idx, item) {
+      var $item = $(item);
+      data.indexOf(item.id) >= 0 ? $item.addClass('active', 500) : $item.removeClass('active', 500);
+    });
+  }
 
   var webSocket;
   this.initialize = function(){
@@ -29,6 +36,9 @@ var currentTrackWebSocket = function() {
       }
       if (json_message.hasOwnProperty('enabled_users')) {
         updateEnabledUsers(json_message.enabled_users);
+      }
+      if (json_message.hasOwnProperty('enabled_playlists')) {
+        updateEnabledPlaylists(json_message.enabled_playlists);
       }
     };
   };

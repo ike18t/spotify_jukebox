@@ -1,9 +1,14 @@
-%ul#users
+%ul.users.entity-list
   - locals[:users].each do |user|
-    %li{:id => user.id, :class => if user.enabled? then 'enabled' end}
-      - if user.image_url
-        %img{:src => user.image_url}
-      = user.name
+    %li.user{:id => user.id, :class => if user.enabled? then 'enabled' end}
+      .name= user.name
+      %ul.playlists.entity-list
+        - locals[:playlists][user.id].each do |playlist|
+          %li.playlist{ :id => playlist.id, :class => if playlist.enabled? then 'active' end }
+            %label.name.transformed.transform-extrude
+              %span.content= playlist.name
+              %span.right.side
+              %span.bottom.side
 
 #current_track_container
   #art{:style => 'display: inline'}
@@ -27,13 +32,13 @@
     var trackHandler = WebSocket ? currentTrackWebSocket() : currentTrackPoller();
     trackHandler.initialize();
 
-    $('#users li').on('click', function(e) {
-      var isEnabled = $(e.target).hasClass('enabled');
+    $('li.playlist').on('click', function(e) {
+      e.preventDefault();
+      var isEnabled = $(this).hasClass('active');
       $.ajax({
-        url: (isEnabled ? 'disable_user/' : 'enable_user/') + e.target.id,
+        url: (isEnabled? 'disable_playlist/' : 'enable_playlist/') + $(this).attr('id'),
         type: 'POST'
       });
-      if (!WebSocket) location.reload();
     });
 
     $('#dialog_form').dialog({
