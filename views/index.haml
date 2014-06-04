@@ -12,6 +12,11 @@
                   %span.right.side
                   %span.bottom.side
 
+    %button.add-playlist.transformed.transform-extrude#add_playlist_button
+      %span.content + Playlist
+      %span.right.side
+      %span.bottom.side
+
   .pure-u-1-2
     .now-playing#track-data
       .album-artist#artist
@@ -21,7 +26,6 @@
         .user-avatar#avatar
         .user-name#name
 
-%a#add_playlist Add Playlist
 
 %form#dialog_form{:action => 'add_playlist', :method => 'POST'}
   %fieldset
@@ -77,5 +81,5 @@
       }
     });
 
-    $('#add_playlist').on('click', function() { $('#dialog_form').dialog('open'); });
+    $('#add_playlist_button').on('click', function() { $('#dialog_form').dialog('open'); });
   });
