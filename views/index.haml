@@ -13,12 +13,13 @@
                   %span.bottom.side
 
   .pure-u-1-2
-    #current_track_container
-      #art{:style => 'display: inline'}
-      #track_info{:style => 'display: inline-block'}
-        #title
-        #artist
-        #user
+    .now-playing#track-data
+      .album-artist#artist
+      .album-title#title
+      .album-art#art
+      .playlist-user#user-data
+        .user-avatar#avatar
+        .user-name#name
 
 %a#add_playlist Add Playlist
 

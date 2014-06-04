@@ -1,12 +1,12 @@
 var currentTrackWebSocket = function() {
   var updateTrackInfo = function(data) {
-    var url = 'https://d3rt1990lpmkn.cloudfront.net/cover/' + data.image;
-    var $art_image = $('<img id="album_art">').attr('src', url);
-    var $container = $('#current_track_container');
+    var url = 'https://d3rt1990lpmkn.cloudfront.net/640/' + data.image;
+    var $art_image = $('<img />').attr('src', url);
+    var $container = $('#track-data');
     $container.find('#art').html($art_image);
     $container.find('#artist').text(data.artists);
     $container.find('#title').text(data.name);
-    $container.find('#user').text(data.user.name);
+    $container.find('#user-data').find('#name').text("Brought to you by " + data.user.name);
   };
 
   var updateEnabledPlaylists = function(data) {

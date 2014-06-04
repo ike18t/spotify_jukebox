@@ -72,3 +72,39 @@ body { background:black; font-size:16px; }
   margin: 0;
 }
 
+
+/*
+** Now Playing
+*/
+
+.now-playing {
+  color: #FFF;
+  font: 300 1em 'Oswald', sans-serif;
+  padding: 1em 0 0 0;
+}
+
+.now-playing .album-art {
+  box-shadow: 0px 0px 50em 0;
+  color: #0DBCFF;
+  display: inline-block;
+  width: 25em; height: 25em;
+}
+
+.now-playing .album-art img {
+  width: 100%; height: 100%;
+}
+
+.now-playing .album-artist {
+  margin-bottom: 1em;
+  position: relative;
+  text-transform: uppercase;
+  z-index: 1;
+}
+
+
+.now-playing .album-title {
+  font-size: 2em;
+  margin-bottom: 1em;
+  position: relative;
+  z-index: 1;
+}
