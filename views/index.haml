@@ -29,7 +29,7 @@
 
 %form#dialog_form{:action => 'add_playlist', :method => 'POST'}
   %fieldset
-    %label{:for => 'playlist_url'} Playlist URL:
+    %label{:for => 'playlist_url'} Enter a Spotify playlist URL.
     %input#playlist_url{:required => 'required', :type => 'url', :name => 'playlist_url'}
 
 #dialog_confirm
@@ -51,10 +51,10 @@
 
     $('#dialog_form').dialog({
       autoOpen:  false,
-      height:    300,
+      height:    150,
       width:     350,
       resizable: false,
-      modal:     true,
+      modal:     false,
       buttons: {
         ok: function() {
           this.submit();
@@ -69,7 +69,7 @@
       autoOpen:  false,
       resizable: false,
       height:    200,
-      modal:     true,
+      modal:     false,
       draggable: false,
       buttons: {
         YOLO: function() {

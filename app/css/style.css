@@ -116,3 +116,39 @@ body { background:black; font-size:16px; }
   position: relative;
   z-index: 1;
 }
+
+
+/*
+** Dialog Boxes
+*/
+
+.ui-dialog {
+  color: #FFF;
+  font: 300 1em 'Titillium Web', sans-serif;
+  background: #0C71E8;
+}
+
+.ui-dialog,
+.ui-dialog form,
+.ui-dialog fieldset,
+.ui-dialog input,
+.ui-dialog button {
+  border: none;
+  outline: none;
+}
+
+.ui-dialog input[type="url"] {
+  line-height: 2em;
+  margin: 1em 0 1em 0;
+  width: 100%;
+}
+
+.ui-dialog fieldset,
+.ui-dialog-buttonset {
+  margin: 0;
+  padding: 1em;
+}
+.ui-dialog-buttonset { text-align: right; }
+.ui-dialog-buttonset button { margin: 0 1em 0 0; }
+
+.ui-dialog-titlebar { display: none; }
