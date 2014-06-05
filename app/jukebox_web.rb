@@ -84,6 +84,7 @@ class JukeboxWeb < Sinatra::Base
   post '/enable_playlist/:playlist_id' do
     playlist_id = params[:playlist_id]
     PlaylistService.enable_playlist playlist_id
+    UserService.enable_user_for_playlist playlist_id
     broadcast_enabled
     return :ok
   end
@@ -91,6 +92,14 @@ class JukeboxWeb < Sinatra::Base
   post '/disable_playlist/:playlist_id' do
     playlist_id = params[:playlist_id]
     PlaylistService.disable_playlist playlist_id
+
+    playlist = PlaylistService.get_playlist playlist_id
+    user_id = playlist.user_id
+
+    if PlaylistService.get_enabled_playlists_for_user(user_id).empty?
+      UserService.disable_user user_id
+    end
+
     broadcast_enabled
     return :ok
   end
@@ -104,6 +113,7 @@ class JukeboxWeb < Sinatra::Base
   post '/enable_user/:id' do
     user_id = params[:id]
     UserService.enable_user user_id
+    PlaylistService.enable_playlists_for_user user_id
     broadcast_enabled
     return :ok
   end
@@ -111,6 +121,7 @@ class JukeboxWeb < Sinatra::Base
   post '/disable_user/:id' do
     user_id = params[:id]
     UserService.disable_user user_id
+    PlaylistService.disable_playlists_for_user user_id
     broadcast_enabled
     return :ok
   end

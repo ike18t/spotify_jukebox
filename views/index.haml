@@ -40,6 +40,15 @@
     var trackHandler = WebSocket ? currentTrackWebSocket() : currentTrackPoller();
     trackHandler.initialize();
 
+    $('li.user div.name').on('click', function(e) {
+      e.preventDefault();
+      var isEnabled = $(this).parent('li.user').hasClass('enabled');
+      $.ajax({
+        url: (isEnabled? 'disable_user/' : 'enable_user/') + $(this).parent('li.user').attr('id'),
+        type: 'POST'
+      });
+    });
+
     $('li.playlist').on('click', function(e) {
       e.preventDefault();
       var isEnabled = $(this).hasClass('active');

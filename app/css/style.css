@@ -36,8 +36,14 @@ body { background:black; font-size:16px; }
 
 .user > .name {
   font: 300 1em 'Oswald', sans-serif;
+  cursor: pointer;
   padding: 1em 0 1em 1em;
   text-transform: uppercase;
+}
+
+.user > .name:hover {
+  color: #0DBCFF;
+  text-shadow: 0px 0px .5em #FFF;
 }
 
 
