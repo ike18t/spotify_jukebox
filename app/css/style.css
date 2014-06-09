@@ -51,6 +51,8 @@ body { background:black; font-size:16px; }
 ** Playlists
 */
 
+.playlists.disabled { height: 0px; overflow: hidden; }
+
 .playlist { margin-bottom: 1em; }
 
 .playlist > .name {

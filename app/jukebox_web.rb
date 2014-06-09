@@ -81,47 +81,31 @@ class JukeboxWeb < Sinatra::Base
     redirect '/'
   end
 
-  post '/enable_playlist/:playlist_id' do
-    playlist_id = params[:playlist_id]
-    PlaylistService.enable_playlist playlist_id
-    UserService.enable_user_for_playlist playlist_id
-    broadcast_enabled
-    return :ok
-  end
-
-  post '/disable_playlist/:playlist_id' do
-    playlist_id = params[:playlist_id]
-    PlaylistService.disable_playlist playlist_id
-
-    playlist = PlaylistService.get_playlist playlist_id
-    user_id = playlist.user_id
-
-    if PlaylistService.get_enabled_playlists_for_user(user_id).empty?
-      UserService.disable_user user_id
-    end
-
-    broadcast_enabled
-    return :ok
-  end
-
   post '/remove_user' do
     user_id = params[:id]
     UserService.remove_user user_id
     redirect '/'
   end
 
+
+  post '/enable_playlist/:playlist_id' do
+    return broadcast_results { PlaylistService.enable_playlist params[:playlist_id] }
+  end
+
+  post '/disable_playlist/:playlist_id' do
+    return broadcast_results { PlaylistService.disable_playlist params[:playlist_id] }
+  end
+
   post '/enable_user/:id' do
-    user_id = params[:id]
-    UserService.enable_user user_id
-    PlaylistService.enable_playlists_for_user user_id
-    broadcast_enabled
-    return :ok
+    return broadcast_results { UserService.enable_user params[:id] }
   end
 
   post '/disable_user/:id' do
-    user_id = params[:id]
-    UserService.disable_user user_id
-    PlaylistService.disable_playlists_for_user user_id
+    return broadcast_results { UserService.disable_user params[:id] }
+  end
+
+  def broadcast_results &block
+    block.call
     broadcast_enabled
     return :ok
   end

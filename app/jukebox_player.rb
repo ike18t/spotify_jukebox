@@ -11,10 +11,10 @@ class JukeboxPlayer
     current_user = nil
     loop do
       sleep 2
-      enabled_users = UserService.get_users
+      enabled_users = UserService.get_enabled_users
       enabled_playlists = PlaylistService.get_enabled_playlists
       @historian.update_enabled_playlists_list enabled_playlists.map{ |p| p.name }
-      if not enabled_playlists.empty?
+      if not enabled_users.empty?
         current_user = get_next_item enabled_users, current_user
         playlists = PlaylistService.get_enabled_playlists_for_user current_user.id
         next if playlists.empty?
