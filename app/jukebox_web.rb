@@ -14,7 +14,7 @@ class JukeboxWeb < Sinatra::Base
 
   assets do
     js :application, ['/js/*.js']
-    css :application, ['/css/*.css']
+    css :application, ['/css/base-min.css', '/css/grids-min.css', '/css/grids-responsive-min.css', '/css/style.css', '/css/extruding-button.css']
   end
 
   @@currently_playing = nil
@@ -63,7 +63,8 @@ class JukeboxWeb < Sinatra::Base
 
   get '/' do
     users = UserService.get_users
-    haml :index, :locals => { :users => users, :playing => MusicService.playing? }
+    playlists = users.inject({}) { |hash, user| hash[user.id] = PlaylistService.get_playlists_for_user(user.id); hash }
+    haml :index, :locals => { :users => users, :playlists => playlists, :playing => MusicService.playing? }
   end
 
   post '/add_playlist' do
@@ -80,42 +81,40 @@ class JukeboxWeb < Sinatra::Base
     redirect '/'
   end
 
-  post '/enable_playlist/:playlist_id' do
-    playlist_id = params[:playlist_id]
-    PlaylistService.enable_playlist playlist_id
-    return :ok
-  end
-
-  post '/disable_playlist/:playlist_id' do
-    playlist_id = params[:playlist_id]
-    PlaylistService.disable_playlist playlist_id
-    return :ok
-  end
-
   post '/remove_user' do
     user_id = params[:id]
     UserService.remove_user user_id
     redirect '/'
   end
 
+
+  post '/enable_playlist/:playlist_id' do
+    return broadcast_results { PlaylistService.enable_playlist params[:playlist_id] }
+  end
+
+  post '/disable_playlist/:playlist_id' do
+    return broadcast_results { PlaylistService.disable_playlist params[:playlist_id] }
+  end
+
   post '/enable_user/:id' do
-    user_id = params[:id]
-    UserService.enable_user user_id
-    broadcast_enabled
-    return :ok
+    return broadcast_results { UserService.enable_user params[:id] }
   end
 
   post '/disable_user/:id' do
-    user_id = params[:id]
-    UserService.disable_user user_id
+    return broadcast_results { UserService.disable_user params[:id] }
+  end
+
+  def broadcast_results &block
+    block.call
     broadcast_enabled
     return :ok
   end
 
   def broadcast_enabled
     enabled_user_ids = UserService.get_enabled_users.map{ |user| user.id }
+    enabled_playlist_ids = PlaylistService.get_enabled_playlists.map{ |playlist| playlist.id }
     settings.sockets.each do |socket|
-      broadcast_json({ :enabled_users => enabled_user_ids }.to_json)
+      broadcast_json({ :enabled_users => enabled_user_ids, :enabled_playlists => enabled_playlist_ids }.to_json)
     end
   end
 

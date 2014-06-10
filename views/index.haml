@@ -1,22 +1,35 @@
-%ul#users
-  - locals[:users].each do |user|
-    %li{:id => user.id, :class => if user.enabled? then 'enabled' end}
-      - if user.image_url
-        %img{:src => user.image_url}
-      = user.name
+.pure-g
+  .pure-u-1-2
+    %ul.users.entity-list
+      - locals[:users].each do |user|
+        %li.user{:id => user.id, :class => if user.enabled? then 'enabled' end}
+          .name= user.name
+          %ul.playlists.entity-list{ :class => if user.enabled? then 'enabled' else 'disabled' end }
+            - locals[:playlists][user.id].each do |playlist|
+              %li.playlist{ :id => playlist.id, :class => if playlist.enabled? then 'active' end }
+                %label.name.transformed.transform-extrude
+                  %span.content= playlist.name
+                  %span.right.side
+                  %span.bottom.side
 
-#current_track_container
-  #art{:style => 'display: inline'}
-  #track_info{:style => 'display: inline-block'}
-    #title
-    #artist
-    #user
+    %button.add-playlist.transformed.transform-extrude#add_playlist_button
+      %span.content + Playlist
+      %span.right.side
+      %span.bottom.side
 
-%a#add_playlist Add Playlist
+  .pure-u-1-2
+    .now-playing#track-data
+      .album-artist#artist
+      .album-title#title
+      .album-art#art
+      .playlist-user#user-data
+        .user-avatar#avatar
+        .user-name#name
+
 
 %form#dialog_form{:action => 'add_playlist', :method => 'POST'}
   %fieldset
-    %label{:for => 'playlist_url'} Playlist URL:
+    %label{:for => 'playlist_url'} Enter a Spotify playlist URL.
     %input#playlist_url{:required => 'required', :type => 'url', :name => 'playlist_url'}
 
 #dialog_confirm
@@ -27,21 +40,50 @@
     var trackHandler = WebSocket ? currentTrackWebSocket() : currentTrackPoller();
     trackHandler.initialize();
 
-    $('#users li').on('click', function(e) {
-      var isEnabled = $(e.target).hasClass('enabled');
+    var ajaxPost = function(url, params) {
       $.ajax({
-        url: (isEnabled ? 'disable_user/' : 'enable_user/') + e.target.id,
+        url: url + params,
         type: 'POST'
       });
-      if (!WebSocket) location.reload();
+    };
+
+    var showPlaylists = function($playlists) {
+      $playlists.show().removeClass('disabled').addClass('enabled');
+    };
+
+    var hidePlaylists = function($playlists) {
+      $playlists.hide().removeClass('enabled').addClass('disabled');
+    };
+
+    $('li.user div.name').on('click', function(e) {
+      e.preventDefault();
+      var isEnabled = $(this).parent('li.user').hasClass('enabled');
+      var userPlaylists = $(this).siblings('ul.playlists');
+      var params = $(this).parent('li.user').attr('id');
+
+      if (isEnabled === true) {
+        ajaxPost('disable_user/', params);
+        hidePlaylists(userPlaylists);
+      } else {
+        ajaxPost('enable_user/', params);
+        showPlaylists(userPlaylists);
+      }
+    });
+
+    $('li.playlist').on('click', function(e) {
+      e.preventDefault();
+      var isEnabled = $(this).hasClass('active');
+      var actionUrl = isEnabled? 'disable_playlist/' : 'enable_playlist/';
+
+      ajaxPost(actionUrl, $(this).attr('id'));
     });
 
     $('#dialog_form').dialog({
       autoOpen:  false,
-      height:    300,
+      height:    150,
       width:     350,
       resizable: false,
-      modal:     true,
+      modal:     false,
       buttons: {
         ok: function() {
           this.submit();
@@ -56,7 +98,7 @@
       autoOpen:  false,
       resizable: false,
       height:    200,
-      modal:     true,
+      modal:     false,
       draggable: false,
       buttons: {
         YOLO: function() {
@@ -68,5 +110,5 @@
       }
     });
 
-    $('#add_playlist').on('click', function() { $('#dialog_form').dialog('open'); });
+    $('#add_playlist_button').on('click', function() { $('#dialog_form').dialog('open'); });
   });

@@ -29,6 +29,12 @@ class UserService < ServiceBase
       set_enabled id, true
     end
 
+    def enable_user_for_playlist playlist_id
+      playlist = PlaylistService.get_playlist playlist_id
+      user_id = playlist.user_id
+      UserService.enable_user user_id
+    end
+
     def disable_user id
       set_enabled id, false
     end
