@@ -15,7 +15,7 @@ class JukeboxPlayer
       enabled_playlists = PlaylistService.get_enabled_playlists
       @historian.update_enabled_playlists_list enabled_playlists.map{ |p| p.name }
       if not enabled_users.empty?
-        current_user = get_next_item enabled_users, current_user
+        current_user = SpinDoctor.get_next_item enabled_users, current_user
         playlists = PlaylistService.get_enabled_playlists_for_user current_user.id
         next if playlists.empty?
         track = get_random_track_for_playlist playlists.sample
@@ -47,12 +47,6 @@ class JukeboxPlayer
       @historian.played_recently?(track.artists, track.name)
     end
     tracks.sample
-  end
-
-  def get_next_item list, last
-    last_index = list.index(last) || rand(list.count)
-    list.rotate! last_index + 1
-    list.first
   end
 
 end
