@@ -61,3 +61,8 @@ task :start do
   Rake::Task[:start_web].execute
 end
 
+desc 'Clears the track historian.'
+task :clear_historian do
+  CacheService.clear_track_history!
+end
+

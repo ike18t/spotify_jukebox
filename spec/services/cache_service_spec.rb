@@ -38,4 +38,20 @@ describe CacheService do
       end
     end
   end
+
+  context 'clear_type!' do
+    CacheService::CACHE_TYPES.each do |type|
+      type = type.to_s
+
+      context "cache_#{type}!" do
+        it "should clear #{type} hash and write to file as yaml" do
+          hash = {type => { :a => 'a', :b => 'b' }}
+          CacheService.send("cache_#{type}!", hash)
+          expect(YAML::load(@data_store[type])).to eq(hash)
+          CacheService.send("clear_#{type}!")
+          expect(@data_store[type]).to eq([])
+        end
+      end
+    end
+  end
 end
