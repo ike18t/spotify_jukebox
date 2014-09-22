@@ -27,21 +27,18 @@ class SpotifyWrapper
   end
 
   def initialize_session config
-    session_config = Spotify::SessionConfig.new({
+    session_config = {
       api_version: Spotify::API_VERSION.to_i,
       application_key: config.app_key,
       cache_location: '.spotify/',
       settings_location: '.spotify/',
       user_agent: 'spotify for ruby',
       callbacks: Spotify::SessionCallbacks.new(get_callbacks),
-    })
+    }
 
     $logger.info "Creating session."
-    session = nil
-    FFI::MemoryPointer.new(Spotify::Session) do |ptr|
-      Spotify.try(:session_create, session_config, ptr)
-      session = Spotify::Session.new(ptr.read_pointer)
-    end
+    error, session = Spotify.session_create(session_config)
+    raise error if error.is_a?(Spotify::APIError)
 
     $logger.info "Created! Logging in."
     Spotify.session_login(session, config.username, config.password, false, nil)
@@ -119,9 +116,7 @@ class SpotifyWrapper
   # might not fire at all). As a result, polling is the way to go.
   def poll session=@session
     until yield
-      FFI::MemoryPointer.new(:int) do |ptr|
-        Spotify.session_process_events(session, ptr)
-      end
+      Spotify.session_process_events(session)
       sleep(0.1)
     end
   end
