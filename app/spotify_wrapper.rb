@@ -135,7 +135,7 @@ class SpotifyWrapper
       end,
 
       logged_in: proc do |session, error|
-        $logger.info('session (logged in)') { Spotify::Error.explain(error) }
+        $logger.info('session (logged in)') { error.message }
       end,
 
       logged_out: proc do |session|
@@ -143,7 +143,7 @@ class SpotifyWrapper
       end,
 
       streaming_error: proc do |session, error|
-        $logger.error('session (player)') { 'streaming error %s' % Spotify::Error.explain(error) }
+        $logger.error('session (player)') { 'streaming error %s' % error.message }
       end,
 
       start_playback: proc do |session|
