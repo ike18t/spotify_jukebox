@@ -104,10 +104,23 @@ body { background:black; font-size:16px; }
   color: #0DBCFF;
   display: inline-block;
   width: 25em; height: 25em;
+  background-size: cover;
+  overflow: hidden;
+  &:hover .album-art-overlay {
+    opacity: 1;
+  }
 }
 
-.now-playing .album-art img {
-  width: 100%; height: 100%;
+.album-art-overlay {
+  opacity: 0;
+  background: rgba(0, 0, 0, 0.8);
+  padding: 1.3em 0 1.4em 0;
+  overflow: hidden;
+  text-align: center;
+  transition: all 0.5s;
+  font-weight: 900;
+  color: rgba(255,255,255,.85);
+  font-size: 96px;
 }
 
 .now-playing .album-artist {

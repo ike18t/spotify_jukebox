@@ -41,19 +41,21 @@ class JukeboxWeb < Sinatra::Base
 
   get '/whatbeplayin' do
     headers 'Access-Control-Allow-Origin'         => '*',
-            'Access-Conformation-Request-Method'  => '*'
+            'Access-Conformation-Request-Method'  => 'GET'
     content_type 'application/json'
     @@currently_playing
   end
 
   get '/pause' do
     MusicService.stop!
-    redirect '/'
+    broadcast_json({:play_status => { :playing => false, :timestamp => Time.now.to_i }}.to_json)
+    return :ok
   end
 
   get '/play' do
     MusicService.play!
-    redirect '/'
+    broadcast_json({:play_status => { :playing => true, :timestamp => Time.now.to_i }}.to_json)
+    return :ok
   end
 
   get '/skip' do

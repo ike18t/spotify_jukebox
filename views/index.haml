@@ -22,6 +22,8 @@
       .album-artist#artist
       .album-title#title
       .album-art#art
+        .album-art-overlay#overlay
+          #play-toggle.album-art-overlay-play-toggle.fa{ :class => if playing then 'fa-pause' else 'fa-play-circle-o' end }
       .playlist-user#user-data
         .user-avatar#avatar
         .user-name#name
@@ -37,8 +39,7 @@
 
 :javascript
   $(document).ready(function(){
-    var trackHandler = WebSocket ? currentTrackWebSocket() : currentTrackPoller();
-    trackHandler.initialize();
+    currentTrackWebSocket().initialize();
 
     var ajaxPost = function(url, params) {
       $.ajax({
