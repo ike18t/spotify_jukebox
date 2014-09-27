@@ -29,11 +29,11 @@ var currentTrackWebSocket = function() {
     }
     lastPlayStatusTimeUpdate = data.timestamp;
     var $playToggle = $('#play-toggle');
-    $playToggle.removeClass('fa-play-circle-o, fa-pause');
+    $playToggle.removeClass('fa-play, fa-pause');
     if (data.playing) {
       $playToggle.addClass('fa-pause');
     } else {
-      $playToggle.addClass('fa-play-circle-o');
+      $playToggle.addClass('fa-play');
     }
   };
 
