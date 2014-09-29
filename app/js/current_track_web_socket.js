@@ -41,7 +41,7 @@ var currentTrackWebSocket = function() {
     $('#play-toggle').on('click', function() {
       var playing = $(this).hasClass('fa-pause');
       var actionUrl = playing? 'pause' : 'play';
-      $.get(actionUrl);
+      $.ajax(actionUrl, { type: 'PUT' });
     });
   };
 

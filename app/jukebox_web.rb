@@ -46,16 +46,14 @@ class JukeboxWeb < Sinatra::Base
     @@currently_playing
   end
 
-  get '/pause' do
+  put '/pause' do
     MusicService.stop!
     broadcast_json({:play_status => { :playing => false, :timestamp => Time.now.to_i }}.to_json)
-    return :ok
   end
 
-  get '/play' do
+  put '/play' do
     MusicService.play!
     broadcast_json({:play_status => { :playing => true, :timestamp => Time.now.to_i }}.to_json)
-    return :ok
   end
 
   get '/skip' do
