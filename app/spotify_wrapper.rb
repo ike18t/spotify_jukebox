@@ -175,7 +175,7 @@ class SpotifyWrapper
         @end_of_track = true
         $logger.debug('session (player)') { 'end of track' }
         SpotifyWrapper.plaything.stop
-        Spotify.try(:session_player_unload, @session)
+        Spotify.try(:session_player_unload, session)
       end,
     }
   end
