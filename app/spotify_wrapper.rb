@@ -101,13 +101,12 @@ class SpotifyWrapper
     poll { Spotify.track_is_loaded(spotify_track) }
     play!
     poll { @end_of_track }
+  rescue Spotify::TrackNotPlayableError => e
+    $logger.error e.message
+    get_callbacks()[:end_of_track].call(@session)
   rescue Spotify::Error => e
     $logger.error e.message
-    if e.message =~ /^\[TRACK_NOT_PLAYABLE\]/
-      get_callbacks()[:end_of_track].call(@session)
-    else
-      throw
-    end
+    raise
   end
 
   private
