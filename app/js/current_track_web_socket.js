@@ -37,11 +37,15 @@ var currentTrackWebSocket = function() {
     }
   };
 
-  var bindPlayToggle = function() {
+  var bindPlayerControls = function() {
     $('#play-toggle').on('click', function() {
       var playing = $(this).hasClass('fa-pause');
       var actionUrl = playing? 'pause' : 'play';
       $.ajax(actionUrl, { type: 'PUT' });
+    });
+
+    $('#skip-button').on('click', function() {
+      $.ajax('skip', { type: 'PUT' });
     });
   };
 
@@ -66,7 +70,7 @@ var currentTrackWebSocket = function() {
         updatePlayStatus(json_message.play_status);
       }
     };
-    bindPlayToggle();
+    bindPlayerControls();
   };
 
   return this;

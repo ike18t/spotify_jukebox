@@ -123,6 +123,26 @@ body { background:black; font-size:16px; }
   font-size: 96px;
 }
 
+.now-playing .skip-button{
+  background-color: none;
+  display: inline-block;
+  overflow: hidden;
+  height: 25em;
+  vertical-align: top;
+  opacity: 0;
+  transition: all 0.5s;
+  &:hover {
+    opacity: 1;
+  }
+}
+
+.now-playing .skip-button .fa-step-forward{
+  background-color: none;
+  font-weight: 900;
+  font-size: 96px;
+  padding: 1.6em .1em 1.4em .1em;
+}
+
 .now-playing .album-artist {
   margin: 0 0 1em 0;
   position: relative;

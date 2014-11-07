@@ -56,7 +56,7 @@ class JukeboxWeb < Sinatra::Base
     broadcast_json({:play_status => { :playing => true, :timestamp => Time.now.to_i }}.to_json)
   end
 
-  get '/skip' do
+  put '/skip' do
     MusicService.skip!
     redirect '/'
   end
