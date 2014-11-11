@@ -26,5 +26,19 @@ describe SpotifyScraper do
       expect(name_and_url[:name]).to eq('idatlof')
       expect(name_and_url[:image_url]).to be nil
     end
+
+    it 'should use the correct url format' do
+      str = <<-HTML
+        <head>
+          <meta property="og:title" content="idatlof">
+        </head>
+      HTML
+      spotify_user_id = 123
+      url = SpotifyScraper::SPOTIFY_PROFILE_URL_FORMAT % spotify_user_id
+      expect(SpotifyScraper).to receive(:open).with(url).and_return(str)
+      name_and_url = SpotifyScraper.name_and_image_from_spotify_id spotify_user_id
+      expect(name_and_url[:name]).to eq('idatlof')
+      expect(name_and_url[:image_url]).to be nil
+    end
   end
 end
