@@ -31,13 +31,10 @@ body { background:black; font-size:16px; }
   margin: 0 0 0 1em;
 }
 
-.user { margin: 2.5em 0 0 0; }
-.user:first-child { margin: 0; }
-
 .user > .name {
   font: 300 1em 'Oswald', sans-serif;
   cursor: pointer;
-  padding: 1em 0 1em 1em;
+  padding: .25em 0 .25em 0em;
   text-transform: uppercase;
 }
 
@@ -56,7 +53,7 @@ body { background:black; font-size:16px; }
 .playlist { margin-bottom: 1em; }
 
 .playlist > .name {
-  font: 700 2em 'Titillium Web', sans-serif;
+  font: 700 1em 'Titillium Web', sans-serif;
   cursor: pointer;
 }
 

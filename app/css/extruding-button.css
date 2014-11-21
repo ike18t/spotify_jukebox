@@ -40,7 +40,7 @@
 
 .transform-extrude:hover .content,
 .active .transform-extrude .content {
-  left: .5em; top: .5em;
+  left: .5em;
   position:relative; xmargin-left: .5em; xmargin-top: .5em;
 }
 
