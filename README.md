@@ -21,13 +21,12 @@ Use the configure script located in the application's root directory.
 * username
 * password
 * app_key
-* playlist_uri
 
 ######Example######
 
 
 ```
-./configure --username=homer --password==doh1 --app_key=/path/to/app_key --playlist_uri=spotify:user:123456789:playlist:0Zr8DSONMuu3HWj4G63S42
+./configure --username=homer --password==doh1 --app_key=/path/to/app_key
 ```
 
 ###Usage###
