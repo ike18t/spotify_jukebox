@@ -2,6 +2,7 @@ require 'bundler'
 require 'bundler/setup'
 require 'logger'
 require 'rspec/core/rake_task'
+require 'cucumber/rake/task'
 require 'thin'
 
 def autoload_all path
@@ -37,6 +38,12 @@ task :start_web do
   JukeboxWeb.run!({ :server => 'thin', :port => SINATRA_PORT })
 end
 
+desc 'Starts the JukeBox web server using the test db.'
+task :start_test_web do
+  ENV['TEST'] = 'true'
+  JukeboxWeb.run!({ :server => 'thin', :port => SINATRA_PORT })
+end
+
 desc 'Starts the JukeBox player.'
 task :start_player do
   player_update_endpoint = PLAYER_ENDPOINT % SINATRA_PORT
@@ -47,6 +54,13 @@ desc 'Creates the database and required tables.'
 task :db_init do
   require 'sqlite3'
   db = SQLite3::Database.new('jukebox.db')
+  db.execute('CREATE TABLE key_value_store( key CHAR(100) PRIMARY KEY NOT NULL, value BLOB NOT NULL );')
+end
+
+desc 'Creates the test database and required tables.'
+task :test_db_init do
+  require 'sqlite3'
+  db = SQLite3::Database.new('test_jukebox.db')
   db.execute('CREATE TABLE key_value_store( key CHAR(100) PRIMARY KEY NOT NULL, value BLOB NOT NULL );')
 end
 
@@ -66,3 +80,8 @@ task :clear_historian do
   CacheService.clear_track_history!
 end
 
+Cucumber::Rake::Task.new do |t|
+  `rm test_jukebox.db`
+  Rake::Task[:test_db_init].execute
+  t.cucumber_opts = %w{--format pretty}
+end

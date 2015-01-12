@@ -1,7 +1,7 @@
 require 'sqlite3'
 
 class SQLite3Adapter
-  DEFAULT_FILE = 'jukebox.db'
+  DEFAULT_FILE = ENV['TEST'] == 'true' ? 'test_jukebox.db' : 'jukebox.db'
 
   def initialize db_file=DEFAULT_FILE
     @db_file = db_file

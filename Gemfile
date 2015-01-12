@@ -20,4 +20,7 @@ group :test do
   gem 'autotest-growl'
   gem 'rspec'
   gem 'codeclimate-test-reporter'
+  gem 'cucumber'
+  gem 'watir'
+  gem 'watir-webdriver'
 end
