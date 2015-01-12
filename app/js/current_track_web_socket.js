@@ -8,17 +8,9 @@ var currentTrackWebSocket = function() {
     $container.find('#user-data').find('#name').text("Brought to you by " + data.user.name);
   };
 
-  var updateEnabledUsers = function(data) {
-    $('.users li').each(function(idx, item) {
-      var $item = $(item);
-      data.indexOf(item.id) >= 0 ? $item.addClass('enabled', 500) : $item.removeClass('enabled', 500);
-    });
-  };
-
-  var updateEnabledPlaylists = function(data) {
-    $('li.playlist').each(function(idx, item) {
-      var $item = $(item);
-      data.indexOf(item.id) >= 0 ? $item.addClass('active', 500) : $item.removeClass('active', 500);
+  var updateEnabled = function(selector, data) {
+    $(selector).each(function(idx, item) {
+      $(item).toggleClass('disabled', data.indexOf(item.id) === -1);
     });
   };
 
@@ -61,10 +53,10 @@ var currentTrackWebSocket = function() {
         updateTrackInfo(json_message.current_track);
       }
       if (json_message.hasOwnProperty('enabled_users')) {
-        updateEnabledUsers(json_message.enabled_users);
+        updateEnabled('li.user', json_message.enabled_users);
       }
       if (json_message.hasOwnProperty('enabled_playlists')) {
-        updateEnabledPlaylists(json_message.enabled_playlists);
+        updateEnabled('li.playlist', json_message.enabled_playlists);
       }
       if (json_message.hasOwnProperty('play_status')) {
         updatePlayStatus(json_message.play_status);

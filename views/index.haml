@@ -2,13 +2,13 @@
   .pure-u-1-2
     %ul.users.entity-list
       - locals[:users].each do |user|
-        %li.user{:id => user.id, :class => if user.enabled? then 'enabled' end}
-          .name= user.name
-          %ul.playlists.entity-list{ :class => if user.enabled? then 'enabled' else 'disabled' end }
+        %li.user{:id => user.id, :class => if not user.enabled? then 'disabled' end}
+          .name.user-name= user.name
+          %ul.playlists.entity-list
             - locals[:playlists][user.id].each do |playlist|
-              %li.playlist{ :id => playlist.id, :class => if playlist.enabled? then 'active' end }
+              %li.playlist{ :id => playlist.id, :class => if not playlist.enabled? then 'disabled' end }
                 %label.name.transformed.transform-extrude
-                  %span.content= playlist.name
+                  %span.content.playlist-name= playlist.name
                   %span.right.side
                   %span.bottom.side
 
@@ -50,35 +50,22 @@
       });
     };
 
-    var showPlaylists = function($playlists) {
-      $playlists.show().removeClass('disabled').addClass('enabled');
-    };
-
-    var hidePlaylists = function($playlists) {
-      $playlists.hide().removeClass('enabled').addClass('disabled');
-    };
-
     $('li.user div.name').on('click', function(e) {
       e.preventDefault();
-      var isEnabled = $(this).parent('li.user').hasClass('enabled');
-      var userPlaylists = $(this).siblings('ul.playlists');
-      var params = $(this).parent('li.user').attr('id');
+      var $user = $(this).parent('li.user');
+      var isEnabled = !$user.hasClass('disabled');
 
-      if (isEnabled === true) {
-        ajaxPost('disable_user/', params);
-        hidePlaylists(userPlaylists);
-      } else {
-        ajaxPost('enable_user/', params);
-        showPlaylists(userPlaylists);
-      }
+      var actionUrl = isEnabled? 'disable_user/' : 'enable_user/';
+      ajaxPost(actionUrl, $user.attr('id'));
     });
 
     $('li.playlist').on('click', function(e) {
       e.preventDefault();
-      var isEnabled = $(this).hasClass('active');
+      var $playlist = $(this);
+      var isEnabled = !$playlist.hasClass('disabled');
       var actionUrl = isEnabled? 'disable_playlist/' : 'enable_playlist/';
 
-      ajaxPost(actionUrl, $(this).attr('id'));
+      ajaxPost(actionUrl, $playlist.attr('id'));
     });
 
     $('#dialog_form').dialog({

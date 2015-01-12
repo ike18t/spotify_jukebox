@@ -43,13 +43,11 @@ body { background:black; font-size:16px; }
   text-shadow: 0px 0px .5em #FFF;
 }
 
+.user.disabled .playlists { height: 0px; overflow: hidden; }
 
 /*
 ** Playlists
 */
-
-.playlists.disabled { height: 0px; overflow: hidden; }
-
 .playlist { margin-bottom: 1em; }
 
 .playlist > .name {
@@ -59,7 +57,7 @@ body { background:black; font-size:16px; }
 
 .playlist .toggle { display: none; }
 
-.playlist.active > .name .content {
+.playlist:not(.disabled) > .name .content {
   background: #0DBCFF;
   box-shadow: 0px 0px .5em 0px #0DBCFF;
   text-shadow: 0px 0px .5em #FFF;
