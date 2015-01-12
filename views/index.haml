@@ -97,21 +97,5 @@
       }
     });
 
-    $('#dialog_confirm').dialog({
-      autoOpen:  false,
-      resizable: false,
-      height:    200,
-      modal:     false,
-      draggable: false,
-      buttons: {
-        YOLO: function() {
-          $(this).dialog('close');
-        },
-        'Abort!': function() {
-          $(this).dialog('close');
-        }
-      }
-    });
-
     $('#add_playlist_button').on('click', function() { $('#dialog_form').dialog('open'); });
   });
