@@ -10,7 +10,6 @@
 ###Dependencies###
 * Spotify premium account
 * [Spotify application key](https://developer.spotify.com/technologies/libspotify/#application-keys)
-* Spotify collaborative playlist URI
 * OpenAL
 
 
