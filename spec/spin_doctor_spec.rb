@@ -1,7 +1,9 @@
+require 'ostruct'
+
 describe SpinDoctor do
   context 'get_next_item' do
     before do
-      @list = [:a, :b, :c, :d, :e]
+      @list = (0..5).map { |i| OpenStruct.new(:id => i) }
     end
 
     it 'should return the next item in the list except for the last item' do
@@ -18,7 +20,12 @@ describe SpinDoctor do
 
     it 'should return a random item from the list if the last item is not in the list' do
       expect(@list).to receive(:sample)
-      SpinDoctor.get_next_item(@list, :f)
+      SpinDoctor.get_next_item(@list, OpenStruct.new(:id => :not_found))
+    end
+
+    it 'should return a random item from the list if the last item is nil' do
+      expect(@list).to receive(:sample)
+      SpinDoctor.get_next_item(@list, nil)
     end
   end
 end
