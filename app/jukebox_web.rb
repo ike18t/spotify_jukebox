@@ -113,9 +113,7 @@ class JukeboxWeb < Sinatra::Base
   def broadcast_enabled
     enabled_user_ids = UserService.get_enabled_users.map{ |user| user.id }
     enabled_playlist_ids = PlaylistService.get_enabled_playlists.map{ |playlist| playlist.id }
-    settings.sockets.each do |socket|
-      broadcast_json({ :enabled_users => enabled_user_ids, :enabled_playlists => enabled_playlist_ids }.to_json)
-    end
+    broadcast_json({ :enabled_users => enabled_user_ids, :enabled_playlists => enabled_playlist_ids }.to_json)
   end
 
   def broadcast_json json
