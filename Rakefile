@@ -80,6 +80,12 @@ task :clear_historian do
   CacheService.clear_track_history!
 end
 
+desc 'Pry into application.'
+task :pry do
+  require 'pry'
+  binding.pry
+end
+
 Cucumber::Rake::Task.new do |t|
   `rm test_jukebox.db`
   Rake::Task[:test_db_init].execute
