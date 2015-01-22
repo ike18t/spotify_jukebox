@@ -16,6 +16,6 @@ end
 
 Then /^I should see the playlist (.*) with playlist id (.*)$/ do |name, id|
   expect(@browser.element(:id, id)).to exist
-  name_in_browser = @browser.element(:class, 'playlist-name').inner_html
+  name_in_browser = @browser.element(:class, 'playlist-name').attribute_value('innerHTML')
   expect(name_in_browser.downcase).to eq(name.downcase)
 end
