@@ -46,17 +46,17 @@ class JukeboxWeb < Sinatra::Base
     @@currently_playing
   end
 
-  put '/pause' do
+  get '/pause' do
     MusicService.stop!
     broadcast_json({:play_status => { :playing => false, :timestamp => Time.now.to_i }}.to_json)
   end
 
-  put '/play' do
+  get '/play' do
     MusicService.play!
     broadcast_json({:play_status => { :playing => true, :timestamp => Time.now.to_i }}.to_json)
   end
 
-  put '/skip' do
+  get '/skip' do
     MusicService.skip!
     redirect '/'
   end
@@ -75,33 +75,32 @@ class JukeboxWeb < Sinatra::Base
     redirect '/'
   end
 
-  post '/remove_playlist' do
-    playlist_id = params[:id]
+  delete '/remove_playlist/:playlist_id' do
+    playlist_id = params[:playlist_id]
     PlaylistService.remove_playlist playlist_id
     redirect '/'
   end
 
-  post '/remove_user' do
-    user_id = params[:id]
+  delete '/remove_user/:user_id' do
+    user_id = params[:user_id]
     UserService.remove_user user_id
     redirect '/'
   end
 
-
-  post '/enable_playlist/:playlist_id' do
+  put '/enable_playlist/:playlist_id' do
     return broadcast_results { PlaylistService.enable_playlist params[:playlist_id] }
   end
 
-  post '/disable_playlist/:playlist_id' do
+  put '/disable_playlist/:playlist_id' do
     return broadcast_results { PlaylistService.disable_playlist params[:playlist_id] }
   end
 
-  post '/enable_user/:id' do
-    return broadcast_results { UserService.enable_user params[:id] }
+  put '/enable_user/:user_id' do
+    return broadcast_results { UserService.enable_user params[:user_id] }
   end
 
-  post '/disable_user/:id' do
-    return broadcast_results { UserService.disable_user params[:id] }
+  put '/disable_user/:user_id' do
+    return broadcast_results { UserService.disable_user params[:user_id] }
   end
 
   def broadcast_results &block

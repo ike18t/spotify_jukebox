@@ -15,7 +15,7 @@ module WebHelper
                             :artists => track.artists.join(', '),
                             :album => track.album.name,
                             :image => track.album.art_hex,
-                            :user => { :name => user.name, :avatar_url => user.image_url }
+                            :user => { :id => user.id, :name => user.name, :avatar_url => user.image_url }
                           } }.to_json.to_s
     end
   end

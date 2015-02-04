@@ -43,10 +43,10 @@
   $(document).ready(function(){
     currentTrackWebSocket().initialize();
 
-    var ajaxPost = function(url, params) {
+    var ajaxUpdate = function(url, params) {
       $.ajax({
         url: url + params,
-        type: 'POST'
+        type: 'PUT'
       });
     };
 
@@ -56,7 +56,7 @@
       var isEnabled = !$user.hasClass('disabled');
 
       var actionUrl = isEnabled? 'disable_user/' : 'enable_user/';
-      ajaxPost(actionUrl, $user.attr('id'));
+      ajaxUpdate(actionUrl, $user.attr('id'));
     });
 
     $('li.playlist').on('click', function(e) {
@@ -65,7 +65,7 @@
       var isEnabled = !$playlist.hasClass('disabled');
       var actionUrl = isEnabled? 'disable_playlist/' : 'enable_playlist/';
 
-      ajaxPost(actionUrl, $playlist.attr('id'));
+      ajaxUpdate(actionUrl, $playlist.attr('id'));
     });
 
     $('#dialog_form').dialog({
