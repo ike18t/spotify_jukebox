@@ -32,12 +32,12 @@ var currentTrackWebSocket = function() {
   var bindPlayerControls = function() {
     $('#play-toggle').on('click', function() {
       var playing = $(this).hasClass('fa-pause');
-      var actionUrl = playing? 'pause' : 'play';
-      $.ajax(actionUrl, { type: 'PUT' });
+      var action = playing? 'pause' : 'play';
+      $.get(action);
     });
 
     $('#skip-button').on('click', function() {
-      $.ajax('skip', { type: 'PUT' });
+      $.get('skip');
     });
   };
 
