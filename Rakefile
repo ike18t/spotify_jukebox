@@ -91,3 +91,8 @@ Cucumber::Rake::Task.new do |t|
   Rake::Task[:test_db_init].execute
   t.cucumber_opts = %w{--format pretty}
 end
+
+ENV['JASMINE_CONFIG_PATH'] = 'spec/js/support/jasmine.yml'
+require 'jasmine'
+require_relative 'spec/js/support/jasmine.rb'
+load 'jasmine/tasks/jasmine.rake'
