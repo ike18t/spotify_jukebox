@@ -12,6 +12,7 @@
 #
 src_files:
   - vendor/assets/js/**/*.{js,coffee}
+  - app/js/spotify_jukebox.coffee
   - app/js/**/*.{js,coffee}
 
 # helpers
