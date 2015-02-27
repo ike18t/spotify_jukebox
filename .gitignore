@@ -1,6 +1,6 @@
 tags
 Gemfile.lock
-vendor
+vendor/bundle
 .sass-cache
 .spotify
 spotify_tracefile.txt
