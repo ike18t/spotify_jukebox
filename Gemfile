@@ -17,7 +17,6 @@ gem 'sqlite3'
 
 group :test do
   gem 'pry'
-  gem 'pry-debugger'
   gem 'autotest-standalone'
   gem 'autotest-growl'
   gem 'rspec'
