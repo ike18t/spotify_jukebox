@@ -1,88 +1,40 @@
 .pure-g
-  .pure-u-1-2
-    %ul.users.entity-list
-      - locals[:users].each do |user|
-        %li.user{:id => user.id, :class => if not user.enabled? then 'disabled' end}
-          .name.user-name= user.name || user.id
-          %ul.playlists.entity-list
-            - locals[:playlists][user.id].each do |playlist|
-              %li.playlist{ :id => playlist.id, :class => if not playlist.enabled? then 'disabled' end }
-                %label.name.transformed.transform-extrude
-                  %span.content.playlist-name= playlist.name
-                  %span.right.side
-                  %span.bottom.side
-
-    %button.add-playlist.transformed.transform-extrude#add_playlist_button
-      %span.content + Playlist
-      %span.right.side
-      %span.bottom.side
+  .pure-u-1-2{:'ng-controller' => 'UserController'}
+    %ul.users.entity-list{:'ng-repeat' => 'user in users'}
+      %li.user{:'ng-class' => '{disabled: !user.enabled}'}
+        .name.user-name{:'ng-click' => 'toggleEnabledUser(user)'}
+          {{user.name}}
+          %span{:'ng-if' => '!user.name'}
+            {{user.id}}
+        %ul.playlists.entity-list{:'ng-repeat' => 'playlist in playlists | filter: { user_id:user.id }'}
+          %li.playlist{:'ng-class' => '{disabled: !playlist.enabled}'}
+            %label.name.transformed.transform-extrude{:'ng-click' => 'toggleEnabledPlaylist(playlist)'}
+              %span.content.playlist-name {{playlist.name}}
+              %span.right.side
+              %span.bottom.side
 
   .pure-u-1-2
-    .now-playing#track-data
-      .album-artist#artist
-      .album-title#title
-      .album-art#art
-        .album-art-overlay#overlay
-          #play-toggle.album-art-overlay-play-toggle.fa{ :class => if playing then 'fa-pause' else 'fa-play' end }
-      .skip-button#skip
-        #skip-button.fa.fa-step-forward
-      .playlist-user#user-data
-        .user-avatar#avatar
-        .user-name#name
+    .now-playing{:'ng-controller' => 'NowPlayingController'}
+      .album-artist
+        {{currentTrack.artists}}
+      .album-title
+        {{currentTrack.name}}
+      %album-art-background.album-art{:'image-url' => 'currentTrack.image'}
+        .album-art-overlay
+          %player-controls.album-art-overlay-play-toggle.fa{:'is-playing' => 'isPlaying'}
+      .skip-button{:'ng-click' => 'skip()'}
+        .fa.fa-step-forward
+      .playlist-user
+        .user-avatar
+        .user-name
+          Brought to you by {{currentUser.name}}
 
-
-%form#dialog_form{:action => 'add_playlist', :method => 'POST'}
-  %fieldset
-    %label{:for => 'playlist_url'} Enter a Spotify playlist URL.
-    %input#playlist_url{:required => 'required', :type => 'url', :name => 'playlist_url'}
-
-#dialog_confirm
-  %span Are you sure you want to remove this playlist?
-
-:javascript
-  $(document).ready(function(){
-    currentTrackWebSocket().initialize();
-
-    var ajaxUpdate = function(url, params) {
-      $.ajax({
-        url: url + params,
-        type: 'PUT'
-      });
-    };
-
-    $('li.user div.name').on('click', function(e) {
-      e.preventDefault();
-      var $user = $(this).parent('li.user');
-      var isEnabled = !$user.hasClass('disabled');
-
-      var actionUrl = isEnabled? 'disable_user/' : 'enable_user/';
-      ajaxUpdate(actionUrl, $user.attr('id'));
-    });
-
-    $('li.playlist').on('click', function(e) {
-      e.preventDefault();
-      var $playlist = $(this);
-      var isEnabled = !$playlist.hasClass('disabled');
-      var actionUrl = isEnabled? 'disable_playlist/' : 'enable_playlist/';
-
-      ajaxUpdate(actionUrl, $playlist.attr('id'));
-    });
-
-    $('#dialog_form').dialog({
-      autoOpen:  false,
-      height:    150,
-      width:     350,
-      resizable: false,
-      modal:     false,
-      buttons: {
-        ok: function() {
-          this.submit();
-        },
-        cancel: function() {
-          $(this).dialog('close');
-        }
-      }
-    });
-
-    $('#add_playlist_button').on('click', function() { $('#dialog_form').dialog('open'); });
-  });
+.add-playlist
+  %form{:action => 'add_playlist', :method => 'POST'}
+    %label{:for => 'add-playlist'}
+      Add a playlist!
+    %fieldset
+      %input#playlist_url{:required => 'required', :type => 'url', :name => 'playlist_url', :placeholder => 'Enter a Spotify playlist URL'}
+      %input{:type => 'submit', :value => '+'}
+      .error{:'ng-show' => 'add_playlist.input.$error.require'} Required!
+      .error{:'ng-show' => 'add_playlist.input.$error.url'} Not a valid url!

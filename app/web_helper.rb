@@ -1,4 +1,6 @@
 module WebHelper
+  IMAGE_URL_FORMAT = 'https://d3rt1990lpmkn.cloudfront.net/640/%s'
+
   class << self
     def get_playlist_id_and_user_id_from_url url
       match_data = url.match /^.*user\/(.*)\/playlist\/(.*)$/
@@ -14,9 +16,9 @@ module WebHelper
       { :current_track => { :name => track.name,
                             :artists => track.artists.join(', '),
                             :album => track.album.name,
-                            :image => track.album.art_hex,
-                            :user => { :id => user.id, :name => user.name, :avatar_url => user.image_url }
-                          } }.to_json.to_s
+                            :image => WebHelper::IMAGE_URL_FORMAT % track.album.art_hex },
+        :current_user => { :id => user.id, :name => user.name, :avatar_url => user.image_url }
+      }.to_json.to_s
     end
   end
 end

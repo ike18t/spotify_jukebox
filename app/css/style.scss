@@ -4,7 +4,6 @@
 @import url(http://fonts.googleapis.com/css?family=Oswald:400,700,300);
 @import url(http://fonts.googleapis.com/css?family=Titillium+Web:400,200,300,600,700);
 
-
 /*
 ** Entity List
 */
@@ -188,3 +187,14 @@ body { background:black; font-size:16px; }
 .ui-dialog-buttonset button { margin: 0 1em 0 0; }
 
 .ui-dialog-titlebar { display: none; }
+
+.add-playlist {
+  width: 20em;
+  fieldset {
+    border: none;
+
+    input[type='url'] {
+      width: 15em;
+    }
+  }
+}

@@ -4,23 +4,34 @@ require 'sinatra/assetpack'
 require 'json'
 require 'haml'
 require 'sass'
+require 'coffee_script'
 
 class JukeboxWeb < Sinatra::Base
-  register Sinatra::AssetPack
-
-  set :root, File.join(File.dirname(__FILE__), '..')
+  set :root, File.expand_path(File.join(File.dirname(__FILE__), '..'))
   set :bind, '0.0.0.0'
   set :sockets, []
 
+  configure do
+    enable :logging
+  end
+
+  register Sinatra::AssetPack
   assets do
-    js :application, ['/js/*.js']
-    css :application, ['/css/base-min.css', '/css/grids-min.css', '/css/grids-responsive-min.css', '/css/style.css', '/css/extruding-button.css']
+    serve '/vendor/js', :from => 'vendor/assets/js'
+    js :application, [
+      '/vendor/**/*.js',
+      '/js/spotify_jukebox.js',
+      '/js/services/*.js',
+      '/js/controllers/*.js',
+      '/js/directives/*.js'
+    ]
+    css :application, ['/css/**/*.css']
   end
 
   @@currently_playing = nil
   post '/player_endpoint' do
-    @@currently_playing = params['player_info']
-    broadcast_json @@currently_playing
+    @@currently_playing = JSON.parse(params['now_playing']).merge({:play_status => {:playing => true, :timestamp => Time.now.to_i}})
+    broadcast @@currently_playing
     return :ok
   end
 
@@ -29,7 +40,7 @@ class JukeboxWeb < Sinatra::Base
     request.websocket do |ws|
       ws.onopen do
         if not @@currently_playing.nil?
-          ws.send(@@currently_playing)
+          ws.send(@@currently_playing.to_json)
         end
         settings.sockets << ws
       end
@@ -46,25 +57,32 @@ class JukeboxWeb < Sinatra::Base
     @@currently_playing
   end
 
-  get '/pause' do
-    MusicService.stop!
-    broadcast_json({:play_status => { :playing => false, :timestamp => Time.now.to_i }}.to_json)
-  end
-
   get '/play' do
     MusicService.play!
-    broadcast_json({:play_status => { :playing => true, :timestamp => Time.now.to_i }}.to_json)
+    broadcast({:play_status => { :playing => MusicService.playing?, :timestamp => Time.now.to_i }})
+    return :ok
+  end
+
+  get '/pause' do
+    MusicService.stop!
+    broadcast({:play_status => { :playing => MusicService.playing?, :timestamp => Time.now.to_i }})
+    return :ok
   end
 
   get '/skip' do
     MusicService.skip!
-    redirect '/'
   end
 
   get '/' do
-    users = UserService.get_users
-    playlists = users.inject({}) { |hash, user| hash[user.id] = PlaylistService.get_playlists_for_user(user.id); hash }
-    haml :index, :locals => { :users => users, :playlists => playlists, :playing => MusicService.playing? }
+    haml :index
+  end
+
+  get '/users' do
+    UserService.get_users.map(&:to_hash).to_json
+  end
+
+  get '/playlists' do
+    PlaylistService.get_playlists.map(&:to_hash).to_json
   end
 
   post '/add_playlist' do
@@ -78,13 +96,11 @@ class JukeboxWeb < Sinatra::Base
   delete '/remove_playlist/:playlist_id' do
     playlist_id = params[:playlist_id]
     PlaylistService.remove_playlist playlist_id
-    redirect '/'
   end
 
   delete '/remove_user/:user_id' do
     user_id = params[:user_id]
     UserService.remove_user user_id
-    redirect '/'
   end
 
   put '/enable_playlist/:playlist_id' do
@@ -110,14 +126,15 @@ class JukeboxWeb < Sinatra::Base
   end
 
   def broadcast_enabled
-    enabled_user_ids = UserService.get_enabled_users.map{ |user| user.id }
-    enabled_playlist_ids = PlaylistService.get_enabled_playlists.map{ |playlist| playlist.id }
-    broadcast_json({ :enabled_users => enabled_user_ids, :enabled_playlists => enabled_playlist_ids }.to_json)
+    users = UserService.get_users.map(&:to_hash)
+    playlists = PlaylistService.get_playlists.map(&:to_hash)
+    broadcast({ :users => users, :playlists => playlists })
   end
 
-  def broadcast_json json
+  def broadcast hash
+    json_string = hash.to_json.to_s
     settings.sockets.each do |socket|
-      socket.send json.to_s
+      socket.send json_string
     end
   end
 end

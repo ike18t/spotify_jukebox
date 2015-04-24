@@ -25,6 +25,7 @@ describe WebHelper do
   context 'track_info_to_json' do
     it 'should return a json string in the appropriate format' do
       album = Album.new :name => 'blue', :art_hex => 'abc'
+      expected_image = WebHelper::IMAGE_URL_FORMAT % album.art_hex
       user = User.new :id => 123, :name => 'ike'
       track = Track.new :name => 'say it aint so', :artists => ['weezer'], :album => album
       retVal = WebHelper.track_info_to_json track, user
@@ -32,9 +33,9 @@ describe WebHelper do
       expect(json['current_track']['name']).to eq(track.name)
       expect(json['current_track']['artists']).to eq(track.artists.join(', '))
       expect(json['current_track']['album']).to eq(album.name)
-      expect(json['current_track']['image']).to eq(album.art_hex)
-      expect(json['current_track']['user']['id']).to eq(user.id)
-      expect(json['current_track']['user']['name']).to eq(user.name)
+      expect(json['current_track']['image']).to eq(expected_image)
+      expect(json['current_user']['id']).to eq(user.id)
+      expect(json['current_user']['name']).to eq(user.name)
     end
   end
 end
