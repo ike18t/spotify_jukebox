@@ -54,7 +54,7 @@ class JukeboxWeb < Sinatra::Base
     headers 'Access-Control-Allow-Origin'         => '*',
             'Access-Conformation-Request-Method'  => 'GET'
     content_type 'application/json'
-    @@currently_playing
+    @@currently_playing.to_json
   end
 
   get '/play' do
