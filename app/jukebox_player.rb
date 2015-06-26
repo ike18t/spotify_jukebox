@@ -10,7 +10,6 @@ class JukeboxPlayer
   def start!
     current_user = nil
     loop do
-      sleep 2
       enabled_users = UserService.get_enabled_users
       enabled_playlists = PlaylistService.get_enabled_playlists
       @historian.update_enabled_playlists_list enabled_playlists.map{ |p| p.name }
