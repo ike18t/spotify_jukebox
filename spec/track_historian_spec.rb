@@ -51,7 +51,6 @@ describe TrackHistorian do
     end
 
     it 'should persist history to cache' do
-      track_key = 'artist => track'
       @track_historian.instance_variable_set(:@track_history, [:a, :b, :c])
       allow(@track_historian).to receive(:generate_track_key).and_return(:d)
       allow(@track_historian).to receive(:get_calculated_size).and_return(3)
