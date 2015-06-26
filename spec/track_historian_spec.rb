@@ -75,6 +75,14 @@ describe TrackHistorian do
     end
   end
 
+  context 'pop' do
+    it 'should bump value in index 0' do
+      @track_historian.instance_variable_set(:@track_history, [:a, :b, :c])
+      @track_historian.pop
+      expect(@track_historian.instance_variable_get(:@track_history)).to eq([:b, :c])
+    end
+  end
+
   context 'get_calculated_size' do
     before do
       @track_historian.instance_variable_set(:@enabled_playlists, ['a', 'b', 'c'])

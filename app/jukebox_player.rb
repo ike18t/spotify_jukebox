@@ -19,7 +19,7 @@ class JukeboxPlayer
         next if playlists.empty?
         track = get_random_track_for_playlist playlists.sample
       end
-      next if track.nil?
+      @historian.pop and next if track.nil?
       notify track, current_user
       MusicService.play track
     end

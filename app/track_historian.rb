@@ -14,6 +14,11 @@ class TrackHistorian
     @playlist_track_counts[playlist.name] = count
   end
 
+  def pop
+    @track_history.shift
+    CacheService.cache_track_history! @track_history
+  end
+
   def record artist_name, track_name
     @track_history.push({ artist_name => track_name })
     @track_history.shift if @track_history.size > get_calculated_size
