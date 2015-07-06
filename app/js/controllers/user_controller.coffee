@@ -11,10 +11,12 @@ angular.module('spotifyJukeboxApplication')
 
     webSocketService.registerListener('users', (userData) ->
       $scope.users = userData
+      $scope.$apply()
     )
 
     webSocketService.registerListener('playlists', (playlistData) ->
       $scope.playlists = playlistData
+      $scope.$apply()
     )
 
     $scope.toggleEnabledUser = (user) ->
