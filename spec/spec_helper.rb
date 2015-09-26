@@ -7,28 +7,16 @@ CodeClimate::TestReporter.start
 
 require_all 'app'
 
+RSpec.configure do |config|
+  config.include Rack::Test::Methods
+end
+
 JukeboxWeb.set(
   environment: :test,
   run: false,
   raise_errors: true,
   logging: false
 )
-
-module TestHelper
-  def app
-    JukeboxWeb.new
-  end
-
-  def body
-    last_response.body
-  end
-
-  def status
-    last_response.status
-  end
-
-  include Rack::Test::Methods
-end
 
 $logger = MockLogger.new
 

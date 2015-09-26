@@ -1,11 +1,3 @@
-require 'sinatra'
-require 'sinatra-websocket'
-require 'sinatra/assetpack'
-require 'json'
-require 'haml'
-require 'sass'
-require 'coffee_script'
-
 class JukeboxWeb < Sinatra::Base
   set :root, File.expand_path(File.join(File.dirname(__FILE__), '..'))
   set :bind, '0.0.0.0'
