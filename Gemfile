@@ -27,4 +27,5 @@ group :test do
   gem 'watir-webdriver'
   gem 'jasmine'
   gem 'rack-asset-compiler'
+  gem 'rubocop'
 end
