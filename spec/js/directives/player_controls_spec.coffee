@@ -22,13 +22,13 @@ describe 'Player Controls Directive', ->
   it 'should hit pause endpoint if playing', ->
     @scope.isPlaying = true
     @scope.$apply()
-    ajaxSpy = spyOn(@http, 'get')
+    ajaxSpy = spyOn(@http, 'put')
     @element.triggerHandler('click')
     expect(ajaxSpy).toHaveBeenCalledWith('pause')
 
   it 'should hit play endpoint if paused', ->
     @scope.isPlaying = false
     @scope.$apply()
-    ajaxSpy = spyOn(@http, 'get')
+    ajaxSpy = spyOn(@http, 'put')
     @element.triggerHandler('click')
     expect(ajaxSpy).toHaveBeenCalledWith('play')

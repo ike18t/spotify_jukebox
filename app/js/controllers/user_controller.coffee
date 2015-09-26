@@ -20,10 +20,10 @@ angular.module('spotifyJukeboxApplication')
     )
 
     $scope.toggleEnabledUser = (user) ->
-      action = if user.enabled then 'disable_user' else 'enable_user'
-      $http.put("#{action}/#{user.id}")
+      action = if user.enabled then 'disable' else 'enable'
+      $http.put("users/#{user.id}/#{action}")
 
     $scope.toggleEnabledPlaylist = (playlist) ->
-      action = if playlist.enabled then 'disable_playlist' else 'enable_playlist'
-      $http.put("#{action}/#{playlist.id}")
+      action = if playlist.enabled then 'disable' else 'enable'
+      $http.put("playlists/#{playlist.id}/#{action}")
   ]

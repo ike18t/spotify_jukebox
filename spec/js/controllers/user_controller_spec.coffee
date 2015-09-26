@@ -20,11 +20,11 @@ describe 'User Controller', ->
       @controller('UserController', { $scope: scope })
       ajaxSpy = spyOn(@http, 'put')
       scope.toggleEnabledUser({id: 1, enabled: true})
-      expect(ajaxSpy).toHaveBeenCalledWith('disable_user/1')
+      expect(ajaxSpy).toHaveBeenCalledWith('users/1/disable')
 
     it 'should call the enable_user endpoint if the user is disabled', ->
       scope = {}
       @controller('UserController', { $scope: scope })
       ajaxSpy = spyOn(@http, 'put')
       scope.toggleEnabledUser({id: 1, enabled: false})
-      expect(ajaxSpy).toHaveBeenCalledWith('enable_user/1')
+      expect(ajaxSpy).toHaveBeenCalledWith('users/1/enable')

@@ -18,6 +18,6 @@ describe 'Now Playing Controller', ->
     it 'should call the skip endpoint', ->
       scope = {}
       @controller('NowPlayingController', { $scope: scope })
-      ajaxSpy = spyOn(@http, 'get')
+      ajaxSpy = spyOn(@http, 'put')
       scope.skip()
       expect(ajaxSpy).toHaveBeenCalled()

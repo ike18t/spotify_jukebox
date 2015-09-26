@@ -22,5 +22,5 @@ angular.module('spotifyJukeboxApplication')
     )
 
     $scope.skip = ->
-      $http.get('skip')
+      $http.put('skip')
   ]

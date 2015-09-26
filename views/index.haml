@@ -30,8 +30,8 @@
           Brought to you by {{currentUser.name}}
 
 .add-playlist
-  %form{:action => 'add_playlist', :method => 'POST'}
-    %label{:for => 'add-playlist'}
+  %form{:action => 'playlists', :method => 'POST'}
+    %label{:for => 'playlists'}
       Add a playlist!
     %fieldset
       %input#playlist_url{:required => 'required', :type => 'url', :name => 'playlist_url', :placeholder => 'Enter a Spotify playlist URL'}

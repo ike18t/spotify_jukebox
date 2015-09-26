@@ -55,19 +55,17 @@ class JukeboxWeb < Sinatra::Base
     @@currently_playing.merge({ play_status: { playing: MusicService.playing?, timestamp: Time.now.to_i } }).to_json
   end
 
-  get '/play' do
+  put '/play' do
     MusicService.play!
     broadcast({ play_status: { playing: MusicService.playing?, timestamp: Time.now.to_i } })
-    return :ok
   end
 
-  get '/pause' do
+  put '/pause' do
     MusicService.stop!
     broadcast({ play_status: { playing: MusicService.playing?, timestamp: Time.now.to_i } })
-    return :ok
   end
 
-  get '/skip' do
+  put '/skip' do
     MusicService.skip!
   end
 
@@ -83,7 +81,7 @@ class JukeboxWeb < Sinatra::Base
     PlaylistService.get_playlists.map(&:to_hash).to_json
   end
 
-  post '/add_playlist' do
+  post '/playlists' do
     playlist_url = params[:playlist_url]
     playlist_info = WebHelper.get_playlist_id_and_user_id_from_url playlist_url
     playlist_uri = WebHelper.create_playlist_uri playlist_info[:playlist_id], playlist_info[:user_id]
@@ -91,29 +89,29 @@ class JukeboxWeb < Sinatra::Base
     redirect '/'
   end
 
-  delete '/remove_playlist/:playlist_id' do
+  delete '/playlists/:playlist_id' do
     playlist_id = params[:playlist_id]
     PlaylistService.remove_playlist playlist_id
   end
 
-  delete '/remove_user/:user_id' do
+  delete '/users/:user_id' do
     user_id = params[:user_id]
     UserService.remove_user user_id
   end
 
-  put '/enable_playlist/:playlist_id' do
+  put '/playlists/:playlist_id/enable' do
     return broadcast_results { PlaylistService.enable_playlist params[:playlist_id] }
   end
 
-  put '/disable_playlist/:playlist_id' do
+  put '/playlists/:playlist_id/disable' do
     return broadcast_results { PlaylistService.disable_playlist params[:playlist_id] }
   end
 
-  put '/enable_user/:user_id' do
+  put '/users/:user_id/enable' do
     return broadcast_results { UserService.enable_user params[:user_id] }
   end
 
-  put '/disable_user/:user_id' do
+  put '/users/:user_id/disable' do
     return broadcast_results { UserService.disable_user params[:user_id] }
   end
 

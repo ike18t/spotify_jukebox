@@ -10,12 +10,12 @@ angular.module('spotifyJukeboxApplication')
         if isPlaying
           $element.addClass('fa-pause')
           $element.on('click', ->
-            $http.get('pause')
+            $http.put('pause')
           )
         else
           $element.addClass('fa-play')
           $element.on('click', (event) ->
-            $http.get('play')
+            $http.put('play')
           )
       )
   ])
