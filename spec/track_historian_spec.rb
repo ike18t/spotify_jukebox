@@ -26,15 +26,16 @@ describe TrackHistorian do
 
   context 'update_playlist_track_count' do
     it 'should store the playlist count key value pair in the playlist_track_counts instance variable' do
-      playlist, count = Playlist.new(:name => 'bah'), 2
+      playlist = Playlist.new(name: 'bah')
+      count = 2
       @track_historian.update_playlist_track_count playlist, count
-      expect(@track_historian.instance_variable_get(:@playlist_track_counts)).to eq({playlist.name => count})
+      expect(@track_historian.instance_variable_get(:@playlist_track_counts)).to eq(playlist.name => count)
     end
   end
 
   context 'record' do
     it 'should add track key to the array' do
-      track_key = { 'artist' => 'track'}
+      track_key = { 'artist' => 'track' }
       @track_historian.instance_variable_set(:@track_history, [])
       allow(@track_historian).to receive(:generate_track_key).and_return(track_key)
       allow(@track_historian).to receive(:get_calculated_size).and_return(1)
@@ -85,22 +86,21 @@ describe TrackHistorian do
 
   context 'get_calculated_size' do
     before do
-      @track_historian.instance_variable_set(:@enabled_playlists, ['a', 'b', 'c'])
+      @track_historian.instance_variable_set(:@enabled_playlists, %w(a b c))
     end
 
     it { expect(@track_historian.send(:get_calculated_size)).to eq(0) }
 
     it 'should add enabled playlists track counts and return 75%' do
-      playlist_track_counts = {'a' => 1, 'b' => 4, 'c' => 3}
+      playlist_track_counts = { 'a' => 1, 'b' => 4, 'c' => 3 }
       @track_historian.instance_variable_set(:@playlist_track_counts, playlist_track_counts)
       expect(@track_historian.send(:get_calculated_size)).to eq(4)
     end
 
     it 'should not error if an enabled_playlist is not in the list' do
-      playlist_track_counts = {'a' => 1, 'c' => 3}
+      playlist_track_counts = { 'a' => 1, 'c' => 3 }
       @track_historian.instance_variable_set(:@playlist_track_counts, playlist_track_counts)
       expect(@track_historian.send(:get_calculated_size)).to eq(2)
     end
   end
-
 end

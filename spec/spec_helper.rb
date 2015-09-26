@@ -8,10 +8,10 @@ CodeClimate::TestReporter.start
 require_all 'app'
 
 JukeboxWeb.set(
-  :environment => :test,
-  :run => false,
-  :raise_errors => true,
-  :logging => false
+  environment: :test,
+  run: false,
+  raise_errors: true,
+  logging: false
 )
 
 module TestHelper

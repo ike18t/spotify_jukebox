@@ -12,7 +12,7 @@ describe MusicService do
 
   context 'play' do
     it 'should call play_track on wrapper with the spotify_track' do
-      track_double = double({:spotify_track => ''})
+      track_double = double(spotify_track: '')
       wrapper_double = double
       expect(MusicService).to receive(:spotify_wrapper).and_return(wrapper_double)
       expect(wrapper_double).to receive(:play_track).with(track_double.spotify_track)

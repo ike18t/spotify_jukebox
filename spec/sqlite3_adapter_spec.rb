@@ -1,7 +1,6 @@
 require_relative 'spec_helper'
 
 describe SQLite3Adapter do
-
   let(:test_db_name) { 'test.db' }
   let(:connection) { SQLite3::Database.new(test_db_name) }
 

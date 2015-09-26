@@ -16,7 +16,7 @@ class MusicService < ServiceBase
       spotify_wrapper.play!
     end
 
-    def play track
+    def play(track)
       spotify_wrapper.play_track track.spotify_track
     end
   end

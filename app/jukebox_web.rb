@@ -17,7 +17,7 @@ class JukeboxWeb < Sinatra::Base
 
   register Sinatra::AssetPack
   assets do
-    serve '/vendor/js', :from => 'vendor/assets/js'
+    serve '/vendor/js', from: 'vendor/assets/js'
     js :application, [
       '/vendor/**/*.js',
       '/js/spotify_jukebox.js',
@@ -30,18 +30,16 @@ class JukeboxWeb < Sinatra::Base
 
   @@currently_playing = nil
   post '/player_endpoint' do
-    @@currently_playing = JSON.parse(params['now_playing']).merge({:play_status => {:playing => true, :timestamp => Time.now.to_i}})
+    @@currently_playing = JSON.parse(params['now_playing']).merge({ play_status: { playing: true, timestamp: Time.now.to_i } })
     broadcast @@currently_playing
     return :ok
   end
 
   get '/websocket_connect' do
-    if not request.websocket? then return 'Websocket connection required' end
+    return 'Websocket connection required' unless request.websocket?
     request.websocket do |ws|
       ws.onopen do
-        if not @@currently_playing.nil?
-          ws.send(@@currently_playing.to_json)
-        end
+        ws.send(@@currently_playing.to_json) unless @@currently_playing.nil?
         settings.sockets << ws
       end
       ws.onclose do
@@ -54,18 +52,18 @@ class JukeboxWeb < Sinatra::Base
     headers 'Access-Control-Allow-Origin'         => '*',
             'Access-Conformation-Request-Method'  => 'GET'
     content_type 'application/json'
-    @@currently_playing.merge({:play_status => { :playing => MusicService.playing?, :timestamp => Time.now.to_i }}).to_json
+    @@currently_playing.merge({ play_status: { playing: MusicService.playing?, timestamp: Time.now.to_i } }).to_json
   end
 
   get '/play' do
     MusicService.play!
-    broadcast({:play_status => { :playing => MusicService.playing?, :timestamp => Time.now.to_i }})
+    broadcast({ play_status: { playing: MusicService.playing?, timestamp: Time.now.to_i } })
     return :ok
   end
 
   get '/pause' do
     MusicService.stop!
-    broadcast({:play_status => { :playing => MusicService.playing?, :timestamp => Time.now.to_i }})
+    broadcast({ play_status: { playing: MusicService.playing?, timestamp: Time.now.to_i } })
     return :ok
   end
 
@@ -119,19 +117,19 @@ class JukeboxWeb < Sinatra::Base
     return broadcast_results { UserService.disable_user params[:user_id] }
   end
 
-  def broadcast_results &block
+  def broadcast_results(&block)
     block.call
     broadcast_enabled
-    return :ok
+    :ok
   end
 
   def broadcast_enabled
     users = UserService.get_users.map(&:to_hash)
     playlists = PlaylistService.get_playlists.map(&:to_hash)
-    broadcast({ :users => users, :playlists => playlists })
+    broadcast({ users: users, playlists: playlists })
   end
 
-  def broadcast hash
+  def broadcast(hash)
     json_string = hash.to_json.to_s
     settings.sockets.each do |socket|
       socket.send json_string

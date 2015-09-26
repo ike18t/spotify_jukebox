@@ -22,5 +22,4 @@ class MockLogger
       end
     ERRORS
   end
-
 end

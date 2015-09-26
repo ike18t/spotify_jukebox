@@ -22,18 +22,18 @@ module Jasmine
       @application = Rack::Builder.new do
         # Compiler for your specs
         use Rack::CoffeeCompiler,
-            :source_dir => File.join(root, 'spec/js'),
-            :url => config.spec_path
+            source_dir: File.join(root, 'spec/js'),
+            url: config.spec_path
 
         # Compiler for your app files
         use Rack::CoffeeCompiler,
-            :source_dir => File.join(root, 'app/js'),
-            :url => 'app/js'
+            source_dir: File.join(root, 'app/js'),
+            url: 'app/js'
 
         run Jasmine::Application.app(config)
       end
 
-      server = Rack::Server.new(@rack_options.merge(:Port => @port, :AccessLog => []))
+      server = Rack::Server.new(@rack_options.merge(Port: @port, AccessLog: []))
       # workaround for Rack bug, when Rack > 1.2.1 is released Rack::Server.start(:app => Jasmine.app(self)) will work
       server.instance_variable_set(:@app, @application)
       server.start

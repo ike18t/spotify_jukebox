@@ -1,7 +1,7 @@
 require 'yaml'
 
 class ConfigService
-  def self.update updates
+  def self.update(updates)
     updates.each do |key, value|
       get.send("#{key}=", value)
     end
@@ -9,10 +9,11 @@ class ConfigService
   end
 
   def self.get
-    @config ||= read() || AppConfig.new
+    @config ||= read || AppConfig.new
   end
 
   protected
+
   FILENAME = 'config.yml'
 
   def self.save
@@ -23,7 +24,7 @@ class ConfigService
 
   def self.read
     config_data = File.read(FILENAME)
-    YAML::load(config_data)
+    YAML.load(config_data)
   rescue Errno::ENOENT
     nil
   end

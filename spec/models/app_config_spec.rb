@@ -2,23 +2,24 @@ require_relative '../spec_helper'
 
 describe AppConfig do
   it 'should update attributes with the values passed into initialize' do
-    username, playlist_uri = 'ike', 'http://bah'
-    config = AppConfig.new :username => username
+    username = 'ike'
+    playlist_uri = 'http://bah'
+    config = AppConfig.new username: username
     expect(config.username).to eq(username)
   end
 
   it 'should IO read binary the app_key if the file exists' do
     app_key = '/path'
-    config = AppConfig.new :app_key => app_key
-    expect(File).to receive(:exists?).and_return(true)
+    config = AppConfig.new app_key: app_key
+    expect(File).to receive(:exist?).and_return(true)
     expect(IO).to receive(:read)
     config.app_key
   end
 
   it 'should return nil for app_key if file does not exist' do
     app_key = '/path'
-    config = AppConfig.new :app_key => app_key
-    expect(File).to receive(:exists?).and_return(false)
+    config = AppConfig.new app_key: app_key
+    expect(File).to receive(:exist?).and_return(false)
     expect(config.app_key).to be nil
   end
 

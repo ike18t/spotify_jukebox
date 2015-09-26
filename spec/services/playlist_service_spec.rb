@@ -3,8 +3,8 @@ require_relative '../spec_helper'
 describe PlaylistService do
   context 'create_playlist' do
     it 'should not add the playlist if it already exists' do
-      existing = [ Playlist.new(:id => 123) ]
-      allow(PlaylistService).to receive(:get_playlists).and_return(existing);
+      existing = [Playlist.new(id: 123)]
+      allow(PlaylistService).to receive(:get_playlists).and_return(existing)
       expect(PlaylistService).to receive(:save_playlists).never
       PlaylistService.create_playlist 123, 456, ''
     end
@@ -69,8 +69,8 @@ describe PlaylistService do
 
   context 'remove_playlist' do
     it 'should remove playlist form array and save' do
-      playlists =  [ Playlist.new(:id => 321, :user_id => 321),
-                     Playlist.new(:id => 123, :user_id => 321) ]
+      playlists = [Playlist.new(id: 321, user_id: 321),
+                   Playlist.new(id: 123, user_id: 321)]
       allow(PlaylistService).to receive(:get_playlists).and_return(playlists)
       expect(PlaylistService).to receive(:save_playlists).with([playlists[0]])
       PlaylistService.remove_playlist(123)
@@ -79,9 +79,9 @@ describe PlaylistService do
 
   context 'get_enabled_playlists_for_user' do
     it 'should only return playlists for the user_id' do
-      user_playlists =     [ Playlist.new(:id => 321, :user_id => 321),
-                             Playlist.new(:id => 123, :user_id => 321) ]
-      not_user_playlists = [ Playlist.new(:id => 567, :user_id => 123) ]
+      user_playlists =     [Playlist.new(id: 321, user_id: 321),
+                            Playlist.new(id: 123, user_id: 321)]
+      not_user_playlists = [Playlist.new(id: 567, user_id: 123)]
 
       expect(PlaylistService).to receive(:get_playlists).and_return(user_playlists + not_user_playlists)
       expect(PlaylistService.get_playlists_for_user(321)).to eq(user_playlists)
@@ -90,9 +90,9 @@ describe PlaylistService do
 
   context 'get_enabled_playlists' do
     it 'should only return enabled playlists' do
-      enabled  = [ Playlist.new(:enabled => true),
-                   Playlist.new(:enabled => true) ]
-      disabled = [ Playlist.new(:enabled => false) ]
+      enabled  = [Playlist.new(enabled: true),
+                  Playlist.new(enabled: true)]
+      disabled = [Playlist.new(enabled: false)]
 
       expect(PlaylistService).to receive(:get_playlists).and_return(enabled + disabled)
       expect(PlaylistService.get_enabled_playlists).to eq(enabled)
@@ -106,9 +106,9 @@ describe PlaylistService do
     end
 
     it 'should only return playlists that are enabled' do
-      enabled =  [ Playlist.new(:id => 321, :name => 'name321', :uri => 'uri321', :enabled => true),
-                   Playlist.new(:id => 567, :name => 'name567', :uri => 'uri567', :enabled => true) ]
-      disabled = [ Playlist.new(:id => 123, :name => 'name123', :uri => 'uri123', :enabled => false) ]
+      enabled =  [Playlist.new(id: 321, name: 'name321', uri: 'uri321', enabled: true),
+                  Playlist.new(id: 567, name: 'name567', uri: 'uri567', enabled: true)]
+      disabled = [Playlist.new(id: 123, name: 'name123', uri: 'uri123', enabled: false)]
 
       expect(PlaylistService).to receive(:get_playlists_for_user).with(1).and_return(enabled + disabled)
       expect(PlaylistService.get_enabled_playlists_for_user(1)).to eq(enabled)
@@ -131,7 +131,7 @@ describe PlaylistService do
 
   context 'enable_playlist' do
     it 'should set enabled flag on playlist' do
-      playlists = [ Playlist.new(:id => 123, :name => 'name123', :uri => 'uri123', :enabled => false) ]
+      playlists = [Playlist.new(id: 123, name: 'name123', uri: 'uri123', enabled: false)]
       allow(PlaylistService).to receive(:get_playlists).and_return(playlists)
       expect(PlaylistService).to receive(:save_playlists)
       PlaylistService.enable_playlist 123
@@ -147,7 +147,7 @@ describe PlaylistService do
 
   context 'disable_playlist' do
     it 'should set enabled flag on playlist' do
-      playlists = [ Playlist.new(:id => 123, :name => 'name123', :uri => 'uri123', :enabled => true) ]
+      playlists = [Playlist.new(id: 123, name: 'name123', uri: 'uri123', enabled: true)]
       allow(PlaylistService).to receive(:get_playlists).and_return(playlists)
       allow(PlaylistService).to receive(:save_playlists)
       PlaylistService.disable_playlist 123
@@ -172,7 +172,7 @@ describe PlaylistService do
       expect(wrapper_double).to receive(:get_playlist_track).with(playlist_double, 1)
       expect(PlaylistService).to receive(:spotify_wrapper).at_least(1).times.and_return(wrapper_double)
       expect(PlaylistService).to receive(:spotify_track_to_model).twice
-      PlaylistService.get_tracks_for_playlist Playlist.new(:uri => 'uri')
+      PlaylistService.get_tracks_for_playlist Playlist.new(uri: 'uri')
     end
   end
 
@@ -180,8 +180,8 @@ describe PlaylistService do
     it 'should return a new track loaded with values' do
       wrapper_double = double
 
-      track = double(:free => true)
-      playlist = double(:id => 123)
+      track = double(free: true)
+      playlist = double(id: 123)
       album = double
       expect(wrapper_double).to receive(:get_track_name).with(track).and_return('track_name')
       expect(wrapper_double).to receive(:get_track_album).with(track).and_return(album)
@@ -215,8 +215,8 @@ describe PlaylistService do
 
   context 'spotify_album_to_model' do
     it 'should return a populated album object' do
-      album_double = double(:free => true)
-      cover_double = double(:unpack => [:hex])
+      album_double = double(free: true)
+      cover_double = double(unpack: [:hex])
       wrapper_double = double
       expect(wrapper_double).to receive(:get_album_name).with(album_double).and_return(:album_name)
       expect(wrapper_double).to receive(:get_album_cover).with(album_double, PlaylistService::SP_IMAGE_SIZE_NORMAL).and_return(cover_double)

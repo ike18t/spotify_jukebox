@@ -1,10 +1,10 @@
 class UserService < ServiceBase
   class << self
-    def create_user id
+    def create_user(id)
       user_info = SpotifyScraper.name_and_image_from_spotify_id id
       users = get_users
-      if users.select{ |u| u.id == id }.empty?
-        user = User.new :id => id, :name => user_info[:name], :image_url => user_info[:image_url]
+      if users.select { |u| u.id == id }.empty?
+        user = User.new id: id, name: user_info[:name], image_url: user_info[:image_url]
         users << user
         save_users users
       end
@@ -16,20 +16,20 @@ class UserService < ServiceBase
       users.select(&:enabled?)
     end
 
-    def remove_user id
+    def remove_user(id)
       users = get_users
-      users.reject!{ |p| p.id == id }
+      users.reject! { |p| p.id == id }
       PlaylistService.get_playlists_for_user(id).each do |playlist|
         PlaylistService.remove_playlist playlist.id
       end
       save_users users
     end
 
-    def enable_user id
+    def enable_user(id)
       set_enabled id, true
     end
 
-    def disable_user id
+    def disable_user(id)
       set_enabled id, false
     end
 
@@ -38,16 +38,17 @@ class UserService < ServiceBase
     end
 
     private
-    def set_enabled user_id, enabled
+
+    def set_enabled(user_id, enabled)
       users = get_users
       user_index = users.index { |user| user.id == user_id }
-      if not user_index.nil?
+      unless user_index.nil?
         users[user_index].enabled = enabled
         save_users users
       end
     end
 
-    def save_users users
+    def save_users(users)
       CacheService.cache_users! users
     end
   end

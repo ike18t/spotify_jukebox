@@ -8,12 +8,12 @@ describe ConfigService do
 
   context 'update' do
     it 'should update config model with hash values passed to update' do
-      updates = { :username => 'ike' }
+      updates = { username: 'ike' }
       ConfigService.update updates
       config = ConfigService.get
       expect(config.username).to eq(updates[:username])
     end
 
-    it { expect { ConfigService.update({ :username1 => 'ike' }) }.to raise_error(NoMethodError) }
+    it { expect { ConfigService.update(username1: 'ike') }.to raise_error(NoMethodError) }
   end
 end

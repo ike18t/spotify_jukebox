@@ -4,7 +4,7 @@ class AppConfig < ModelBase
 
   attr_accessor :username, :password, :app_key
 
-  def password= value
+  def password=(value)
     @password = AESCrypt.encrypt(value, 'secret_key')
   end
 
@@ -16,7 +16,7 @@ class AppConfig < ModelBase
   def app_key
     return nil if @app_key.nil?
     app_key = File.expand_path(@app_key)
-    return nil unless File.exists? app_key
+    return nil unless File.exist? app_key
     IO.read(app_key, encoding: 'BINARY')
   end
 end

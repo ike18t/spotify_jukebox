@@ -10,6 +10,6 @@ module SpotifyScraper
     name = response['display_name']
     images = response['images']
     image_url = images.empty? ? nil : images.first['url']
-    { :name => name, :image_url => image_url }
+    { name: name, image_url: image_url }
   end
 end

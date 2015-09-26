@@ -4,7 +4,7 @@ describe SpotifyScraper do
   context 'name_and_image_from_spotify_id' do
     it 'should set the image_url if it is found' do
       mock_response = { 'display_name' => 'DISPLAY NAME',
-                        'images' => [ { 'url' => 'http://image.com' } ] }.to_json
+                        'images' => [{ 'url' => 'http://image.com' }] }.to_json
       spotify_user_id = 123
       url = SpotifyScraper::SPOTIFY_PROFILE_URL_FORMAT % spotify_user_id
       allow(RestClient).to receive(:get).and_return(mock_response)
