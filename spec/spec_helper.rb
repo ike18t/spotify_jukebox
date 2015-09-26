@@ -1,29 +1,11 @@
-require 'sinatra'
-require 'rack/test'
-require 'rspec'
-require 'pry'
-require 'autotest'
-require 'codeclimate-test-reporter'
 require_relative 'mock_logger'
+
+Bundler.require :default, :test
 
 ENV['RACK_ENV'] = 'test'
 CodeClimate::TestReporter.start
 
-def autoload_all path
-  Dir.glob("#{path}**/*.rb").each do |file|
-    File.open(file, 'r') do |infile|
-      while (line = infile.gets)
-        match = line.match /^(class|module)\s([A-Z]\w+)/
-        if not match.nil? and not match[2].nil?
-          autoload match[2].to_sym, File.expand_path(file)
-          break
-        end
-      end
-    end
-  end
-end
-
-autoload_all 'app/'
+require_all 'app'
 
 JukeboxWeb.set(
   :environment => :test,
@@ -33,7 +15,6 @@ JukeboxWeb.set(
 )
 
 module TestHelper
-
   def app
     JukeboxWeb.new
   end
@@ -47,7 +28,6 @@ module TestHelper
   end
 
   include Rack::Test::Methods
-
 end
 
 $logger = MockLogger.new

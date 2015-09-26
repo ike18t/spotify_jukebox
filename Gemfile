@@ -14,6 +14,7 @@ gem 'aescrypt'
 gem 'main'
 gem 'rest-client'
 gem 'sqlite3'
+gem 'require_all'
 
 group :test do
   gem 'pry'
