@@ -1,6 +1,7 @@
 require 'bundler/setup'
 require 'rspec/core/rake_task'
 require 'cucumber/rake/task'
+require 'rubocop/rake_task'
 
 Bundler.require
 
@@ -8,7 +9,7 @@ require_all 'app'
 
 RSpec::Core::RakeTask.new :spec
 
-task :default => :spec
+task :default => [:rubocop, :spec, 'jasmine:ci']
 
 APP_ROOT = File.expand_path(File.join(File.dirname(__FILE__)))
 SINATRA_PORT = 4567
@@ -81,3 +82,8 @@ ENV['JASMINE_CONFIG_PATH'] = 'spec/js/support/jasmine.yml'
 require 'jasmine'
 require_relative 'spec/js/support/jasmine.rb'
 load 'jasmine/tasks/jasmine.rake'
+
+RuboCop::RakeTask.new(:rubocop) do |task|
+  task.patterns = ['app/**/*.rb', 'spec/**/*.rb']
+  task.fail_on_error = true
+end
