@@ -81,6 +81,16 @@ class JukeboxWeb < Sinatra::Base
     redirect '/'
   end
 
+  post '/users/:user_id/playlists' do
+    user_id = params[:user_id]
+    playlist_url = params[:playlist_url]
+    playlist_info = WebHelper.get_playlist_id_and_user_id_from_url playlist_url
+    playlist_uri = WebHelper.create_playlist_uri playlist_info[:playlist_id], playlist_info[:user_id]
+    PlaylistService.create_playlist playlist_info[:playlist_id], user_id, playlist_uri
+    broadcast_enabled
+    :ok
+  end
+
   delete '/playlists/:playlist_id' do
     playlist_id = params[:playlist_id]
     PlaylistService.remove_playlist playlist_id
