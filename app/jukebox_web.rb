@@ -24,7 +24,7 @@ class JukeboxWeb < Sinatra::Base
   post '/player_endpoint' do
     @@currently_playing = JSON.parse(params['now_playing']).merge({ play_status: { playing: true, timestamp: Time.now.to_i } })
     broadcast @@currently_playing
-    return :ok
+    :ok
   end
 
   get '/websocket_connect' do
@@ -50,15 +50,18 @@ class JukeboxWeb < Sinatra::Base
   put '/play' do
     MusicService.play!
     broadcast({ play_status: { playing: MusicService.playing?, timestamp: Time.now.to_i } })
+    :ok
   end
 
   put '/pause' do
     MusicService.stop!
     broadcast({ play_status: { playing: MusicService.playing?, timestamp: Time.now.to_i } })
+    :ok
   end
 
   put '/skip' do
     MusicService.skip!
+    :ok
   end
 
   get '/' do
@@ -94,11 +97,13 @@ class JukeboxWeb < Sinatra::Base
   delete '/playlists/:playlist_id' do
     playlist_id = params[:playlist_id]
     PlaylistService.remove_playlist playlist_id
+    :ok
   end
 
   delete '/users/:user_id' do
     user_id = params[:user_id]
     UserService.remove_user user_id
+    :ok
   end
 
   put '/playlists/:playlist_id/enable' do
