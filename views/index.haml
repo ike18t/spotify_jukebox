@@ -1,24 +1,22 @@
 .pure-g
   .pure-u-1-2{:'ng-controller' => 'UserController'}
     %ul.users.entity-list{:'ng-repeat' => 'user in users'}
-      %li.user{:'ng-class' => '{disabled: !user.enabled}'}
+      %li.user{:'ng-class' => '{ disabled: !user.enabled }'}
         .name.user-name{:'ng-click' => 'toggleEnabledUser(user)'}
-          {{user.name}}
-          %span{:'ng-if' => '!user.name'}
-            {{user.id}}
+          {{ user.name || user.id }}
         %ul.playlists.entity-list{:'ng-repeat' => 'playlist in playlists | filter: { user_id:user.id }'}
-          %li.playlist{:'ng-class' => '{disabled: !playlist.enabled}'}
+          %li.playlist{:'ng-class' => '{ disabled: !playlist.enabled }'}
             %label.name.transformed.transform-extrude{:'ng-click' => 'toggleEnabledPlaylist(playlist)'}
-              %span.content.playlist-name {{playlist.name}}
+              %span.content.playlist-name {{ playlist.name }}
               %span.right.side
               %span.bottom.side
 
   .pure-u-1-2
     .now-playing{:'ng-controller' => 'NowPlayingController'}
       .album-artist
-        {{currentTrack.artists}}
+        {{ currentTrack.artists }}
       .album-title
-        {{currentTrack.name}}
+        {{ currentTrack.name }}
       %album-art-background.album-art{:'image-url' => 'currentTrack.image'}
         .album-art-overlay
           %player-controls.album-art-overlay-play-toggle.fa{:'is-playing' => 'isPlaying'}
@@ -27,7 +25,7 @@
       .playlist-user
         .user-avatar
         .user-name
-          Brought to you by {{currentUser.name}}
+          Brought to you by {{ currentUser.name || currentUser.id }}
 
 .add-playlist
   %form{:action => 'playlists', :method => 'POST'}
