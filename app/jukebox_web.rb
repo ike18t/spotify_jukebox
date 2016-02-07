@@ -1,24 +1,24 @@
+require 'sinatra/asset_pipeline'
+
 class JukeboxWeb < Sinatra::Base
   set :root, File.expand_path(File.join(File.dirname(__FILE__), '..'))
   set :bind, '0.0.0.0'
   set :sockets, []
+  set :sprockets, Sprockets::Environment.new(root)
 
   configure do
     enable :logging
+    sprockets.append_path File.join(root, 'app', 'js')
+    sprockets.append_path File.join(root, 'app', 'css')
   end
 
-  register Sinatra::AssetPack
-  assets do
-    serve '/vendor/js', from: 'vendor/assets/js'
-    js :application, [
-      '/vendor/**/*.js',
-      '/js/spotify_jukebox.js',
-      '/js/services/*.js',
-      '/js/controllers/*.js',
-      '/js/directives/*.js'
-    ]
-    css :application, ['/css/**/*.css']
+  helpers do
+    include Sprockets::Helpers
   end
+
+  register Sinatra::AssetPipeline
+  set :assets_precompile, 'js/application.coffee', 'js/style.scss'
+  set :assets_css_compressor, :sass
 
   @@currently_playing = nil
   post '/player_endpoint' do

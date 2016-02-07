@@ -2,10 +2,13 @@ require 'bundler/setup'
 require 'rspec/core/rake_task'
 require 'cucumber/rake/task'
 require 'rubocop/rake_task'
+require 'sinatra/asset_pipeline/task'
 
 Bundler.require
 
 require_all 'app'
+
+Sinatra::AssetPipeline::Task.define! JukeboxWeb
 
 RSpec::Core::RakeTask.new :spec
 
