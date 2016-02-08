@@ -28,4 +28,5 @@ group :test do
   gem 'jasmine'
   gem 'rack-asset-compiler'
   gem 'rubocop'
+  gem 'rack-test', require: 'rack/test'
 end
