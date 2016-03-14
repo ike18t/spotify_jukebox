@@ -5,6 +5,6 @@ angular.module('spotifyJukeboxApplication')
     },
     link: ($scope, $element, $attributes) ->
       $scope.$watch('imageUrl', (url) ->
-        $element.css('background-image', "url('#{url}')")
+        $element.css('background-image', "url(#{url})")
       )
   ])

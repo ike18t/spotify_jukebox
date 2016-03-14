@@ -11,4 +11,4 @@ describe 'Album Art Background Directive', ->
     imageUrl = 'http://bar.com/'
     @scope.imageUrl = imageUrl
     @scope.$apply()
-    expect(@element.css('background-image')).toEqual("url(\"#{imageUrl}\")")
+    expect(@element.css('background-image')).toEqual("url(#{imageUrl})")
