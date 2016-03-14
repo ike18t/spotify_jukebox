@@ -12,7 +12,7 @@ Sinatra::AssetPipeline::Task.define! JukeboxWeb
 
 RSpec::Core::RakeTask.new :spec
 
-task :default => [:rubocop, :spec, 'jasmine:ci']
+task :default => [:spec, 'jasmine:ci']
 
 APP_ROOT = File.expand_path(File.join(File.dirname(__FILE__)))
 SINATRA_PORT = 4567
