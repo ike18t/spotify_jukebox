@@ -8,17 +8,19 @@ class JukeboxWeb < Sinatra::Base
 
   configure do
     enable :logging
+    sprockets.append_path File.join(root, 'frontend', 'dist')
     sprockets.append_path File.join(root, 'app', 'js')
     sprockets.append_path File.join(root, 'app', 'css')
+    sprockets.css_compressor = :scss
   end
+
+  set :assets_precompile, 'application.js', 'js/style.scss'
 
   helpers do
     include Sprockets::Helpers
   end
 
   register Sinatra::AssetPipeline
-  set :assets_precompile, 'js/application.coffee', 'js/style.scss'
-  set :assets_css_compressor, :sass
 
   @@currently_playing = nil
   post '/player_endpoint' do

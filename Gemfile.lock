@@ -179,7 +179,6 @@ DEPENDENCIES
   autotest-growl
   autotest-standalone
   codeclimate-test-reporter
-  coffee-script
   cucumber
   haml
   jasmine

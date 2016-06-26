@@ -4,10 +4,11 @@
     %meta{'http-equiv' => 'Content-Type', 'content' => 'text/html; charset=utf-8'}
     %title Spotify Jukebox
     %link{rel: 'stylesheet', href: stylesheet_path('style')}
-    %script{src: javascript_path('application')}
 
     %link{href: '//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css', rel: 'stylesheet'}
     %link{href: '//fonts.googleapis.com/css?family=Oswald:400,700,300', rel: 'stylesheet'}
     %link{href: '//fonts.googleapis.com/css?family=Titillium+Web:400,200,300,600,700', rel: 'stylesheet'}
-  %body{:'ng-app' => 'spotifyJukeboxApplication'}
-    = yield
+  %body
+    %jukebox-application
+
+    %script{src: javascript_path('application')}
