@@ -14,7 +14,7 @@ import { Playlist } from '../models/playlist';
         </div>
         <ul class="playlists entity-list">
           <li class="playlist" *ngFor="let playlist of playlistsByUser(user)" id="{{ playlist.id }}" [ngClass]="{ 'disabled': !playlist.enabled }">
-            <label class="name transformed transform-extrude" (click)="togglePlaylist(user, playlist)">
+            <label class="name transformed transform-extrude" (click)="togglePlaylist(playlist)">
               <span class="content playlist-name"> {{ playlist.name }} </span>
               <span class="right side"></span>
               <span class="bottom side"></span>
@@ -46,7 +46,7 @@ export class UserListComponent {
     }
   }
 
-  togglePlaylist(user: User, playlist: Playlist): void {
+  togglePlaylist(playlist: Playlist): void {
     if (playlist.enabled) {
       this.playlistService.disablePlaylist(playlist);
     }
