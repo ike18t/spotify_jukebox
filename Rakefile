@@ -12,7 +12,7 @@ Sinatra::AssetPipeline::Task.define! JukeboxWeb
 
 RSpec::Core::RakeTask.new :spec
 
-task :default => [:spec]
+task :default => [:spec, :js_spec]
 
 APP_ROOT = File.expand_path(File.join(File.dirname(__FILE__)))
 SINATRA_PORT = 4567
@@ -100,4 +100,18 @@ Rake::Task['assets:precompile'].enhance ['before_assets_precompile']
 RuboCop::RakeTask.new(:rubocop) do |task|
   task.patterns = ['app/**/*.rb', 'spec/**/*.rb']
   task.fail_on_error = true
+end
+
+desc 'Run the javascript specs.'
+task :js_spec do
+  commands = <<-DATA
+    npm install
+    npm run postinstall
+    npm test
+  DATA
+  Dir.chdir('frontend') do
+    commands.lines.each do |command|
+      sh(command)
+    end
+  end
 end
