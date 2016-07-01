@@ -6,9 +6,15 @@ type MessageType = 'users' | 'playlists' | 'current_track' | 'current_user' | 'p
 @Injectable()
 export class WebSocketService {
   private registrationLookup: Map<string, Array<Function>> = new Map<string, Array<Function>>();
+  private webSocket: WebSocket;
 
-  constructor(@Inject(WebSocketToken) private webSocket: WebSocket) {
-    webSocket.onmessage = (messageEvent: MessageEvent) => {
+  constructor(@Inject(WebSocketToken) webSocket: WebSocket) {
+    this.webSocket = webSocket;
+    this.connect();
+  }
+
+  private connect = () => {
+    this.webSocket.onmessage = (messageEvent: MessageEvent) => {
       let json = JSON.parse(messageEvent.data);
       Object.keys(json).forEach((messageType: string) => {
         (this.registrationLookup.get(messageType) || []).forEach((callback: Function) => {
@@ -16,6 +22,12 @@ export class WebSocketService {
         });
       });
     };
+    this.webSocket.onclose = (closeEvent: CloseEvent) => {
+      setTimeout(() => {
+        this.webSocket = new WebSocket(this.webSocket.url);
+        this.connect();
+      }, 5000);
+    }
   }
 
   registerListener = (messageType: MessageType, callback: Function) => {
