@@ -48,12 +48,6 @@ GEM
     hike (1.2.3)
     http-cookie (1.0.2)
       domain_name (~> 0.5)
-    jasmine (2.4.0)
-      jasmine-core (~> 2.4)
-      phantomjs
-      rack (>= 1.2.1)
-      rake
-    jasmine-core (2.4.1)
     json (1.8.3)
     libspotify (12.1.51.4)
     main (6.2.0)
@@ -70,7 +64,6 @@ GEM
     parser (2.3.1.2)
       ast (~> 2.2)
     performer (1.0.1)
-    phantomjs (2.1.1.0)
     plaything (1.1.1)
       ffi (~> 1.1)
     powerpack (0.1.1)
@@ -181,7 +174,6 @@ DEPENDENCIES
   codeclimate-test-reporter
   cucumber
   haml
-  jasmine
   main
   plaything
   pry
@@ -203,4 +195,4 @@ DEPENDENCIES
   watir-webdriver
 
 BUNDLED WITH
-   1.10.3
+   1.11.2

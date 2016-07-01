@@ -1,38 +1,14 @@
-.pure-g
-  .pure-u-1-2{:'ng-controller' => 'UserController'}
-    %ul.users.entity-list{:'ng-repeat' => 'user in users'}
-      %li.user{:'ng-class' => '{ disabled: !user.enabled }'}
-        .name.user-name{:'ng-click' => 'toggleEnabledUser(user)'}
-          {{ user.name || user.id }}
-        %ul.playlists.entity-list{:'ng-repeat' => 'playlist in playlists | filter: { user_id:user.id }'}
-          %li.playlist{:'ng-class' => '{ disabled: !playlist.enabled }'}
-            %label.name.transformed.transform-extrude{:'ng-click' => 'toggleEnabledPlaylist(playlist)'}
-              %span.content.playlist-name {{ playlist.name }}
-              %span.right.side
-              %span.bottom.side
+!!! 5
+%html
+  %head
+    %meta{'http-equiv' => 'Content-Type', 'content' => 'text/html; charset=utf-8'}
+    %title Spotify Jukebox
+    %link{rel: 'stylesheet', href: stylesheet_path('style')}
 
-  .pure-u-1-2
-    .now-playing{:'ng-controller' => 'NowPlayingController'}
-      .album-artist
-        {{ currentTrack.artists }}
-      .album-title
-        {{ currentTrack.name }}
-      %album-art-background.album-art{:'image-url' => 'currentTrack.image'}
-        .album-art-overlay
-          %player-controls.album-art-overlay-play-toggle.fa{:'is-playing' => 'isPlaying'}
-      .skip-button{:'ng-click' => 'skip()'}
-        .fa.fa-step-forward
-      .playlist-user
-        .user-avatar
-        .user-name
-          Brought to you by {{ currentUser.name || currentUser.id }}
+    %link{href: '//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css', rel: 'stylesheet'}
+    %link{href: '//fonts.googleapis.com/css?family=Oswald:400,700,300', rel: 'stylesheet'}
+    %link{href: '//fonts.googleapis.com/css?family=Titillium+Web:400,200,300,600,700', rel: 'stylesheet'}
+  %body
+    %jukebox-application
 
-.add-playlist
-  %form{:action => 'playlists', :method => 'POST'}
-    %label{:for => 'playlists'}
-      Add a playlist!
-    %fieldset
-      %input#playlist_url{:required => 'required', :type => 'url', :name => 'playlist_url', :placeholder => 'Enter a Spotify playlist URL'}
-      %input{:type => 'submit', :value => '+'}
-      .error{:'ng-show' => 'add_playlist.input.$error.require'} Required!
-      .error{:'ng-show' => 'add_playlist.input.$error.url'} Not a valid url!
+    %script{src: javascript_path('application')}

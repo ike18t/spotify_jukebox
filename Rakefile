@@ -12,7 +12,7 @@ Sinatra::AssetPipeline::Task.define! JukeboxWeb
 
 RSpec::Core::RakeTask.new :spec
 
-task :default => [:spec, 'jasmine:ci']
+task :default => [:spec]
 
 APP_ROOT = File.expand_path(File.join(File.dirname(__FILE__)))
 SINATRA_PORT = 4567
@@ -81,10 +81,21 @@ Cucumber::Rake::Task.new do |t|
   t.cucumber_opts = %w{--format pretty}
 end
 
-ENV['JASMINE_CONFIG_PATH'] = 'spec/js/support/jasmine.yml'
-require 'jasmine'
-require_relative 'spec/js/support/jasmine.rb'
-load 'jasmine/tasks/jasmine.rake'
+task :before_assets_precompile do
+  commands = <<-DATA
+    npm install
+    npm run postinstall
+    npm run build
+  DATA
+  Dir.chdir('frontend') do
+    commands.lines.each do |command|
+      sh(command)
+    end
+  end
+end
+# every time you execute 'rake assets:precompile'
+# run 'before_assets_precompile' first
+Rake::Task['assets:precompile'].enhance ['before_assets_precompile']
 
 RuboCop::RakeTask.new(:rubocop) do |task|
   task.patterns = ['app/**/*.rb', 'spec/**/*.rb']

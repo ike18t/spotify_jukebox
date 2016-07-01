@@ -1,11 +1,15 @@
 {
   "name": "spotify_jukebox",
   "version": "1.0.0",
-  "description": "[![Build Status](https://travis-ci.org/ike18t/spotify_jukebox.png?branch=master)](https://travis-ci.org/ike18t/spotify_jukebox) [![Code Climate](https://codeclimate.com/github/ike18t/spotify_jukebox.png)](https://codeclimate.com/github/ike18t/spotify_jukebox) [![Test Coverage](https://codeclimate.com/github/ike18t/spotify_jukebox/coverage.png)](https://codeclimate.com/github/ike18t/spotify_jukebox) [![Dependency Status](https://gemnasium.com/ike18t/spotify_jukebox.png)](https://gemnasium.com/ike18t/spotify_jukebox)",
+  "description": "A collaborative jukebox using Spotify.",
   "main": "index.js",
   "scripts": {
-    "test": "karma start",
-    "debug": "karma start --browsers Chrome karma.conf.js --no-single-run"
+    "build": "rimraf dist && webpack --config config/webpack.prod.js --progress --profile --bail",
+    "debug": "karma start --browsers Chrome karma.conf.js --no-single-run",
+    "lint": "tslint src/**/*.ts spec/**/*.ts",
+    "postinstall": "typings install",
+    "start": "webpack -w",
+    "test": "karma start"
   },
   "repository": {
     "type": "git",
@@ -40,6 +44,7 @@
     "karma-webpack": "^1.7.0",
     "phantomjs-prebuilt": "^2.1.7",
     "ts-loader": "^0.8.1",
+    "tslint": "^3.13.0",
     "typescript": "^1.8.10",
     "typings": "^1.3.0",
     "webpack": "^1.13.1",

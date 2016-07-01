@@ -39,6 +39,7 @@ body { background:black; font-size:16px; }
   cursor: pointer;
   padding: .25em 0 .25em 0em;
   text-transform: uppercase;
+  display: inline-block
 }
 
 .user > .name:hover {
@@ -147,7 +148,6 @@ body { background:black; font-size:16px; }
   text-transform: uppercase;
   z-index: 1;
 }
-
 
 .now-playing .album-title {
   font-size: 2em;

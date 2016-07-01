@@ -33,6 +33,7 @@ class JukeboxWeb < Sinatra::Base
     return 'Websocket connection required' unless request.websocket?
     request.websocket do |ws|
       ws.onopen do
+        broadcast_enabled [ws]
         ws.send(@@currently_playing.to_json) unless @@currently_playing.nil?
         settings.sockets << ws
       end
@@ -130,15 +131,15 @@ class JukeboxWeb < Sinatra::Base
     :ok
   end
 
-  def broadcast_enabled
+  def broadcast_enabled(sockets = settings.sockets)
     users = UserService.get_users.map(&:to_hash)
     playlists = PlaylistService.get_playlists.map(&:to_hash)
-    broadcast({ users: users, playlists: playlists })
+    broadcast({ users: users, playlists: playlists }, sockets)
   end
 
-  def broadcast(hash)
+  def broadcast(hash, sockets = settings.sockets)
     json_string = hash.to_json.to_s
-    settings.sockets.each do |socket|
+    sockets.each do |socket|
       socket.send json_string
     end
   end

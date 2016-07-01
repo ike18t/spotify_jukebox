@@ -24,7 +24,6 @@ group :test do
   gem 'cucumber'
   gem 'watir'
   gem 'watir-webdriver'
-  gem 'jasmine'
   gem 'rack-asset-compiler'
   gem 'rubocop'
   gem 'rack-test', require: 'rack/test'

@@ -17,3 +17,4 @@ coverage
 frontend/node_modules
 frontend/dist
 typings
+public/assets
