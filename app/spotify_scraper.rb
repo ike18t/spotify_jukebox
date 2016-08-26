@@ -2,7 +2,7 @@ require 'open-uri'
 require 'rest-client'
 
 module SpotifyScraper
-  SPOTIFY_PROFILE_URL_FORMAT = 'https://api.spotify.com/v1/users/%s'
+  SPOTIFY_PROFILE_URL_FORMAT = 'https://api.spotify.com/v1/users/%s'.freeze
 
   def self.name_and_image_from_spotify_id(spotify_id)
     profile_url = SPOTIFY_PROFILE_URL_FORMAT % spotify_id

@@ -10,6 +10,9 @@ Style/Documentation:
 Style/RaiseArgs:
   Enabled: false
 
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
 Style/PredicateName:
   NamePrefixBlacklist:
     - is_
@@ -19,6 +22,7 @@ Style/PredicateName:
 AllCops:
   Exclude:
     - 'db/schema.rb'
+    - 'vendor/**/*'
 
 Style/SingleLineBlockParams:
   Enabled: false

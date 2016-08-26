@@ -12,11 +12,11 @@ Sinatra::AssetPipeline::Task.define! JukeboxWeb
 
 RSpec::Core::RakeTask.new :spec
 
-task :default => [:spec, :js_spec]
+task default: [:spec, :js_spec]
 
 APP_ROOT = File.expand_path(File.join(File.dirname(__FILE__)))
 SINATRA_PORT = 4567
-PLAYER_ENDPOINT = 'http://localhost:%s/player_endpoint'
+PLAYER_ENDPOINT = 'http://localhost:%s/player_endpoint'.freeze
 
 log_file = File.open('spotify_jukebox.log', 'w')
 $logger = Logger.new(MultiIO.new(STDOUT, log_file))
@@ -24,13 +24,13 @@ $logger.level = Logger::INFO
 
 desc 'Starts the JukeBox web server.'
 task :start_web do
-  JukeboxWeb.run!({ :server => 'thin', :port => SINATRA_PORT })
+  JukeboxWeb.run!(server: 'thin', port: SINATRA_PORT)
 end
 
 desc 'Starts the JukeBox web server using the test db.'
 task :start_test_web do
   ENV['TEST'] = 'true'
-  JukeboxWeb.run!({ :server => 'thin', :port => SINATRA_PORT })
+  JukeboxWeb.run!(server: 'thin', port: SINATRA_PORT)
 end
 
 desc 'Starts the JukeBox player.'
@@ -71,14 +71,16 @@ end
 
 desc 'Pry into application.'
 task :pry do
+  # rubocop:disable Lint/Debugger
   require 'pry'
   binding.pry
+  # rubocop:enable Lint/Debugger
 end
 
 Cucumber::Rake::Task.new do |t|
   `rm test_jukebox.db`
   Rake::Task[:test_db_init].execute
-  t.cucumber_opts = %w{--format pretty}
+  t.cucumber_opts = %w(--format pretty)
 end
 
 task :before_assets_precompile do
@@ -98,7 +100,6 @@ end
 Rake::Task['assets:precompile'].enhance ['before_assets_precompile']
 
 RuboCop::RakeTask.new(:rubocop) do |task|
-  task.patterns = ['app/**/*.rb', 'spec/**/*.rb']
   task.fail_on_error = true
 end
 

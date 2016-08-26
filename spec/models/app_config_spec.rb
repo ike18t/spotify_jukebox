@@ -32,9 +32,9 @@ describe AppConfig do
   it 'should accept an environment variable for the pw secret' do
     ClimateControl.modify(jukebox_secret: 'some_secret') do
       expect(AESCrypt).to receive(:encrypt).with('some_password', 'some_secret')
-                                           .and_return('encrypted')
+        .and_return('encrypted')
       expect(AESCrypt).to receive(:decrypt).with('encrypted', 'some_secret')
-                                           .and_return('some_password')
+        .and_return('some_password')
       app_config = AppConfig.new
       app_config.password = 'some_password'
       expect(app_config.password).to eq 'some_password'

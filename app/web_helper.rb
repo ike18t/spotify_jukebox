@@ -1,5 +1,5 @@
 module WebHelper
-  IMAGE_URL_FORMAT = 'https://d3rt1990lpmkn.cloudfront.net/640/%s'
+  IMAGE_URL_FORMAT = 'https://d3rt1990lpmkn.cloudfront.net/640/%s'.freeze
 
   class << self
     def get_playlist_id_and_user_id_from_url(url)
@@ -17,8 +17,7 @@ module WebHelper
                          artists: track.artists.join(', '),
                          album: track.album.name,
                          image: WebHelper::IMAGE_URL_FORMAT % track.album.art_hex },
-        current_user: { id: user.id, name: user.name, avatar_url: user.image_url }
-      }.to_json.to_s
+        current_user: { id: user.id, name: user.name, avatar_url: user.image_url } }.to_json.to_s
     end
   end
 end

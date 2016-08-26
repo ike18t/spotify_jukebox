@@ -28,8 +28,8 @@ describe WebHelper do
       expected_image = WebHelper::IMAGE_URL_FORMAT % album.art_hex
       user = User.new id: 123, name: 'ike'
       track = Track.new name: 'say it aint so', artists: ['weezer'], album: album
-      retVal = WebHelper.track_info_to_json track, user
-      json = JSON.parse(retVal)
+      result = WebHelper.track_info_to_json track, user
+      json = JSON.parse(result)
       expect(json['current_track']['name']).to eq(track.name)
       expect(json['current_track']['artists']).to eq(track.artists.join(', '))
       expect(json['current_track']['album']).to eq(album.name)

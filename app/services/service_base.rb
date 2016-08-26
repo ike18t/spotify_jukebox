@@ -1,7 +1,9 @@
 class ServiceBase
-  protected
+  class << self
+    protected
 
-  def self.spotify_wrapper
-    @@spotify_wrapper ||= SpotifyWrapper.new(ConfigService.get)
+    def spotify_wrapper
+      @@spotify_wrapper ||= SpotifyWrapper.new(ConfigService.get)
+    end
   end
 end

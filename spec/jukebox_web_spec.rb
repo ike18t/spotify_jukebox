@@ -41,7 +41,7 @@ describe JukeboxWeb do
         app.sockets = [double, double]
 
         user_id = '123'
-        playlist_url = "http://open.spotify.com/user/1295855412/playlist/7Co7hqxAQFSAV7bMtyCGp0"
+        playlist_url = 'http://open.spotify.com/user/1295855412/playlist/7Co7hqxAQFSAV7bMtyCGp0'
 
         message = { users: [], playlists: [] }.to_json
         expect(app.sockets[0]).to receive(:send).with(message)
@@ -53,8 +53,7 @@ describe JukeboxWeb do
 
       it 'should return ok' do
         user_id = '123'
-        playlist_url = "http://open.spotify.com/user/1295855412/playlist/7Co7hqxAQFSAV7bMtyCGp0"
-
+        playlist_url = 'http://open.spotify.com/user/1295855412/playlist/7Co7hqxAQFSAV7bMtyCGp0'
 
         post "/users/#{user_id}/playlists", playlist_url: playlist_url
         expect(last_response).to be_ok

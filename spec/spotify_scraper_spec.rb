@@ -6,7 +6,6 @@ describe SpotifyScraper do
       mock_response = { 'display_name' => 'DISPLAY NAME',
                         'images' => [{ 'url' => 'http://image.com' }] }.to_json
       spotify_user_id = 123
-      url = SpotifyScraper::SPOTIFY_PROFILE_URL_FORMAT % spotify_user_id
       allow(RestClient).to receive(:get).and_return(mock_response)
       name_and_url = SpotifyScraper.name_and_image_from_spotify_id spotify_user_id
       expect(name_and_url[:name]).to eq('DISPLAY NAME')

@@ -8,7 +8,10 @@ class SQLite3Adapter
   end
 
   def [](key)
-    connection.get_first_value('SELECT value FROM key_value_store WHERE key = ?;', key)
+    sql = 'SELECT value
+           FROM key_value_store
+           WHERE key = ?;'
+    connection.get_first_value(sql, key)
   end
 
   def []=(key, value)

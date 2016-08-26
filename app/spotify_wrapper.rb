@@ -9,7 +9,7 @@ class SpotifyWrapper
                       :track_name,
                       :playlist_name,
                       :track_album,
-                      :track_artist]
+                      :track_artist].freeze
 
   DELEGATE_GETTERS.each do |method_name|
     define_method('get_' + method_name.to_s) do |*args|
@@ -37,7 +37,7 @@ class SpotifyWrapper
 
     $logger.info 'Creating session.'
     error, session = Spotify.session_create(session_config)
-    fail error if error.is_a?(Spotify::APIError)
+    raise error if error.is_a?(Spotify::APIError)
 
     $logger.info 'Created! Logging in.'
     Spotify.session_login(session, config.username, config.password, false, nil)

@@ -24,7 +24,7 @@ class JukeboxWeb < Sinatra::Base
 
   @@currently_playing = nil
   post '/player_endpoint' do
-    @@currently_playing = JSON.parse(params['now_playing']).merge({ play_status: { playing: true, timestamp: Time.now.to_i } })
+    @@currently_playing = JSON.parse(params['now_playing']).merge(play_status: { playing: true, timestamp: Time.now.to_i })
     broadcast @@currently_playing
     :ok
   end
@@ -47,18 +47,18 @@ class JukeboxWeb < Sinatra::Base
     headers 'Access-Control-Allow-Origin'         => '*',
             'Access-Conformation-Request-Method'  => 'GET'
     content_type 'application/json'
-    @@currently_playing.merge({ play_status: { playing: MusicService.playing?, timestamp: Time.now.to_i } }).to_json
+    @@currently_playing.merge(play_status: { playing: MusicService.playing?, timestamp: Time.now.to_i }).to_json
   end
 
   put '/play' do
     MusicService.play!
-    broadcast({ play_status: { playing: MusicService.playing?, timestamp: Time.now.to_i } })
+    broadcast(play_status: { playing: MusicService.playing?, timestamp: Time.now.to_i })
     :ok
   end
 
   put '/pause' do
     MusicService.stop!
-    broadcast({ play_status: { playing: MusicService.playing?, timestamp: Time.now.to_i } })
+    broadcast(play_status: { playing: MusicService.playing?, timestamp: Time.now.to_i })
     :ok
   end
 
@@ -125,8 +125,8 @@ class JukeboxWeb < Sinatra::Base
     return broadcast_results { UserService.disable_user params[:user_id] }
   end
 
-  def broadcast_results(&block)
-    block.call
+  def broadcast_results
+    yield
     broadcast_enabled
     :ok
   end

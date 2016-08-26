@@ -29,7 +29,7 @@ class Plaything
       consumed_frames = frames.send(:"read_array_of_#{@sample_type}", readable_size)
       @queued_frames.concat(consumed_frames)
 
-      if @queued_frames.length >= @buffer_size and @free_buffers.any?
+      if @queued_frames.length >= @buffer_size && @free_buffers.any?
         current_buffer = @free_buffers.shift
 
         FFI::MemoryPointer.new(@sample_type, @queued_frames.length) do |frames|

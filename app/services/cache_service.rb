@@ -1,7 +1,7 @@
 require 'yaml'
 
 class CacheService
-  CACHE_TYPES = [:playlists, :track_history, :users]
+  CACHE_TYPES = [:playlists, :track_history, :users].freeze
 
   class << self
     CACHE_TYPES.each do |type|
