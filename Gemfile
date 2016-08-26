@@ -27,4 +27,5 @@ group :test do
   gem 'rack-asset-compiler'
   gem 'rubocop'
   gem 'rack-test', require: 'rack/test'
+  gem 'climate_control'
 end

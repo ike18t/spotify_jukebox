@@ -3,7 +3,6 @@ require_relative '../spec_helper'
 describe AppConfig do
   it 'should update attributes with the values passed into initialize' do
     username = 'ike'
-    playlist_uri = 'http://bah'
     config = AppConfig.new username: username
     expect(config.username).to eq(username)
   end
@@ -28,5 +27,17 @@ describe AppConfig do
     expect(config.username).to be nil
     expect(config.password).to be nil
     expect(config.app_key).to be nil
+  end
+
+  it 'should accept an environment variable for the pw secret' do
+    ClimateControl.modify(jukebox_secret: 'some_secret') do
+      expect(AESCrypt).to receive(:encrypt).with('some_password', 'some_secret')
+                                           .and_return('encrypted')
+      expect(AESCrypt).to receive(:decrypt).with('encrypted', 'some_secret')
+                                           .and_return('some_password')
+      app_config = AppConfig.new
+      app_config.password = 'some_password'
+      expect(app_config.password).to eq 'some_password'
+    end
   end
 end
