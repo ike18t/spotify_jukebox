@@ -27,7 +27,7 @@ export class WebSocketService {
         this.webSocket = new WebSocket(this.webSocket.url);
         this.connect();
       }, 5000);
-    }
+    };
   }
 
   registerListener = (messageType: MessageType, callback: Function) => {
