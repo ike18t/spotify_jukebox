@@ -1,4 +1,3 @@
-import { it, describe, expect } from '@angular/core/testing';
 import { WebSocketService } from '../../src/services/web_socket_service';
 
 describe('WebSocketService', () => {
