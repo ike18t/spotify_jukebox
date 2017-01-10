@@ -1,5 +1,5 @@
 language: ruby
-script: 'bundle exec rake'
+script: 'bundle exec rake; bundle exec codeclimate-test-reporter'
 cache: bundler
 rvm:
   - 2.0.0

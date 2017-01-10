@@ -5,16 +5,11 @@ class JukeboxWeb < Sinatra::Base
   set :bind, '0.0.0.0'
   set :sockets, []
   set :sprockets, Sprockets::Environment.new(root)
-
-  configure do
-    enable :logging
-    sprockets.append_path File.join(root, 'frontend', 'dist')
-    sprockets.append_path File.join(root, 'app', 'js')
-    sprockets.append_path File.join(root, 'app', 'css')
-    sprockets.css_compressor = :scss
-  end
-
+  set :assets_paths, %w('frontend/dist' 'app/js' 'app/css')
+  set :assets_css_compressor, :scss
+  set :assets_paths, %w(frontend/dist app/js app/css)
   set :assets_precompile, 'application.js', 'js/style.scss'
+  set :logging, true
 
   helpers do
     include Sprockets::Helpers

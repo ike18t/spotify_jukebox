@@ -3,7 +3,8 @@ require_relative 'mock_logger'
 Bundler.require :default, :test
 
 ENV['RACK_ENV'] = 'test'
-CodeClimate::TestReporter.start
+
+SimpleCov.start
 
 require_all 'app'
 
