@@ -9,6 +9,8 @@ env:
   - RUBY_PLATFORM="x86_64-linux"
   - RUBY_PLATFORM="x86_64-darwin11.3.0"
   - CODECLIMATE_REPO_TOKEN=bccfad5e9dbca0688a4ee7d9bb5aa3e7ce943b910b8f52bdea5c6701c2378ef4
+  - ARTIFACTS_BUCKET=jukebox.8675309
+  - ARTIFACTS_PATHS="tmp/spotify_jukebox.tar.gz"
 before_install:
   - sudo apt-get update
   - sudo apt-get install libopenal-dev
@@ -23,3 +25,10 @@ matrix:
         - ike18t@gmail.com
       on_success: change
       on_failure: change
+after_success:
+  - brake assets:precompile
+  - npm prune --production
+  - rm -rf vendor node_modules
+  - tar -zcf /tmp/spotify_jukebox.tar.gz .
+addons:
+  artifacts: true
