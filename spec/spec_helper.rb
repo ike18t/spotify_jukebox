@@ -21,6 +21,8 @@ JukeboxWeb.set(
 
 $logger = MockLogger.new
 
+SQLite3Adapter.const_set(:DATABASE, 'jukebox_test.db')
+
 class CacheService
   def self.data_store
     @@data_store ||= {}

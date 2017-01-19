@@ -1,11 +1,7 @@
 require 'sqlite3'
 
 class SQLite3Adapter
-  DEFAULT_FILE = ENV['TEST'] == 'true' ? 'test_jukebox.db' : 'jukebox.db'
-
-  def initialize(db_file = DEFAULT_FILE)
-    @db_file = db_file
-  end
+  DATABASE = 'jukebox.db'
 
   def [](key)
     sql = 'SELECT value
@@ -25,6 +21,6 @@ class SQLite3Adapter
   protected
 
   def connection
-    @connection ||= SQLite3::Database.new(@db_file)
+    @connection ||= SQLite3::Database.new(DATABASE)
   end
 end

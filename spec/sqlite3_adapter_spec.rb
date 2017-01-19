@@ -1,8 +1,7 @@
 require_relative 'spec_helper'
 
 describe SQLite3Adapter do
-  let(:test_db_name) { 'test.db' }
-  let(:connection) { SQLite3::Database.new(test_db_name) }
+  let(:connection) { SQLite3::Database.new(SQLite3Adapter::DATABASE) }
 
   around(:each) do |example|
     create_table_sql = 'CREATE TABLE IF NOT EXISTS key_value_store( key CHAR(100) PRIMARY KEY NOT NULL,
@@ -12,11 +11,15 @@ describe SQLite3Adapter do
     connection.execute('DROP TABLE IF EXISTS key_value_store;')
   end
 
+  after(:all) do
+    File.delete(SQLite3Adapter::DATABASE)
+  end
+
   context '[]' do
     it 'should pull the value for the key from the database' do
       sql = 'INSERT INTO key_value_store (key, value) VALUES (?, ?);'
       connection.execute(sql, 'test_key', 'test_value')
-      expect(SQLite3Adapter.new(test_db_name)['test_key']).to eq('test_value')
+      expect(SQLite3Adapter.new['test_key']).to eq('test_value')
     end
   end
 
@@ -25,7 +28,7 @@ describe SQLite3Adapter do
       expect(connection.get_first_value('SELECT COUNT(*) FROM key_value_store WHERE key = ?', 'test_key')).to eq(0)
 
       expected_value = 'bah'
-      SQLite3Adapter.new(test_db_name)['test_key'] = expected_value
+      SQLite3Adapter.new['test_key'] = expected_value
       fetch_sql = 'SELECT value FROM key_value_store WHERE key = ?'
       expect(connection.get_first_value(fetch_sql, 'test_key')).to eq(expected_value)
     end
@@ -39,7 +42,7 @@ describe SQLite3Adapter do
 
       fetch_sql = 'SELECT value FROM key_value_store WHERE key = ?'
       expected_value = 'bah'
-      SQLite3Adapter.new(test_db_name)['test_key'] = expected_value
+      SQLite3Adapter.new['test_key'] = expected_value
       expect(connection.get_first_value(fetch_sql, 'test_key')).to eq(expected_value)
     end
   end
