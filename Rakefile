@@ -1,6 +1,5 @@
 require 'bundler/setup'
 require 'rspec/core/rake_task'
-require 'cucumber/rake/task'
 require 'rubocop/rake_task'
 require 'sinatra/asset_pipeline/task'
 
@@ -75,12 +74,6 @@ task :pry do
   require 'pry'
   binding.pry
   # rubocop:enable Lint/Debugger
-end
-
-Cucumber::Rake::Task.new do |t|
-  `rm test_jukebox.db`
-  Rake::Task[:test_db_init].execute
-  t.cucumber_opts = %w(--format pretty)
 end
 
 task :before_assets_precompile do

@@ -43,18 +43,8 @@ class PlaylistService < ServiceBase
       set_enabled id, true
     end
 
-    def enable_playlists_for_user(user_id)
-      playlists = get_playlists_for_user user_id
-      playlists.each { |pl| enable_playlist pl.id }
-    end
-
     def disable_playlist(id)
       set_enabled id, false
-    end
-
-    def disable_playlists_for_user(user_id)
-      playlists = get_playlists_for_user user_id
-      playlists.each { |pl| disable_playlist pl.id }
     end
 
     def get_tracks_for_playlist(playlist)
