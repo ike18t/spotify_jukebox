@@ -30,7 +30,7 @@ describe AppConfig do
   end
 
   it 'should accept an environment variable for the pw secret' do
-    ClimateControl.modify(jukebox_secret: 'some_secret') do
+    ClimateControl.modify(JUKEBOX_SECRET: 'some_secret') do
       expect(AESCrypt).to receive(:encrypt).with('some_password', 'some_secret')
         .and_return('encrypted')
       expect(AESCrypt).to receive(:decrypt).with('encrypted', 'some_secret')

@@ -23,6 +23,6 @@ class AppConfig < ModelBase
   private
 
   def get_secret
-    @secret ||= ENV['jukebox_secret'] || ''
+    @secret ||= ENV['JUKEBOX_SECRET'] || ''
   end
 end
