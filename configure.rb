@@ -29,6 +29,16 @@ Main do
     description 'Set the password'
   end
 
+  option(:client_id) do
+    argument :optional
+    description 'Set the Spotify client id'
+  end
+
+  option(:client_secret) do
+    argument :optional
+    description 'Set the Spotify client secret'
+  end
+
   option(:app_key) do
     argument :optional
     description 'Set the path to the application key'

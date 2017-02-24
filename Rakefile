@@ -19,7 +19,7 @@ PLAYER_ENDPOINT = 'http://localhost:%s/player_endpoint'.freeze
 
 log_file = File.open('spotify_jukebox.log', 'w')
 $logger = Logger.new(MultiIO.new(STDOUT, log_file))
-$logger.level = Logger::INFO
+$logger.level = Logger::DEBUG
 
 desc 'Starts the JukeBox web server.'
 task :start_web do

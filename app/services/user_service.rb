@@ -1,10 +1,10 @@
-class UserService < ServiceBase
+class UserService
   class << self
-    def create_user(id)
-      user_info = SpotifyScraper.name_and_image_from_spotify_id id
+    def create_user(user_id)
       users = get_users
-      if users.select { |u| u.id == id }.empty?
-        user = User.new id: id, name: user_info[:name], image_url: user_info[:image_url]
+      if users.select { |u| u.id == user_id }.empty?
+        user_name = get_name(user_id)
+        user = User.new id: user_id, name: user_name
         users << user
         save_users users
       end
@@ -38,6 +38,11 @@ class UserService < ServiceBase
     end
 
     private
+
+    def get_name user_id
+      spotify_user = RSpotify::User.find(user_id)
+      spotify_user.name
+    end
 
     def set_enabled(user_id, enabled)
       users = get_users

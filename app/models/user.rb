@@ -1,7 +1,7 @@
 class User < ModelBase
-  attr_accessor :name
+  attr_accessor :name, :image_url
   attr_writer :enabled
-  attr_reader :id, :image_url
+  attr_reader :id
 
   def enabled?
     @enabled == true

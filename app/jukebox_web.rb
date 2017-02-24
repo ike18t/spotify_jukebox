@@ -1,4 +1,5 @@
 require 'sinatra/asset_pipeline'
+require 'sinatra/jbuilder'
 
 class JukeboxWeb < Sinatra::Base
   set :root, File.expand_path(File.join(File.dirname(__FILE__), '..'))
@@ -46,19 +47,19 @@ class JukeboxWeb < Sinatra::Base
   end
 
   put '/play' do
-    MusicService.play!
-    broadcast(play_status: { playing: MusicService.playing?, timestamp: Time.now.to_i })
+    # broadcast(play_status: { playing: MusicService.playing?, timestamp: Time.now.to_i })
+    do_the_thing :play
     :ok
   end
 
   put '/pause' do
-    MusicService.stop!
-    broadcast(play_status: { playing: MusicService.playing?, timestamp: Time.now.to_i })
+    # broadcast(play_status: { playing: MusicService.playing?, timestamp: Time.now.to_i })
+    do_the_thing :pause
     :ok
   end
 
   put '/skip' do
-    MusicService.skip!
+    do_the_thing :skip
     :ok
   end
 
@@ -76,8 +77,16 @@ class JukeboxWeb < Sinatra::Base
 
   post '/playlists' do
     playlist_url = params[:playlist_url]
-    playlist_info = WebHelper.get_playlist_id_and_user_id_from_url playlist_url
-    playlist_uri = WebHelper.create_playlist_uri playlist_info[:playlist_id], playlist_info[:user_id]
+    playlist_uri = params[:playlist_uri]
+    playlist_info = nil
+
+    if playlist_url
+      playlist_info = WebHelper.get_playlist_id_and_user_id_from_url playlist_url
+      playlist_uri = WebHelper.create_playlist_uri playlist_info[:playlist_id], playlist_info[:user_id]
+    else
+      playlist_info = WebHelper.get_playlist_id_and_user_id_from_uri playlist_uri
+    end
+
     PlaylistService.create_playlist playlist_info[:playlist_id], playlist_info[:user_id], playlist_uri
     redirect '/'
   end
@@ -85,8 +94,15 @@ class JukeboxWeb < Sinatra::Base
   post '/users/:user_id/playlists' do
     user_id = params[:user_id]
     playlist_url = params[:playlist_url]
-    playlist_info = WebHelper.get_playlist_id_and_user_id_from_url playlist_url
-    playlist_uri = WebHelper.create_playlist_uri playlist_info[:playlist_id], playlist_info[:user_id]
+    playlist_uri = params[:playlist_uri]
+    playlist_info = nil
+
+    if playlist_url
+      playlist_info = WebHelper.get_playlist_id_and_user_id_from_url playlist_url
+      playlist_uri = WebHelper.create_playlist_uri playlist_info[:playlist_id], playlist_info[:user_id]
+    else
+      playlist_info = WebHelper.get_playlist_id_and_user_id_from_uri playlist_uri
+    end
     PlaylistService.create_playlist playlist_info[:playlist_id], user_id, playlist_uri
     broadcast_enabled
     :ok
@@ -127,15 +143,29 @@ class JukeboxWeb < Sinatra::Base
   end
 
   def broadcast_enabled(sockets = settings.sockets)
-    users = UserService.get_users.map(&:to_hash)
-    playlists = PlaylistService.get_playlists.map(&:to_hash)
-    broadcast({ users: users, playlists: playlists }, sockets)
+    users = UserService.get_users
+    playlists = PlaylistService.get_playlists
+    json = jbuilder :users_and_playlists, locals: { users: users, playlists: playlists }
+    broadcast(json, sockets)
   end
 
-  def broadcast(hash, sockets = settings.sockets)
-    json_string = hash.to_json.to_s
-    sockets.each do |socket|
-      socket.send json_string
+  def broadcast(value, sockets = settings.sockets)
+    if value.class == Hash
+      value = hash.to_json.to_s
     end
+    sockets.each do |socket|
+      socket.send value
+    end
+  end
+
+  def do_the_thing command
+    command_map = {
+                    skip: 'USR1',
+                    play: 'CONT',
+                    pause: 'USR2'
+                  }
+    pid = File.read('tmp/pid').to_i
+    puts command_map[command]
+    Process.kill command_map[command], pid
   end
 end
