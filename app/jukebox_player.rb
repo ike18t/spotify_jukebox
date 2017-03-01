@@ -68,7 +68,7 @@ class JukeboxPlayer
   end
 
   def notify(track, user)
-    @historian.record track.artists, track.name
+    @historian.record track.artists.first.name, track.name
     $logger.info "Now playing #{track.name} by #{track.artists.first.name} on the album #{track.album.name}"
     begin
       RestClient.post @player_update_endpoint, now_playing: WebHelper.track_info_to_json(track, user)
