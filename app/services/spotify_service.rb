@@ -6,6 +6,7 @@ class SpotifyService
   OAUTH_TOKEN_URL = 'https://open.spotify.com/token'
   CSRF_TOKEN_URL = 'https://whatever.spotilocal.com:4371/simplecsrf/token.json?&ref=&cors='
   CSRF_REQUEST_ORIGIN = 'https://embed.spotify.com'
+  DEFAULT_ORIGIN = 'https://nowhere.spotify.com'
 
   class << self
     def open
@@ -38,7 +39,10 @@ class SpotifyService
       status_url = STATUS_URL % { csrf_token: get_csrf_token,
                                   oauth_token: get_oauth_token }
       response_body = make_the_call status_url
-      JSON.parse(response_body).select { |key, _| ['playing', 'playing_position'].include? key }
+      response = JSON.parse(response_body)
+      end_of_song = response['playing_position'] == 0 && !response['playing']
+      playing = response['playing']
+      [end_of_song, playing]
     end
 
     def pause(pause=true)
@@ -55,14 +59,13 @@ class SpotifyService
       while(attempts < 5)
         begin
           attempts += 1
-          response = RestClient.get URI.encode(url), Origin: headers[:Origin] || 'https://nowhere.spotify.com'
+          response = RestClient.get URI.encode(url), Origin: headers[:Origin] || DEFAULT_ORIGIN
           return response.body
-        rescue StandardError => e
+        rescue Errno::ECONNREFUSED => e
           open
-          sleep 3
+          sleep 10
+        rescue => e
           puts e
-          puts e.backtrace
-          next
         end
       end
     end

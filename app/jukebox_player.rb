@@ -22,9 +22,10 @@ class JukeboxPlayer
     play_a_song
     set_playing(SpotifyService.playing?)
     loop do
-      if playing && SpotifyService.end_of_song?
+      end_of_song, client_playing = SpotifyService.status
+      if playing && end_of_song
         play_a_song
-      elsif playing && !SpotifyService.playing?
+      elsif playing && !client_playing
         SpotifyService.pause(false)
       end
       sleep 2
