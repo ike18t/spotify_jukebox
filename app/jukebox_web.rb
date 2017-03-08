@@ -43,7 +43,7 @@ class JukeboxWeb < Sinatra::Base
     headers 'Access-Control-Allow-Origin'         => '*',
             'Access-Conformation-Request-Method'  => 'GET'
     content_type 'application/json'
-    @@currently_playing.merge(play_status: { playing: MusicService.playing?, timestamp: Time.now.to_i }).to_json
+    @@currently_playing.merge(play_status: { playing: true, timestamp: Time.now.to_i }).to_json
   end
 
   put '/play' do
