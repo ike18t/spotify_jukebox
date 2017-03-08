@@ -40,8 +40,10 @@ class UserService
     private
 
     def get_name user_id
+      config = ConfigService.get
+      RSpotify::authenticate(config.client_id, config.client_secret)
       spotify_user = RSpotify::User.find(user_id)
-      spotify_user.name
+      spotify_user.display_name
     end
 
     def set_enabled(user_id, enabled)

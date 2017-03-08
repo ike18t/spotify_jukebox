@@ -51,6 +51,8 @@ class PlaylistService
     private
 
     def get_name user_id, playlist_id
+      config = ConfigService.get
+      RSpotify::authenticate(config.client_id, config.client_secret)
       spotify_playlist = RSpotify::Playlist.find(user_id, playlist_id)
       spotify_playlist.name
     end
