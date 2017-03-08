@@ -16,6 +16,7 @@ task default: [:spec, :js_spec]
 APP_ROOT = File.expand_path(File.join(File.dirname(__FILE__)))
 SINATRA_PORT = 4567
 PLAYER_ENDPOINT = 'http://localhost:%s/player_endpoint'.freeze
+PLAYER_STATUS_ENDPOINT = 'http://localhost:%s/player_status_endpoint'.freeze
 
 log_file = File.open('spotify_jukebox.log', 'w')
 $logger = Logger.new(MultiIO.new(STDOUT, log_file))
@@ -35,7 +36,8 @@ end
 desc 'Starts the JukeBox player.'
 task :start_player do
   player_update_endpoint = PLAYER_ENDPOINT % SINATRA_PORT
-  JukeboxPlayer.new(player_update_endpoint).start!
+  player_status_update_endpoint = PLAYER_STATUS_ENDPOINT % SINATRA_PORT
+  JukeboxPlayer.new(player_update_endpoint, player_status_update_endpoint).start!
 end
 
 desc 'Creates the database and required tables.'

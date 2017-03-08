@@ -23,7 +23,22 @@ class SpotifyService
       status_url = STATUS_URL % { csrf_token: get_csrf_token,
                                   oauth_token: get_oauth_token }
       response_body = make_the_call status_url
-      JSON.parse(response_body)['playing_position'] == 0
+      response = JSON.parse(response_body)
+      response['playing_position'] == 0 && !response['playing']
+    end
+
+    def playing?
+      status_url = STATUS_URL % { csrf_token: get_csrf_token,
+                                  oauth_token: get_oauth_token }
+      response_body = make_the_call status_url
+      JSON.parse(response_body)['playing']
+    end
+
+    def status
+      status_url = STATUS_URL % { csrf_token: get_csrf_token,
+                                  oauth_token: get_oauth_token }
+      response_body = make_the_call status_url
+      JSON.parse(response_body).select { |key, _| ['playing', 'playing_position'].include? key }
     end
 
     def pause(pause=true)
