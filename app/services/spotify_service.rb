@@ -1,4 +1,5 @@
 class SpotifyService
+  OPEN_URL = 'https://whatever.spotilocal.com:4370/remote/open.json'
   PLAY_URL = 'https://whatever.spotilocal.com:4371/remote/play.json?csrf=%{csrf_token}&oauth=%{oauth_token}&uri=spotify:track:%{track_id}'
   STATUS_URL = 'https://whatever.spotilocal.com:4371/remote/status.json?csrf=%{csrf_token}&oauth=%{oauth_token}'
   PAUSE_URL = 'https://whatever.spotilocal.com:4371/remote/pause.json?csrf=%{csrf_token}&oauth=%{oauth_token}&pause=%{pause}'
@@ -7,6 +8,10 @@ class SpotifyService
   CSRF_REQUEST_ORIGIN = 'https://embed.spotify.com'
 
   class << self
+    def open
+      make_the_call OPEN_URL
+    end
+
     def play(track)
       play_url = PLAY_URL % { csrf_token: get_csrf_token,
                               oauth_token: get_oauth_token,
@@ -30,28 +35,31 @@ class SpotifyService
 
     private
 
-    def make_the_call url
+    def make_the_call url, headers = {}
       attempts = 0
       while(attempts < 5)
         begin
           attempts += 1
-          response = RestClient.get URI.encode(url)
+          response = RestClient.get URI.encode(url), Origin: headers[:Origin] || 'https://nowhere.spotify.com'
           return response.body
-        rescue RestClient::BadRequest => e
+        rescue StandardError => e
+          open
+          sleep 3
           puts e
+          puts e.backtrace
           next
         end
       end
     end
 
     def get_oauth_token
-      response = RestClient.get(OAUTH_TOKEN_URL)
-      JSON.parse(response.body)['t']
+      response = make_the_call(OAUTH_TOKEN_URL)
+      JSON.parse(response)['t']
     end
 
     def get_csrf_token
-      response = RestClient.get(CSRF_TOKEN_URL, { 'Origin' => CSRF_REQUEST_ORIGIN })
-      JSON.parse(response.body)['token']
+      response = make_the_call(CSRF_TOKEN_URL, { Origin: CSRF_REQUEST_ORIGIN })
+      JSON.parse(response)['token']
     end
   end
 end
