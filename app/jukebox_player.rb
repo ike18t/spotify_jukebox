@@ -25,8 +25,8 @@ class JukeboxPlayer
       end_of_song, client_playing = SpotifyService.status
       if playing && end_of_song
         play_a_song
-      elsif playing && !client_playing
-        SpotifyService.pause(false)
+      elsif playing != client_playing
+        SpotifyService.pause(!playing)
       end
       sleep 2
     end
@@ -87,6 +87,8 @@ class JukeboxPlayer
         return track
       end
     end
+    nil
+  rescue
     nil
   end
 
