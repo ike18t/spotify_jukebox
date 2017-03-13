@@ -28,7 +28,7 @@ class JukeboxWeb < Sinatra::Base
   @@currently_play = false
   post '/player_status_endpoint' do
     @@currently_play = JSON.parse(params['status'])['playing']
-    @@currently_playing = @@currently_playing.merge({'play_status' => { 'playing' => @@currently_play, 'timestamp' => Time.now.to_i }})
+    @@currently_playing = (@@currently_playing || {}).merge({'play_status' => { 'playing' => @@currently_play, 'timestamp' => Time.now.to_i }})
     broadcast @@currently_playing.to_json
     :ok
   end

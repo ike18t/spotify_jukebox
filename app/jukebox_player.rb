@@ -81,6 +81,7 @@ class JukeboxPlayer
     config = ConfigService.get
     RSpotify::authenticate(config.client_id, config.client_secret)
     spotify_playlist = RSpotify::Playlist.find(playlist.user_id, playlist.id)
+    @historian.update_playlist_track_count(spotify_playlist.name, spotify_playlist.total)
     num_tracks = spotify_playlist.total
     spotify_playlist.tracks(limit: 10, offset: rand(num_tracks)).each do |track|
       if !@historian.played_recently?(track.artists.first.name, track.name)

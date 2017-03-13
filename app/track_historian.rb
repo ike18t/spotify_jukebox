@@ -9,8 +9,8 @@ class TrackHistorian
     @enabled_playlists = enabled_playlists
   end
 
-  def update_playlist_track_count(playlist, count)
-    @playlist_track_counts[playlist.name] = count
+  def update_playlist_track_count(playlist_name, count)
+    @playlist_track_counts[playlist_name] = count
   end
 
   def pop
